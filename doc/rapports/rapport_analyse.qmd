@@ -1,0 +1,79 @@
+---
+bibliography: refs.bib
+citeproc: false
+nocite: "@*"
+format:
+  html:
+    code-tools: true
+  typst:
+    papersize: a4
+    margin:
+      x: 1.5cm
+      y: 2.0cm
+    section-numbering: 1.1.a
+    mainfont: "Libertinus Serif"
+    fontsize: 11pt
+---
+
+
+```{=typst}
+#import "model.typ": project_template
+
+#show: body => project_template(
+  title: [Rapport d'analyse : projet VeloScope],
+  team: [Équipe 14],
+  authors: ([BONAVERO Méline], [BOYCE Eddy], [CHATONNIER Eliot], [LEJARS Samuel], [MOINERAUD--DOUCET Alix]),
+  tutor: [RIVIERE André],
+  project: [Projet informatique de 2ème année - Année 2026-2027],
+  body
+)
+```
+
+## Introduction {.unnumbered}
+
+```{=typst} 
+#lorem(100)
+```
+
+{{< pagebreak >}}
+
+## Cahier des charges
+
+L'objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte. Cet indicateur sera obtenu en s'appuyant notamment sur la tension des stations  
+
+## Modèle de données  
+
+Ce projet nécessite la gestion de deux bases de données :  
+- la première est celle des utilisateurs,  
+- la seconde est celle des stations de vélos.  
+
+Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.
+
+### Base de données des utilisateurs  
+
+Une seule table sera nécessaire. Les attributs seront les suivants :
+pseudo de l'utilisateur, mot de passe hashé de l'utilisateur, 
+
+### Base de données des stations de vélos  
+
+Les API donnent les donnée suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles, date et heure. Afin de respecter les formes normales, il faut construire plusieurs.  
+
+**Relation station**  
+
+Elle possédera deux attributs : id_station (PK), nom_station, coordonnées géographiques
+
+**Relation enregistrement**  
+
+Elle possédera les attributs suivants : (date et heure, id_station) (PK composite), nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles  
+
+## Calendrier prévisionnel
+
+diagramme de Gantt
+
+
+{{< pagebreak >}}
+
+## Annexes {.unnumbered}
+
+
+{{< pagebreak >}}
