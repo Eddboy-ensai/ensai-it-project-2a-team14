@@ -29,19 +29,45 @@ format:
 )
 ```
 
-## Introduction {.unnumbered}
+## I - Cahier des charges
 
-```{=typst} 
-#lorem(100)
-```
+L'objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.  
 
-{{< pagebreak >}}
+### Utilisateurs  
 
-## Cahier des charges
+Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilisateurs «réguliers» de l'application, qui devront créer un compte puis se connecter pour accéder à l'application. Une fois connecté, ils pourront accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.
 
-L'objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte. Cet indicateur sera obtenu en s'appuyant notamment sur la tension des stations  
+### Fonctionnalités de base  
 
-## Modèle de données  
+L'application possédera plusieurs fonctionnalités de base.  
+
+**Collecter des données via une API**  
+
+La collecte des données se fera via l'API de la ville de Rennes. La collecte se fera à intervalle de temps régulier (toutes 15 min). Elle permettra de nourrir une base de données, hébergée ..., qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d'emplacement.  
+
+**Consulter des données**  
+
+Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l'API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l'accumulation des données collectés (taux de remplissage, évolution de la disponibilité).  
+
+**Fournir un score de fiabilité**
+
+Pour chaque station, l'application calculera et fournira un score de fiabilité. La construction de ce score est détaillée ci-dessous :  
+
+**Recommander une station**  
+
+L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.
+
+### Outils de développement  
+
+Le projet sera réalisé en Python. 
+Concernant les bonnes pratiques, nous utiliserons les outils suivants :  
+- Ruff pour le formatage du code,  
+- Pytest afin d'effectuer les tests unitaires,  
+- Github pour héberger et versionner notre projet.  
+
+## II - Modélisation
+
+### Modèle de données  
 
 Ce projet nécessite la gestion de deux bases de données :  
 - la première est celle des utilisateurs,  
@@ -49,12 +75,12 @@ Ce projet nécessite la gestion de deux bases de données :
 
 Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.
 
-### Base de données des utilisateurs  
+#### Base de données des utilisateurs  
 
 Une seule table sera nécessaire. Les attributs seront les suivants :
 pseudo de l'utilisateur, mot de passe hashé de l'utilisateur, 
 
-### Base de données des stations de vélos  
+#### Base de données des stations de vélos  
 
 Les API donnent les donnée suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles, date et heure. Afin de respecter les formes normales, il faut construire plusieurs.  
 

@@ -89,31 +89,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="introduction" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="introduction">Introduction</h2>
-<div style="page-break-after: always;"></div>
+<section id="i---cahier-des-charges" class="level2">
+<h2 class="anchored" data-anchor-id="i---cahier-des-charges">I - Cahier des charges</h2>
+<p>L’objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l’application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.</p>
+<section id="utilisateurs" class="level3">
+<h3 class="anchored" data-anchor-id="utilisateurs">Utilisateurs</h3>
+<p>Deux types d’utilisateurs sont à distingués. Il y aura tout d’abord les utilisateurs «réguliers» de l’application, qui devront créer un compte puis se connecter pour accéder à l’application. Une fois connecté, ils pourront accéder aux données de l’application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.</p>
 </section>
-<section id="cahier-des-charges" class="level2">
-<h2 class="anchored" data-anchor-id="cahier-des-charges">Cahier des charges</h2>
-<p>L’objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l’application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte. Cet indicateur sera obtenu en s’appuyant notamment sur la tension des stations</p>
+<section id="fonctionnalités-de-base" class="level3">
+<h3 class="anchored" data-anchor-id="fonctionnalités-de-base">Fonctionnalités de base</h3>
+<p>L’application possédera plusieurs fonctionnalités de base.</p>
+<p><strong>Collecter des données via une API</strong></p>
+<p>La collecte des données se fera via l’API de la ville de Rennes. La collecte se fera à intervalle de temps régulier (toutes 15 min). Elle permettra de nourrir une base de données, hébergée …, qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d’emplacement.</p>
+<p><strong>Consulter des données</strong></p>
+<p>Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l’API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l’accumulation des données collectés (taux de remplissage, évolution de la disponibilité).</p>
+<p><strong>Fournir un score de fiabilité</strong></p>
+<p>Pour chaque station, l’application calculera et fournira un score de fiabilité. La construction de ce score est détaillée ci-dessous :</p>
+<p><strong>Recommander une station</strong></p>
+<p>L’application permettra de recommander des stations à proximité de l’utilisateur. Cette recommandation se basera à la fois sur la distance à l’utilisateur, sur l’historique de station (notamment via le score de fiabilité) et sur son historique récent.</p>
 </section>
-<section id="modèle-de-données" class="level2">
-<h2 class="anchored" data-anchor-id="modèle-de-données">Modèle de données</h2>
+<section id="outils-de-développement" class="level3">
+<h3 class="anchored" data-anchor-id="outils-de-développement">Outils de développement</h3>
+<p>Le projet sera réalisé en Python. Concernant les bonnes pratiques, nous utiliserons les outils suivants :<br>
+- Ruff pour le formatage du code,<br>
+- Pytest afin d’effectuer les tests unitaires,<br>
+- Github pour héberger et versionner notre projet.</p>
+</section>
+</section>
+<section id="ii---modélisation" class="level2">
+<h2 class="anchored" data-anchor-id="ii---modélisation">II - Modélisation</h2>
+<section id="modèle-de-données" class="level3">
+<h3 class="anchored" data-anchor-id="modèle-de-données">Modèle de données</h3>
 <p>Ce projet nécessite la gestion de deux bases de données :<br>
 - la première est celle des utilisateurs,<br>
 - la seconde est celle des stations de vélos.</p>
 <p>Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.</p>
-<section id="base-de-données-des-utilisateurs" class="level3">
-<h3 class="anchored" data-anchor-id="base-de-données-des-utilisateurs">Base de données des utilisateurs</h3>
+<section id="base-de-données-des-utilisateurs" class="level4">
+<h4 class="anchored" data-anchor-id="base-de-données-des-utilisateurs">Base de données des utilisateurs</h4>
 <p>Une seule table sera nécessaire. Les attributs seront les suivants : pseudo de l’utilisateur, mot de passe hashé de l’utilisateur,</p>
 </section>
-<section id="base-de-données-des-stations-de-vélos" class="level3">
-<h3 class="anchored" data-anchor-id="base-de-données-des-stations-de-vélos">Base de données des stations de vélos</h3>
+<section id="base-de-données-des-stations-de-vélos" class="level4">
+<h4 class="anchored" data-anchor-id="base-de-données-des-stations-de-vélos">Base de données des stations de vélos</h4>
 <p>Les API donnent les donnée suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d’emplacements, nombre d’emplacements libres, nombre de vélos disponibles, date et heure. Afin de respecter les formes normales, il faut construire plusieurs.</p>
 <p><strong>Relation station</strong></p>
 <p>Elle possédera deux attributs : id_station (PK), nom_station, coordonnées géographiques</p>
 <p><strong>Relation enregistrement</strong></p>
 <p>Elle possédera les attributs suivants : (date et heure, id_station) (PK composite), nombre d’emplacements, nombre d’emplacements libres, nombre de vélos disponibles</p>
+</section>
 </section>
 </section>
 <section id="calendrier-prévisionnel" class="level2">
@@ -612,54 +634,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction {.unnumbered}</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## I - Cahier des charges</span></span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="in">```{=typst} </span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="in">#lorem(100)</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>L'objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.  </span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">### Utilisateurs  </span></span>
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilisateurs «réguliers» de l'application, qui devront créer un compte puis se connecter pour accéder à l'application. Une fois connecté, ils pourront accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.</span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cahier des charges</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fonctionnalités de base  </span></span>
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>L'objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte. Cet indicateur sera obtenu en s'appuyant notamment sur la tension des stations  </span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>L'application possédera plusieurs fonctionnalités de base.  </span>
 <span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modèle de données  </span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>**Collecter des données via une API**  </span>
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>Ce projet nécessite la gestion de deux bases de données :  </span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la première est celle des utilisateurs,  </span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la seconde est celle des stations de vélos.  </span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>La collecte des données se fera via l'API de la ville de Rennes. La collecte se fera à intervalle de temps régulier (toutes 15 min). Elle permettra de nourrir une base de données, hébergée ..., qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d'emplacement.  </span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>**Consulter des données**  </span>
 <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l'API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l'accumulation des données collectés (taux de remplissage, évolution de la disponibilité).  </span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">### Base de données des utilisateurs  </span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>**Fournir un score de fiabilité**</span>
 <span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>Une seule table sera nécessaire. Les attributs seront les suivants :</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>pseudo de l'utilisateur, mot de passe hashé de l'utilisateur, </span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="fu">### Base de données des stations de vélos  </span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>Les API donnent les donnée suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles, date et heure. Afin de respecter les formes normales, il faut construire plusieurs.  </span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>**Relation station**  </span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>Elle possédera deux attributs : id_station (PK), nom_station, coordonnées géographiques</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>**Relation enregistrement**  </span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>Elle possédera les attributs suivants : (date et heure, id_station) (PK composite), nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles  </span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calendrier prévisionnel</span></span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>diagramme de Gantt</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>Pour chaque station, l'application calculera et fournira un score de fiabilité. La construction de ce score est détaillée ci-dessous :  </span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>**Recommander une station**  </span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="fu">### Outils de développement  </span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>Le projet sera réalisé en Python. </span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>Concernant les bonnes pratiques, nous utiliserons les outils suivants :  </span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ruff pour le formatage du code,  </span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pytest afin d'effectuer les tests unitaires,  </span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Github pour héberger et versionner notre projet.  </span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="fu">## II - Modélisation</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="fu">### Modèle de données  </span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>Ce projet nécessite la gestion de deux bases de données :  </span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la première est celle des utilisateurs,  </span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la seconde est celle des stations de vélos.  </span>
 <span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.</span>
 <span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Base de données des utilisateurs  </span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>Une seule table sera nécessaire. Les attributs seront les suivants :</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>pseudo de l'utilisateur, mot de passe hashé de l'utilisateur, </span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Base de données des stations de vélos  </span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>Les API donnent les donnée suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles, date et heure. Afin de respecter les formes normales, il faut construire plusieurs.  </span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>**Relation station**  </span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>Elle possédera deux attributs : id_station (PK), nom_station, coordonnées géographiques</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>**Relation enregistrement**  </span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>Elle possédera les attributs suivants : (date et heure, id_station) (PK composite), nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles  </span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calendrier prévisionnel</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>diagramme de Gantt</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
