@@ -16,16 +16,26 @@ attributs : id station, nom de la station, localisation géographique, nombre de
 
 attributs : id utilisateur, pseudo, mot de passe hashé, mail, liste de stations favorites  
 
-## Travail à faire  
+3) Comment gérer le portage d'une ville à l'autre ?  
 
-Modèle de données (quelles tables pour obtenir les trois formes normales ?) + diagramme UML
+4) Comment gérer les enregistrements en termes d'objets ? Créer des objets "enregistrement" ou comme attribut de la classe Station, ou autre ?
 
-Diagramme de cas d'utilisation
+## Séance du 04/09  
 
-Diagramme d'activité
+### Résumé  
 
-Diagramme d'écran
+Création du diagramme d'activité  
+Concernant le rapport : ajout des sections à compléter, réflexion sur les classes, les services
 
-Cahier des charges
+### Travail à faire  
 
-## Gérer le portage d'une ville à l'autre  
+Rédiger les sections et tracer les diagrammes suivants :
+Diagramme de Gantt + réflexion sur la formule du score de fiabilité (Alix)
+Structure de l'API (frontend, backend, etc.) + arborescence du projet (Eddy)
+Création base de données + questions du stockage sur le long terme (Eliot)
+Diagramme d'activité (Samuel)  
+Réfléchir au score de fiabilité + 
+
+
+
+Réfléchir aux calculs (pour voir comment organiser la classe station_service)
