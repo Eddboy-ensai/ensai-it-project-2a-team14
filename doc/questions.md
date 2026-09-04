@@ -27,3 +27,7 @@ Diagramme d'activité
 Diagramme d'écran
 
 Cahier des charges
+
+## Services de l'application  
+
+Calculer le score de fiabilité

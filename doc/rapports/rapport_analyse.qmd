@@ -29,7 +29,7 @@ format:
 )
 ```
 
-## I - Cahier des charges
+## Cahier des charges
 
 L'objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.  
 
@@ -65,7 +65,12 @@ Concernant les bonnes pratiques, nous utiliserons les outils suivants :
 - Pytest afin d'effectuer les tests unitaires,  
 - Github pour héberger et versionner notre projet.  
 
-## II - Modélisation
+## Modélisation
+
+## Modèle de l'API  
+
+diagramme du modèle
+Persistence : BDD
 
 ### Modèle de données  
 
@@ -73,7 +78,7 @@ Ce projet nécessite la gestion de deux bases de données :
 - la première est celle des utilisateurs,  
 - la seconde est celle des stations de vélos.  
 
-Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.
+Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.  
 
 #### Base de données des utilisateurs  
 
