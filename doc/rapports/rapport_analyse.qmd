@@ -47,7 +47,7 @@ La collecte des données se fera via l'API de la ville de Rennes. La collecte se
 
 **Consulter des données**  
 
-Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l'API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l'accumulation des données collectés (taux de remplissage, évolution de la disponibilité).  
+Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l'API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l'accumulation des données collectés (taux de remplissage, évolution de la disponibilité, durée moyenne des épisodes de saturation et de pénurie).  
 
 **Fournir un score de fiabilité**
 
@@ -55,7 +55,7 @@ Pour chaque station, l'application calculera et fournira un score de fiabilité.
 
 **Recommander une station**  
 
-L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.
+L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  
 
 ### Outils de développement  
 
@@ -67,10 +67,22 @@ Concernant les bonnes pratiques, nous utiliserons les outils suivants :
 
 ## Modélisation
 
-## Modèle de l'API  
+### Modèle de l'API  
 
-diagramme du modèle
+diagramme du modèle  
 Persistence : BDD
+
+### Services  
+
+Service : les calculs : score de fiabilité, évolution de la disponibilité (graphique ?) avec choix des périodes, pourcentage de temps passé vide et saturé, durée moyenne des épisodes de saturations et pénurie  
+
+### Classes  
+
+Classes controller : une par classe métier  + login  
+
+Classes métiers : user, station (copies des tables de données)  
+
+Classes services : station_service, user_service  
 
 ### Modèle de données  
 

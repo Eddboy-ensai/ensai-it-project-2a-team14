@@ -28,6 +28,4 @@ Diagramme d'écran
 
 Cahier des charges
 
-## Services de l'application  
-
-Calculer le score de fiabilité
+## Gérer le portage d'une ville à l'autre  
