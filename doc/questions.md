@@ -34,7 +34,7 @@ Diagramme de Gantt + réflexion sur la formule du score de fiabilité (Alix)
 Structure de l'API (frontend, backend, etc.) + arborescence du projet (Eddy)
 Création base de données + questions du stockage sur le long terme (Eliot)
 Diagramme d'activité (Samuel)  
-Réfléchir au score de fiabilité + 
+Réfléchir au score de fiabilité (Méline)  
 
 
 
