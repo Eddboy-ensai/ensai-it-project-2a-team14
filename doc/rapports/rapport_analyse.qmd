@@ -43,7 +43,7 @@ L'application possédera plusieurs fonctionnalités de base.
 
 **Collecter des données via une API**  
 
-La collecte des données se fera via l'API de la ville de Rennes. La collecte se fera à intervalle de temps régulier (toutes 15 min). Elle permettra de nourrir une base de données, hébergée ..., qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d'emplacement.  
+La collecte des données concernant la disponibilité et l'état des stations de vélos se fera via une API externe. La collecte se fera à intervalle de temps régulier (toutes 15 min). Elle permettra de nourrir une base de données, hébergée ..., qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d'emplacement.  
 
 **Consulter des données**  
 
@@ -67,10 +67,38 @@ Concernant les bonnes pratiques, nous utiliserons les outils suivants :
 
 ## Modélisation
 
-### Modèle de l'API  
+### Architecture de l'API  
 
-diagramme du modèle  
-Persistence : BDD
+L'API sera constituée de plusieurs couches. On détaille dans la suite du paragraphe l'architecture envisagée, dont voici un schéma d'ensemble :
+
+[schéma de l'API avec front end, backend, les interactions et reque^tes + API externes]
+
+#### Frontend  
+
+Le frontend correspond à l'interface homme-machine. Il sera codé à l'aide du package streamlit.  
+
+L'interface se voudra simple et fonctionnelle : elle se présentera sous la forme d'une page HTML. Un menu à gauche permettra à l'utilisateur de sélectionner la fonctionnalité qu'il souhaite. Les différentes fonctionnalités disponibles porteront les noms suivants :  
+- rechercher une station,  
+- mes stations favorites,  
+- recommandation,  
+- gérer mon compte,  
+- gérer les comptes utilisateurs (n'apparaitra que pour les administrateurs).  
+
+La gestion des stations favorites se fera de la manière suivante : l'utilisateur pourra ajouter de nouvelles stations lors de la consultation de la page d'une station. Il pourra ensuite consulter ses stations favorites ou les supprimer dans l'onglet "mes stations favorites".
+
+#### Backend  
+
+Le frontend enverra des requêtes http au backend, qui sera chargé de traité ces requêtes. Ces requêtes concerneront soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d'une station par exemple). Le backend sera séparé en plusieurs couches.  
+
+Tout d'abord, une couche *controller* recevra les requêtes fournies par le frontend lors de l'utilisation de l'API par un usager. Cette couche aura pour but de convertir et transférer ces requêtes à la couche suivante, celles des services.  
+
+La couche *service* est le coeur fonctionnelle de l'API. C'est dans cette couche que seront regrouper les fonctions apportant une valeur ajoutée à notre API. Il s'agira par exemple des fonctions permettant de calculer les indicateurs souhaitées et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services feront donc appelle à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  
+
+La couche *DAO* recevra les demandes de données de la part de la couche *service*. Elle sera chargée de convertir ces demandes en requêtes SQL. Ces requêtes seront alors traitées par la couche persistente : celle des bases de données. La couche *DAO* aura alors pour mission de convertir en objets python (par exemple en objet *Utilisateur* ou *Station*, cf la section "Modèle de données" pour plus de détails). Ces objets seront ensuite utilisés par la couche service afin de calculer les indicateurs qui seront transmis à la couche *controller* afin de les afficher à l'utilisateur dans l'interface.  
+
+#### Bases de données  
+
+Les bases de données permettront de gérer la persistence des données accumulées. Ces concerneront les comptes des utilisateurs de l'API ainsi que les données accumulées sur les stations au cours du temps.  
 
 ### Services  
 
@@ -87,27 +115,30 @@ Classes services : station_service, user_service
 ### Modèle de données  
 
 Ce projet nécessite la gestion de deux bases de données :  
-- la première est celle des utilisateurs,  
-- la seconde est celle des stations de vélos.  
+- la première est celle des données qui concernent les utilisateurs,  
+- la seconde est celle des données qui concernent les stations de vélos.  
 
 Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.  
 
 #### Base de données des utilisateurs  
 
-Une seule table sera nécessaire. Les attributs seront les suivants :
-pseudo de l'utilisateur, mot de passe hashé de l'utilisateur, 
+Afin de stocker les données des utilisateurs tout en respectant les trois formes normales, une seule table de données sera nécessaire. Elle contiendra les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, statut (utilisateur simple ou administrateur)
+[diagramme UML de la table]
 
 #### Base de données des stations de vélos  
 
-Les API donnent les donnée suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles, date et heure. Afin de respecter les formes normales, il faut construire plusieurs.  
+L'un des objectifs est de pouvoir aisément transposer l'API à différentes villes. Ainsi, les données conservées doivent être le plus génériques possibles. Les API consultées fournissent les donnée suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date et heure. Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (id_station, date, heure). Cela créerait plusieurs problèmes :  
+- l'attribut nom_station serait en dépendance fonctionnelle avec id_station et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
+- l'attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).
 
-**Relation station**  
+La base de données des stations possédera deux tables de données :  
+- une relation **station**, dont les attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques ;  
+- une relation **enregistrement**, dont les attributs stockeront les données fournies par les API externes.  
 
-Elle possédera deux attributs : id_station (PK), nom_station, coordonnées géographiques
+[Diagramme UML avec les données suivantes :]
 
-**Relation enregistrement**  
-
-Elle possédera les attributs suivants : (date et heure, id_station) (PK composite), nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles  
+Elle possédera deux attributs : id_station (clé primaire), nom_station, coordonnées géographiques
+Elle possédera les attributs suivants : (date et heure, id_station) (PK composite), nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles, nombre de vélos électriques disponibles  
 
 ## Calendrier prévisionnel
 
