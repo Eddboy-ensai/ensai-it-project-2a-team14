@@ -57,25 +57,17 @@ Pour chaque station, l'application calculera et fournira un score de fiabilité.
 
 L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  
 
-### Outils de développement  
-
-Le projet sera réalisé en Python. 
-Concernant les bonnes pratiques, nous utiliserons les outils suivants :  
-- Ruff pour le formatage du code,  
-- Pytest afin d'effectuer les tests unitaires,  
-- Github pour héberger et versionner notre projet.  
-
 ## Modélisation
 
 ### Architecture de l'API  
 
-L'API sera constituée de plusieurs couches. On détaille dans la suite du paragraphe l'architecture envisagée, dont voici un schéma d'ensemble :
+L'API sera constituée de plusieurs couches afin de repsecter le principe de séparations des responsabilités. Voici un schéma d'ensemble de l'architecture logiciel envisagée, que nous détaillons dans la suite du dossier.
 
 [schéma de l'API avec front end, backend, les interactions et reque^tes + API externes]
 
 #### Frontend  
 
-Le frontend correspond à l'interface homme-machine. Il sera codé à l'aide du package streamlit.  
+Le *frontend* correspond à l'interface homme-machine. Il prendra la forme d'une application interactive accessible via une page Web.  
 
 L'interface se voudra simple et fonctionnelle : elle se présentera sous la forme d'une page HTML. Un menu à gauche permettra à l'utilisateur de sélectionner la fonctionnalité qu'il souhaite. Les différentes fonctionnalités disponibles porteront les noms suivants :  
 - rechercher une station,  
@@ -88,7 +80,7 @@ La gestion des stations favorites se fera de la manière suivante : l'utilisateu
 
 #### Backend  
 
-Le frontend enverra des requêtes http au backend, qui sera chargé de traité ces requêtes. Ces requêtes concerneront soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d'une station par exemple). Le backend sera séparé en plusieurs couches.  
+Le *frontend* enverra des requêtes http de la part du *backend*, qui sera chargé de traité ces requêtes et de renvoyer la réponse attendue. Ces requêtes concerneront soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d'une station par exemple). Le backend sera séparé en plusieurs couches.  
 
 Tout d'abord, une couche *controller* recevra les requêtes fournies par le frontend lors de l'utilisation de l'API par un usager. Cette couche aura pour but de convertir et transférer ces requêtes à la couche suivante, celles des services.  
 
@@ -96,9 +88,21 @@ La couche *service* est le coeur fonctionnelle de l'API. C'est dans cette couche
 
 La couche *DAO* recevra les demandes de données de la part de la couche *service*. Elle sera chargée de convertir ces demandes en requêtes SQL. Ces requêtes seront alors traitées par la couche persistente : celle des bases de données. La couche *DAO* aura alors pour mission de convertir en objets python (par exemple en objet *Utilisateur* ou *Station*, cf la section "Modèle de données" pour plus de détails). Ces objets seront ensuite utilisés par la couche service afin de calculer les indicateurs qui seront transmis à la couche *controller* afin de les afficher à l'utilisateur dans l'interface.  
 
-#### Bases de données  
+#### Couche persistente  
 
-Les bases de données permettront de gérer la persistence des données accumulées. Ces concerneront les comptes des utilisateurs de l'API ainsi que les données accumulées sur les stations au cours du temps.  
+La couche persistente sera constituée des bases de données qu'utilisera notre API. Deux bases de données sont prévues : l'une pour les données utilisateurs, l'autre pour les données accumulées sur les stations de vélos.  
+
+#### Outils de développement  
+
+Le projet sera réalisé en Python. Nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  
+- le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  
+- le framework ```FastAPI``` pour le *backend*,  
+- le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  
+
+De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  
+- Ruff pour le formatage du code,  
+- Pytest afin d'effectuer les tests unitaires,  
+- Github pour héberger et versionner notre projet.  
 
 ### Services  
 
@@ -118,7 +122,7 @@ Ce projet nécessite la gestion de deux bases de données :
 - la première est celle des données qui concernent les utilisateurs,  
 - la seconde est celle des données qui concernent les stations de vélos.  
 
-Afin que le modèle de données soit cohérent et pérenne, il doit respecter les trois formes normales.  
+Afin que le modèle de données soit cohérent et pérenne, nous veillerons à respecter, pour chaque base de données, les trois premières formes normales.  
 
 #### Base de données des utilisateurs  
 
@@ -127,18 +131,13 @@ Afin de stocker les données des utilisateurs tout en respectant les trois forme
 
 #### Base de données des stations de vélos  
 
-L'un des objectifs est de pouvoir aisément transposer l'API à différentes villes. Ainsi, les données conservées doivent être le plus génériques possibles. Les API consultées fournissent les donnée suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date et heure. Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (id_station, date, heure). Cela créerait plusieurs problèmes :  
+L'un des objectifs est de pouvoir aisément transposer l'API à différentes villes. Ainsi, les données conservées doivent être le plus génériques possibles. Les API consultées fournissent les données suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date et heure. Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (id_station, date, heure). Cela créerait plusieurs problèmes :  
 - l'attribut nom_station serait en dépendance fonctionnelle avec id_station et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
 - l'attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).
 
-La base de données des stations possédera deux tables de données :  
-- une relation **station**, dont les attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques ;  
-- une relation **enregistrement**, dont les attributs stockeront les données fournies par les API externes.  
+La base de données des stations possédera deux tables de données. La première sera la relation **station**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **enregistrements**, dont les attributs stockeront les données fournies par les API externes. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_emplac```), le nombre d'emplacements libre de la station (```nb_emplac_lib```), le nombre de vélos disponibles (```nb_velos_dispo```) et le nombre de vélos électriques disponibles(```nb_evelos_dispo```).  
 
-[Diagramme UML avec les données suivantes :]
-
-Elle possédera deux attributs : id_station (clé primaire), nom_station, coordonnées géographiques
-Elle possédera les attributs suivants : (date et heure, id_station) (PK composite), nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles, nombre de vélos électriques disponibles  
+[Diagramme UML avec les données suivantes :] 
 
 ## Calendrier prévisionnel
 
