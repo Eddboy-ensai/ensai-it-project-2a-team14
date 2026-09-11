@@ -39,7 +39,9 @@ Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilis
 
 ### Fonctionnalités de base  
 
-L'application possédera plusieurs fonctionnalités de base.  
+L'application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d'utilisation, que nous détaillons ci-dessous :  
+
+![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)
 
 **Collecter des données via une API**  
 
@@ -134,6 +136,12 @@ L'un des objectifs est de pouvoir aisément transposer l'API à différentes vil
 La base de données des stations possédera deux tables de données. La première sera la relation **station**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **enregistrements**, dont les attributs stockeront les données fournies par les API externes. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_emplac```), le nombre d'emplacements libre de la station (```nb_emplac_lib```), le nombre de vélos disponibles (```nb_velos_dispo```) et le nombre de vélos électriques disponibles(```nb_evelos_dispo```).  
 
 [Diagramme UML avec les données suivantes :] 
+
+### Endpoints
+
+Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH
++ présenter un peu l'api externe 
++ nous gèrerons le niveau de droit au niveau des contrôleurs
 
 ## Calendrier prévisionnel
 
