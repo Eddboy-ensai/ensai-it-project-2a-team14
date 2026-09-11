@@ -65,7 +65,7 @@ L'application permettra de recommander des stations à proximité de l'utilisate
 
 L'API sera constituée de plusieurs couches afin de repsecter le principe de séparations des responsabilités. Voici un schéma d'ensemble de l'architecture logiciel envisagée, que nous détaillons dans la suite du dossier.
 
-[schéma de l'API avec front end, backend, les interactions et reque^tes + API externes]
+![Diagramme d'architecture logiciel](img/diag_archi_log.png)
 
 #### Frontend  
 
@@ -137,11 +137,25 @@ La base de données des stations possédera deux tables de données. La premièr
 
 [Diagramme UML avec les données suivantes :] 
 
-### Endpoints
+### Description des endpoints
+
+endpoints utilisateurs:
+consulter une station
+ajouter une station en favori
+obtenir la liste des stations
+afficher les stations recommandées
+créer un compte
+se connecter
+ajouter une station en favori
+supprimer une station des favoris
+
+
+endpoints pour administrateur :
+changer un mdp
+changer un nom utilisateur
+supprimer utilisateur
 
 Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH
-+ présenter un peu l'api externe 
-+ nous gèrerons le niveau de droit au niveau des contrôleurs
 
 ## Calendrier prévisionnel
 
