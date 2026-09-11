@@ -39,7 +39,9 @@ Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilis
 
 ### Fonctionnalités de base  
 
-L'application possédera plusieurs fonctionnalités de base.  
+L'application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d'utilisation, que nous détaillons ci-dessous :  
+
+![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)
 
 **Collecter des données via une API**  
 
@@ -104,17 +106,13 @@ De plus, afin de garantir une maintenance aisée, nous tenterons de respecter le
 - Pytest afin d'effectuer les tests unitaires,  
 - Github pour héberger et versionner notre projet.  
 
-### Services  
-
-Service : les calculs : score de fiabilité, évolution de la disponibilité (graphique ?) avec choix des périodes, pourcentage de temps passé vide et saturé, durée moyenne des épisodes de saturations et pénurie  
-
 ### Classes  
 
-Classes controller : une par classe métier  + login  
+D'après l'architecture logicielle, le projet nécessitera plusieurs types de classes. Tout d'abord, il faudra implémenter les objets métiers "Users", "Station", et "StationRecord". Chacun de ces objets nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API. Voici un diagramme de classes résumant l'architecture envisagée :
 
-Classes métiers : user, station (copies des tables de données)  
+[diagramme classe]
 
-Classes services : station_service, user_service  
+Chacune des trois classes métiers prévues aura une classe "service" associée. Pour les classes "Users" et "StationRecord", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau de la classe "StationService". Les méthodes de cette classe permettront notamment de récupérer les informations concernant une station et de calculer les différents indicateurs attendus par le cahier des charges. compute_score, score de fiabilité, évolution de la disponibilité (graphique ?) avec choix des périodes, pourcentage de temps passé vide et saturé, durée moyenne des épisodes de saturations et pénurie  
 
 ### Modèle de données  
 
@@ -138,6 +136,12 @@ L'un des objectifs est de pouvoir aisément transposer l'API à différentes vil
 La base de données des stations possédera deux tables de données. La première sera la relation **station**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **enregistrements**, dont les attributs stockeront les données fournies par les API externes. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_emplac```), le nombre d'emplacements libre de la station (```nb_emplac_lib```), le nombre de vélos disponibles (```nb_velos_dispo```) et le nombre de vélos électriques disponibles(```nb_evelos_dispo```).  
 
 [Diagramme UML avec les données suivantes :] 
+
+### Endpoints
+
+Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH
++ présenter un peu l'api externe 
++ nous gèrerons le niveau de droit au niveau des contrôleurs
 
 ## Calendrier prévisionnel
 
