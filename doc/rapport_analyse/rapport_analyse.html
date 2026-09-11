@@ -74,7 +74,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="rapport_analyse_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="rapport_analyse_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="rapport_analyse_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="rapport_analyse_files/libs/bootstrap/bootstrap-005e5f49e2105de2e9189abba14d0143.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="rapport_analyse_files/libs/bootstrap/bootstrap-87e23fed0fbc345d7ddb46a8db588084.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -178,6 +178,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 - l’attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).</p>
 <p>La base de données des stations possédera deux tables de données. La première sera la relation <strong>station</strong>. Ses attributs stockeront les données concernant les stations elles-mêmes : l’identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation <strong>enregistrements</strong>, dont les attributs stockeront les données fournies par les API externes. Voici les données stockées : l’identifiant de la station (attribut <code>id_station</code>), date et heure de l’enregistrement (attribut <code>date</code>), le nombre d’emplacements de la station (<code>nb_emplac</code>), le nombre d’emplacements libre de la station (<code>nb_emplac_lib</code>), le nombre de vélos disponibles (<code>nb_velos_dispo</code>) et le nombre de vélos électriques disponibles(<code>nb_evelos_dispo</code>).</p>
 <p>[Diagramme UML avec les données suivantes :]</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/diagactivté.png" class="img-fluid figure-img"></p>
+<figcaption>Diagramme d’activité</figcaption>
+</figure>
+</div>
 </section>
 </section>
 <section id="endpoints" class="level3">
@@ -789,23 +795,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Diagramme UML avec les données suivantes :</span><span class="co">]</span> </span>
 <span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="fu">### Endpoints</span></span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH</span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>présenter un peu l'api externe </span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>nous gèrerons le niveau de droit au niveau des contrôleurs</span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calendrier prévisionnel</span></span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>diagramme de Gantt</span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'activité](img/diagactivté.png)</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="fu">### Endpoints</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>présenter un peu l'api externe </span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>nous gèrerons le niveau de droit au niveau des contrôleurs</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calendrier prévisionnel</span></span>
 <span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>diagramme de Gantt</span>
 <span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
 <span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

@@ -59,6 +59,21 @@ Pour chaque station, l'application calculera et fournira un score de fiabilité.
 
 L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  
 
+
+### Déroulé de la navigation
+
+Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :
+
+![Diagramme d'activité](img/diagactivté.png)
+
+**Gestion de compte**
+
+La première partie de ce diagramme correspond à la partie de gestion de compte de l'utilisateur. Elle lui permet de créer un compte si il en a pas, de modifier son mot de passe en cas d'oubli ou bien de se connecter à son compte. Seul l'administrateur dispose après connexion à son compte de la possibilité d'influer sur les comptes des utilisateurs "réguliers".
+
+**Fonctionnalité principales**
+
+L'ensemble des fonctionnalités de l'application sont dans la deuxième partie de ce diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'application ou de poursuivre la navigation en retournant à l'étape du choix d'action.
+
 ## Modélisation
 
 ### Architecture de l'API  
@@ -136,6 +151,9 @@ L'un des objectifs est de pouvoir aisément transposer l'API à différentes vil
 La base de données des stations possédera deux tables de données. La première sera la relation **station**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **enregistrements**, dont les attributs stockeront les données fournies par les API externes. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_emplac```), le nombre d'emplacements libre de la station (```nb_emplac_lib```), le nombre de vélos disponibles (```nb_velos_dispo```) et le nombre de vélos électriques disponibles(```nb_evelos_dispo```).  
 
 [Diagramme UML avec les données suivantes :] 
+
+
+![Diagramme d'activité](img/diagactivté.png)
 
 ### Endpoints
 
