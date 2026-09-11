@@ -104,17 +104,13 @@ De plus, afin de garantir une maintenance aisée, nous tenterons de respecter le
 - Pytest afin d'effectuer les tests unitaires,  
 - Github pour héberger et versionner notre projet.  
 
-### Services  
-
-Service : les calculs : score de fiabilité, évolution de la disponibilité (graphique ?) avec choix des périodes, pourcentage de temps passé vide et saturé, durée moyenne des épisodes de saturations et pénurie  
-
 ### Classes  
 
-Classes controller : une par classe métier  + login  
+D'après l'architecture logicielle, le projet nécessitera plusieurs types de classes. Tout d'abord, il faudra implémenter les objets métiers "Users", "Station", et "StationRecord". Chacun de ces objets nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API. Voici un diagramme de classes résumant l'architecture envisagée :
 
-Classes métiers : user, station (copies des tables de données)  
+[diagramme classe]
 
-Classes services : station_service, user_service  
+Chacune des trois classes métiers prévues aura une classe "service" associée. Pour les classes "Users" et "StationRecord", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau de la classe "StationService". Les méthodes de cette classe permettront notamment de récupérer les informations concernant une station et de calculer les différents indicateurs attendus par le cahier des charges. compute_score, score de fiabilité, évolution de la disponibilité (graphique ?) avec choix des périodes, pourcentage de temps passé vide et saturé, durée moyenne des épisodes de saturations et pénurie  
 
 ### Modèle de données  
 
