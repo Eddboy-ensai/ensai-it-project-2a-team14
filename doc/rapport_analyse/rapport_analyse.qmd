@@ -59,6 +59,21 @@ Pour chaque station, l'application calculera et fournira un score de fiabilité.
 
 L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  
 
+
+### Déroulé de la navigation
+
+Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :
+
+![Diagramme d'activité](img/diagactivté.png)
+
+**Gestion de compte**
+
+La première partie de ce diagramme correspond à la partie de gestion de compte de l'utilisateur. Elle lui permet de créer un compte si il en a pas, de modifier son mot de passe en cas d'oubli ou bien de se connecter à son compte. Seul l'administrateur dispose après connexion à son compte de la possibilité d'influer sur les comptes des utilisateurs "réguliers".
+
+**Fonctionnalité principales**
+
+L'ensemble des fonctionnalités de l'application sont dans la deuxième partie de ce diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'application ou de poursuivre la navigation en retournant à l'étape du choix d'action.
+
 ## Modélisation
 
 ### Architecture de l'API  
