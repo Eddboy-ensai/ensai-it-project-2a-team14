@@ -121,36 +121,26 @@ De plus, afin de garantir une maintenance aisée, nous tenterons de respecter le
 - Pytest afin d'effectuer les tests unitaires,  
 - Github pour héberger et versionner notre projet.  
 
-### Classes  
-
-D'après l'architecture logicielle, le projet nécessitera plusieurs types de classes. Tout d'abord, il faudra implémenter les objets métiers "Users", "Station", et "StationRecord". Chacun de ces objets nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API. Voici un diagramme de classes résumant l'architecture envisagée :
-
-[diagramme classe]
-
-Chacune des trois classes métiers prévues aura une classe "service" associée. Pour les classes "Users" et "StationRecord", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau de la classe "StationService". Les méthodes de cette classe permettront notamment de récupérer les informations concernant une station et de calculer les différents indicateurs attendus par le cahier des charges. compute_score, score de fiabilité, évolution de la disponibilité (graphique ?) avec choix des périodes, pourcentage de temps passé vide et saturé, durée moyenne des épisodes de saturations et pénurie  
-
 ### Modèle de données  
 
-Ce projet nécessite la gestion de deux bases de données :  
-- la première est celle des données qui concernent les utilisateurs,  
-- la seconde est celle des données qui concernent les stations de vélos.  
+Afin que le modèle de données soit cohérent et pérenne, nous veillerons à respecter les trois premières formes normales. 
 
-Afin que le modèle de données soit cohérent et pérenne, nous veillerons à respecter, pour chaque base de données, les trois premières formes normales.  
+Concernant les utilisateurs, une seule table "Users" sera nécessaire. Elle contiendra les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, statut (utilisateur simple ou administrateur). 
 
-#### Base de données des utilisateurs  
-
-Afin de stocker les données des utilisateurs tout en respectant les trois formes normales, une seule table de données sera nécessaire. Elle contiendra les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, statut (utilisateur simple ou administrateur)
-[diagramme UML de la table]
-
-#### Base de données des stations de vélos  
-
-L'un des objectifs est de pouvoir aisément transposer l'API à différentes villes. Ainsi, les données conservées doivent être le plus génériques possibles. Les API consultées fournissent les données suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date et heure. Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (id_station, date, heure). Cela créerait plusieurs problèmes :  
+Pour les stations, les données à stocker sont les suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date et heure. Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (id_station, date, heure). Cela créerait plusieurs problèmes :  
 - l'attribut nom_station serait en dépendance fonctionnelle avec id_station et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
-- l'attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).
+- l'attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).  
+Il faudra donc deux tables. La première sera la relation **Stations**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **StationRecords**, dont les attributs stockeront les données fournies par l'API externe. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_spaces```), le nombre d'emplacements libre de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).  
 
-La base de données des stations possédera deux tables de données. La première sera la relation **station**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **enregistrements**, dont les attributs stockeront les données fournies par les API externes. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_emplac```), le nombre d'emplacements libre de la station (```nb_emplac_lib```), le nombre de vélos disponibles (```nb_velos_dispo```) et le nombre de vélos électriques disponibles(```nb_evelos_dispo```).  
+Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association "Favorite" qui permettra de lier un utilisateur à ses stations favorites.  
 
 [Diagramme UML avec les données suivantes :] 
+
+### Classes  
+
+D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles "User", "Station", et "StationRecord". Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API.  
+
+Chacune des trois classes métiers prévues aura une classe "service" associée. Pour les classes "Users" et "StationRecord", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau des services associés à la classe "Station", notamment via le calcul d'indicateurs. Afin d'éviter d'avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe "Station" seront séparé en deux classes. Tout d'abord une classe "StationService" qui se concentre sur la logique métier, et qui permettra d'obtenir d'obtenir les indicateurs via une méthode ```get_stats``` qui fera appel à la classe ```StationCalculationService```. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).  
 
 ### Description des endpoints
 
@@ -170,7 +160,9 @@ changer un mdp
 changer un nom utilisateur
 supprimer utilisateur
 
-Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH
+Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH  
+
+### Diagramme de séquence
 
 ## Calendrier prévisionnel
 
