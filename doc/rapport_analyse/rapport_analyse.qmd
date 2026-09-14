@@ -155,6 +155,37 @@ supprimer utilisateur
 
 Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH  
 
+### Endpoints
+
+#### Comptes et authentification
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| `/utilisateurs` | POST | corps : `username`, `password` | `201` + `Utilisateur` | public | Crée un compte |
+| `/login` | POST | corps : `username`, `password` | `200` + jeton d'accès | public | Authentifie et renvoie un jeton |
+| `/utilisateurs` | GET | `?limit=&offset=` | `200` + `liste[Utilisateur]` | admin | Liste les comptes |
+| `/utilisateurs/{user_id}` | PATCH | corps : `username` et/ou `password` | `200` + `Utilisateur` | admin | Modifie un compte |
+| `/utilisateurs/{user_id}` | DELETE | — | `204` | admin | Supprime un compte |
+
+#### Stations
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| `/stations` | GET | `?limit=&offset=&q=` | `200` + `liste[Station]` | connecté | Liste les stations, `q` filtre sur le nom |
+| `/stations/{station_id}` | GET | — | `200` + `Station` | connecté | État actuel d'une station |
+| `/stations/{station_id}/historique` | GET | `?periode=24h\|7j\|30j` | `200` + `liste[Releve]` | connecté | Évolution de la disponibilité (F3) |
+| `/stations/{station_id}/fiabilite` | GET | `?periode=24h\|7j\|30j` | `200` + `ScoreFiabilite` | connecté | Score et indicateurs de fiabilité (F4) |
+| `/recommandations` | GET | `?lat=&lon=&limit=` | `200` + `liste[StationRecommandee]` | connecté | Classement multicritère (F5) |
+
+#### Favoris
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| `/favoris` | GET | — | `200` + `liste[Station]` | connecté | Favoris de l'utilisateur courant |
+| `/favoris/{station_id}` | PUT | — | `204` | connecté | Ajoute une station aux favoris |
+| `/favoris/{station_id}` | DELETE | — | `204` | connecté | Retire une station des favoris |
+
+
 ### Diagramme de séquence d'une fonctionnalité  
 
 Afin de visualiser 
