@@ -31,7 +31,7 @@ format:
 
 ## Introduction  
 
-Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transports les plus utilisés actuellement figure le vélo. Cependant, l'accès à son propre vélo peut-être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, amélioration technologique des vélos électriques lourd et cher, réduction des surfaces habités par les ménages empêchant le stockage de son vélo personnel). C'est pourquoi toutes les villes se dotent de vélos en libre service, dont la gestion des stations est primordiales. Si de nombreuses applications existent déjà pour connaître l'état des stations de vélos en libre service, elles sont sujettes à de nombreux points faibles. Par exemple, elles ne permettent en effet de connaître que l'état actuel, et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C'est pourquoi notre client souhaite développer une API qui irait bien plus loin. Elle permettrait d'étudier les stocks des différentes stations au cours du temps, et ainsi de connaitre l'état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d'évolution temporels et des recommandations adaptées.  
+Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transports les plus utilisés actuellement figure le vélo. Cependant, l'accès à son propre vélo peut-être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, amélioration technologique des vélos électriques lourd et cher, réduction des surfaces habités par les ménages empêchant le stockage de son vélo personnel). C'est pourquoi toutes les villes se dotent de vélos en libre service, dont la gestion des stations est primordiale. Si de nombreuses applications existent déjà pour connaître l'état des stations de vélos en libre service, elles sont sujettes à de nombreux points faibles. Par exemple, elles ne permettent en effet de ne connaître que l'état actuel, et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C'est pourquoi notre client souhaite développer une API qui irait bien plus loin. Elle permettrait d'étudier les stocks des différentes stations au cours du temps, et ainsi de connaître l'état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d'évolution temporels et des recommandations adaptées.  
 
 ## Cahier des charges
 
@@ -39,7 +39,7 @@ L'objectif du projet est de produire une application donnant des informations su
 
 ### Utilisateurs  
 
-Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilisateurs «réguliers» de l'application, qui devront créer un compte puis se connecter pour accéder à l'application. Une fois connecté, ils pourront accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.
+Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilisateurs «réguliers» de l'application, qui devront créer un compte puis se connecter pour accéder à l'application. Une fois connectés, ils pourront accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.
 
 ### Fonctionnalités de base attendues  
 
