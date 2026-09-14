@@ -29,6 +29,10 @@ format:
 )
 ```
 
+## Introduction  
+
+Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transports les plus utilisés actuellement figure le vélo. Cependant, l'accès à son propre vélo peut-être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, amélioration technologique des vélos électriques lourd et cher, réduction des surfaces habités par les ménages empêchant le stockage de son vélo personnel). C'est pourquoi toutes les villes se dotent de vélos en libre service, dont la gestion des stations est primordiales. Si de nombreuses applications existent déjà pour connaître l'état des stations de vélos en libre service, elles sont sujettes à de nombreux points faibles. Par exemple, elles ne permettent en effet de connaître que l'état actuel, et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C'est pourquoi notre client souhaite développer une API qui irait bien plus loin. Elle permettrait d'étudier les stocks des différentes stations au cours du temps, et ainsi de connaitre l'état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d'évolution temporels et des recommandations adaptées.  
+
 ## Cahier des charges
 
 L'objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.  
@@ -37,7 +41,7 @@ L'objectif du projet est produire une application donnant des informations sur l
 
 Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilisateurs «réguliers» de l'application, qui devront créer un compte puis se connecter pour accéder à l'application. Une fois connecté, ils pourront accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.
 
-### Fonctionnalités de base  
+### Fonctionnalités de base attendues  
 
 L'application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d'utilisation, que nous détaillons ci-dessous :  
 
@@ -59,7 +63,6 @@ Pour chaque station, l'application calculera et fournira un score de fiabilité.
 
 L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  
 
-
 ### Déroulé de la navigation
 
 Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :
@@ -72,7 +75,7 @@ La première partie de ce diagramme correspond à la partie de gestion de compte
 
 **Fonctionnalité principales**
 
-L'ensemble des fonctionnalités de l'application sont dans la deuxième partie de ce diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'application ou de poursuivre la navigation en retournant à l'étape du choix d'action.
+L'ensemble des fonctionnalités de l'application sont dans la deuxième partie de ce diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'application ou de poursuivre la navigation en retournant à l'étape du choix d'action.  
 
 ## Modélisation
 
@@ -109,18 +112,6 @@ La couche *DAO* recevra les demandes de données de la part de la couche *servic
 
 La couche persistente sera constituée des bases de données qu'utilisera notre API. Deux bases de données sont prévues : l'une pour les données utilisateurs, l'autre pour les données accumulées sur les stations de vélos.  
 
-#### Outils de développement  
-
-Le projet sera réalisé en Python. Nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  
-- le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  
-- le framework ```FastAPI``` pour le *backend*,  
-- le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  
-
-De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  
-- Ruff pour le formatage du code,  
-- Pytest afin d'effectuer les tests unitaires,  
-- Github pour héberger et versionner notre projet.  
-
 ### Modèle de données  
 
 Afin que le modèle de données soit cohérent et pérenne, nous veillerons à respecter les trois premières formes normales. 
@@ -138,9 +129,11 @@ Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir 
 
 ### Classes  
 
-D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles "User", "Station", et "StationRecord". Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API.  
+D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles "User", "Station", et "StationRecord" et "Favorite" qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API.  
 
-Chacune des trois classes métiers prévues aura une classe "service" associée. Pour les classes "Users" et "StationRecord", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau des services associés à la classe "Station", notamment via le calcul d'indicateurs. Afin d'éviter d'avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe "Station" seront séparé en deux classes. Tout d'abord une classe "StationService" qui se concentre sur la logique métier, et qui permettra d'obtenir d'obtenir les indicateurs via une méthode ```get_stats``` qui fera appel à la classe ```StationCalculationService```. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).  
+Chacune des quatre classes métiers prévues aura une classe "service" associée. Pour les classes "Users", "StationRecord" et "Favorite", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau des services associés à la classe "Station", notamment via le calcul d'indicateurs. Afin d'éviter d'avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe "Station" seront séparé en deux classes. Tout d'abord une classe "StationService" qui se concentre sur la logique métier, et qui permettra d'obtenir d'obtenir les indicateurs via une méthode ```get_stats``` qui fera appel à la classe ```StationCalculationService```. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).  
+
+La nécessité de l'utilisation de classe "schéma" utilisant "BaseModel" sera étudiée plus tard durant la phase de développement. Ces classes définiraient notamment le format des Json échangé et permettrait de faire le lien entre le backend et le frontend.
 
 ### Description des endpoints
 
@@ -162,11 +155,26 @@ supprimer utilisateur
 
 Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH  
 
-### Diagramme de séquence
+### Diagramme de séquence d'une fonctionnalité  
 
-## Calendrier prévisionnel
+Afin de visualiser 
+## Organisation du projet  
+
+### Calendrier prévisionnel  
 
 diagramme de Gantt
+
+### Outils de développement  
+
+Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  
+- le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  
+- le framework ```FastAPI``` pour le *backend*,  
+- le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  
+
+De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  
+- Ruff pour le formatage du code,  
+- Pytest afin d'effectuer les tests unitaires,  
+- Github pour héberger et versionner notre projet.  
 
 
 {{< pagebreak >}}
