@@ -74,7 +74,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="rapport_analyse_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="rapport_analyse_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="rapport_analyse_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="rapport_analyse_files/libs/bootstrap/bootstrap-005e5f49e2105de2e9189abba14d0143.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="rapport_analyse_files/libs/bootstrap/bootstrap-04d99a120c289cffc4a1fba6e2dd9051.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -89,15 +89,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transports les plus utilisés actuellement figure le vélo. Cependant, l’accès à son propre vélo peut-être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, amélioration technologique des vélos électriques lourd et cher, réduction des surfaces habités par les ménages empêchant le stockage de son vélo personnel). C’est pourquoi toutes les villes se dotent de vélos en libre service, dont la gestion des stations est primordiale. Si de nombreuses applications existent déjà pour connaître l’état des stations de vélos en libre service, elles sont sujettes à de nombreux points faibles. Par exemple, elles ne permettent en effet de ne connaître que l’état actuel, et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C’est pourquoi notre client souhaite développer une API qui irait bien plus loin. Elle permettrait d’étudier les stocks des différentes stations au cours du temps, et ainsi de connaître l’état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d’évolution temporels et des recommandations adaptées.</p>
+</section>
 <section id="cahier-des-charges" class="level2">
 <h2 class="anchored" data-anchor-id="cahier-des-charges">Cahier des charges</h2>
-<p>L’objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l’application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.</p>
+<p>L’objectif du projet est de produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l’application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.</p>
 <section id="utilisateurs" class="level3">
 <h3 class="anchored" data-anchor-id="utilisateurs">Utilisateurs</h3>
-<p>Deux types d’utilisateurs sont à distingués. Il y aura tout d’abord les utilisateurs «réguliers» de l’application, qui devront créer un compte puis se connecter pour accéder à l’application. Une fois connecté, ils pourront accéder aux données de l’application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.</p>
+<p>Deux types d’utilisateurs sont à distingués. Il y aura tout d’abord les utilisateurs «réguliers» de l’application, qui devront créer un compte puis se connecter pour accéder à l’application. Une fois connectés, ils pourront accéder aux données de l’application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.</p>
 </section>
-<section id="fonctionnalités-de-base" class="level3">
-<h3 class="anchored" data-anchor-id="fonctionnalités-de-base">Fonctionnalités de base</h3>
+<section id="fonctionnalités-de-base-attendues" class="level3">
+<h3 class="anchored" data-anchor-id="fonctionnalités-de-base-attendues">Fonctionnalités de base attendues</h3>
 <p>L’application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d’utilisation, que nous détaillons ci-dessous :</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -110,7 +114,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Consulter des données</strong></p>
 <p>Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l’API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l’accumulation des données collectés (taux de remplissage, évolution de la disponibilité, durée moyenne des épisodes de saturation et de pénurie).</p>
 <p><strong>Fournir un score de fiabilité</strong></p>
-<p>Pour chaque station, l’application calculera et fournira un score de fiabilité. La construction de ce score est détaillée ci-dessous :</p>
+<p>Pour chaque station, l’application calculera et fournira un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers doivent donc pouvoir emprunter un vélo (station non vide) et le rendre (station non saturée). Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l’historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d’indisponibilité, mesurée par le pourcentage de temps passé à l’état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L’idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l’application puisse mettre en avant les stations réellement fiables au quotidien.</p>
+<p>Pour traduire cette logique mathématiquement, nous avons construit un score sur 100 points. Cette échelle présente l’avantage d’être intuitive pour l’utilisateur final lors de la recommandation de trajets. La formule sera établie par la suite, mais elle tiendra compte des variables suivantes : - les pourcentages de temps passé vides (Pvide) et saturés (Psat),<br>
+- les durées moyennes des épisodes de saturation (Msat) et de pénurie (Mvide).</p>
+<p>La formule prévue sera de la forme : Score = max(0, 100 - f(Pvide ; Psat ; Msat ; Mvide))</p>
 <p><strong>Recommander une station</strong></p>
 <p>L’application permettra de recommander des stations à proximité de l’utilisateur. Cette recommandation se basera à la fois sur la distance à l’utilisateur, sur l’historique de station (notamment via le score de fiabilité) et sur son historique récent.</p>
 </section>
@@ -162,17 +169,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 class="anchored" data-anchor-id="couche-persistente">Couche persistente</h4>
 <p>La couche persistente sera constituée des bases de données qu’utilisera notre API. Deux bases de données sont prévues : l’une pour les données utilisateurs, l’autre pour les données accumulées sur les stations de vélos.</p>
 </section>
-<section id="outils-de-développement" class="level4">
-<h4 class="anchored" data-anchor-id="outils-de-développement">Outils de développement</h4>
-<p>Le projet sera réalisé en Python. Nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :<br>
-- le framework <code>streamlit</code> pour le <em>frontend</em> (afin de construire l’application Web interactive),<br>
-- le framework <code>FastAPI</code> pour le <em>backend</em>,<br>
-- le package <code>psycopg2</code> pour la couche <em>DAO</em> (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).</p>
-<p>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :<br>
-- Ruff pour le formatage du code,<br>
-- Pytest afin d’effectuer les tests unitaires,<br>
-- Github pour héberger et versionner notre projet.</p>
-</section>
 </section>
 <section id="modèle-de-données" class="level3">
 <h3 class="anchored" data-anchor-id="modèle-de-données">Modèle de données</h3>
@@ -187,23 +183,209 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 </section>
 <section id="classes" class="level3">
 <h3 class="anchored" data-anchor-id="classes">Classes</h3>
-<p>D’après l’architecture logicielle, le projet nécessitera différents types de classes. Tout d’abord, il faudra implémenter les classes modèles “User”, “Station”, et “StationRecord”. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l’API.</p>
-<p>Chacune des trois classes métiers prévues aura une classe “service” associée. Pour les classes “Users” et “StationRecord”, les services permettront essentiellement de faire la jonction entre la couche “controller” et la couche “DAO” : ce seront donc des services purement techniques. La réelle plus-value de l’API se fera au niveau des services associés à la classe “Station”, notamment via le calcul d’indicateurs. Afin d’éviter d’avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe “Station” seront séparé en deux classes. Tout d’abord une classe “StationService” qui se concentre sur la logique métier, et qui permettra d’obtenir d’obtenir les indicateurs via une méthode <code>get_stats</code> qui fera appel à la classe <code>StationCalculationService</code>. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).</p>
+<p>D’après l’architecture logicielle, le projet nécessitera différents types de classes. Tout d’abord, il faudra implémenter les classes modèles “User”, “Station”, et “StationRecord” et “Favorite” qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l’API.</p>
+<p>Chacune des quatre classes métiers prévues aura une classe “service” associée. Pour les classes “Users”, “StationRecord” et “Favorite”, les services permettront essentiellement de faire la jonction entre la couche “controller” et la couche “DAO” : ce seront donc des services purement techniques. La réelle plus-value de l’API se fera au niveau des services associés à la classe “Station”, notamment via le calcul d’indicateurs. Afin d’éviter d’avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe “Station” seront séparé en deux classes. Tout d’abord une classe “StationService” qui se concentre sur la logique métier, et qui permettra d’obtenir d’obtenir les indicateurs via une méthode <code>get_stats</code> qui fera appel à la classe <code>StationCalculationService</code>. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).</p>
+<p>La nécessité de l’utilisation de classe “schéma” utilisant “BaseModel” sera étudiée plus tard durant la phase de développement. Ces classes définiraient notamment le format des Json échangé et permettrait de faire le lien entre le backend et le frontend.</p>
 </section>
 <section id="description-des-endpoints" class="level3">
 <h3 class="anchored" data-anchor-id="description-des-endpoints">Description des endpoints</h3>
-<p>endpoints utilisateurs: consulter une station ajouter une station en favori obtenir la liste des stations afficher les stations recommandées créer un compte se connecter ajouter une station en favori supprimer une station des favoris</p>
-<p>endpoints pour administrateur : changer un mdp changer un nom utilisateur supprimer utilisateur</p>
-<p>Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH</p>
+<p>Les tableaux suivants décrivent les différents endpoints prévus de l’API.</p>
+<section id="comptes-et-authentification" class="level4">
+<h4 class="anchored" data-anchor-id="comptes-et-authentification">Comptes et authentification</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Chemin</th>
+<th style="text-align: left;">Méthode</th>
+<th style="text-align: left;">Entrée</th>
+<th style="text-align: left;">Sortie (succès)</th>
+<th style="text-align: left;">Habilitation</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>/create_user</code></td>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;"><code>username</code>, <code>password</code>, <code>email</code></td>
+<td style="text-align: left;"><code>User</code></td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">Crée un compte</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>/login</code></td>
+<td style="text-align: left;">POST</td>
+<td style="text-align: left;"><code>username</code>, <code>password</code></td>
+<td style="text-align: left;">jeton d’accès</td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">Authentifie et renvoie un jeton</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>/users</code></td>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;"><code>liste[User]</code></td>
+<td style="text-align: left;">admin</td>
+<td style="text-align: left;">Liste les comptes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>/users/{id_user}</code></td>
+<td style="text-align: left;">PATCH</td>
+<td style="text-align: left;"><code>username</code> et/ou <code>password</code></td>
+<td style="text-align: left;"><code>User</code></td>
+<td style="text-align: left;">admin</td>
+<td style="text-align: left;">Modifie un compte</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>/users/{id_user}</code></td>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">admin</td>
+<td style="text-align: left;">Supprime un compte</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="diagramme-de-séquence" class="level3">
-<h3 class="anchored" data-anchor-id="diagramme-de-séquence">Diagramme de séquence</h3>
+<section id="stations" class="level4">
+<h4 class="anchored" data-anchor-id="stations">Stations</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Chemin</th>
+<th style="text-align: left;">Méthode</th>
+<th style="text-align: left;">Entrée</th>
+<th style="text-align: left;">Sortie (succès)</th>
+<th style="text-align: left;">Habilitation</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>/stations</code></td>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;"><code>liste[Station]</code></td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">Liste les stations</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>/stations/{id_station}</code></td>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;"><code>Station</code></td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">État actuel d’une station + indicateurs statistiques + score</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>/stations/{id_station}/history</code></td>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">période (24h/7j/30j)</td>
+<td style="text-align: left;"><code>liste[Releve]</code></td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">Évolution de la disponibilité</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>/suggestions</code></td>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">position géographique</td>
+<td style="text-align: left;"><code>liste[Station]</code></td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">Stations recommandées en fonction des critères</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="gestion-des-stations-favorites" class="level4">
+<h4 class="anchored" data-anchor-id="gestion-des-stations-favorites">Gestion des stations favorites</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Chemin</th>
+<th style="text-align: left;">Méthode</th>
+<th style="text-align: left;">Entrée</th>
+<th style="text-align: left;">Sortie (succès)</th>
+<th style="text-align: left;">Habilitation</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>/favorites</code></td>
+<td style="text-align: left;">GET</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;"><code>liste[Station]</code></td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">Favoris de l’utilisateur courant</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>/favorites/{station_id}</code></td>
+<td style="text-align: left;">PUT</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">Ajoute une station aux favoris</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>/favorites/{station_id}</code></td>
+<td style="text-align: left;">DELETE</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">connecté</td>
+<td style="text-align: left;">Retire une station des favoris</td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
-<section id="calendrier-prévisionnel" class="level2">
-<h2 class="anchored" data-anchor-id="calendrier-prévisionnel">Calendrier prévisionnel</h2>
+<section id="diagramme-de-séquence-dune-fonctionnalité" class="level3">
+<h3 class="anchored" data-anchor-id="diagramme-de-séquence-dune-fonctionnalité">Diagramme de séquence d’une fonctionnalité</h3>
+<p>On présente ci-dessous le diagramme de séquence de la fonctionnalité “ajouter une station favorite”, afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n’est pas déjà en favori.</p>
+<p>[Diagramme de séquence de la fonctionnalité “ajouter une station favorite”]</p>
+</section>
+</section>
+<section id="organisation-du-projet" class="level2">
+<h2 class="anchored" data-anchor-id="organisation-du-projet">Organisation du projet</h2>
+<section id="calendrier-prévisionnel" class="level3">
+<h3 class="anchored" data-anchor-id="calendrier-prévisionnel">Calendrier prévisionnel</h3>
 <p>diagramme de Gantt</p>
+</section>
+<section id="outils-de-développement" class="level3">
+<h3 class="anchored" data-anchor-id="outils-de-développement">Outils de développement</h3>
+<p>Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :<br>
+- le framework <code>streamlit</code> pour le <em>frontend</em> (afin de construire l’application Web interactive),<br>
+- le framework <code>FastAPI</code> pour le <em>backend</em>,<br>
+- le package <code>psycopg2</code> pour la couche <em>DAO</em> (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).</p>
+<p>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :<br>
+- Ruff pour le formatage du code,<br>
+- Pytest afin d’effectuer les tests unitaires,<br>
+- Github pour héberger et versionner notre projet.</p>
 <div style="page-break-after: always;"></div>
+</section>
 </section>
 <section id="annexes" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="annexes">Annexes</h2>
@@ -696,152 +878,183 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cahier des charges</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction  </span></span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>L'objectif du projet est produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.  </span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transports les plus utilisés actuellement figure le vélo. Cependant, l'accès à son propre vélo peut-être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, amélioration technologique des vélos électriques lourd et cher, réduction des surfaces habités par les ménages empêchant le stockage de son vélo personnel). C'est pourquoi toutes les villes se dotent de vélos en libre service, dont la gestion des stations est primordiale. Si de nombreuses applications existent déjà pour connaître l'état des stations de vélos en libre service, elles sont sujettes à de nombreux points faibles. Par exemple, elles ne permettent en effet de ne connaître que l'état actuel, et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C'est pourquoi notre client souhaite développer une API qui irait bien plus loin. Elle permettrait d'étudier les stocks des différentes stations au cours du temps, et ainsi de connaître l'état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d'évolution temporels et des recommandations adaptées.  </span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">### Utilisateurs  </span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cahier des charges</span></span>
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilisateurs «réguliers» de l'application, qui devront créer un compte puis se connecter pour accéder à l'application. Une fois connecté, ils pourront accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>L'objectif du projet est de produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.  </span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fonctionnalités de base  </span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">### Utilisateurs  </span></span>
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>L'application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d'utilisation, que nous détaillons ci-dessous :  </span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilisateurs «réguliers» de l'application, qui devront créer un compte puis se connecter pour accéder à l'application. Une fois connectés, ils pourront accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.</span>
 <span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fonctionnalités de base attendues  </span></span>
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>**Collecter des données via une API**  </span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>L'application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d'utilisation, que nous détaillons ci-dessous :  </span>
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>La collecte des données concernant la disponibilité et l'état des stations de vélos se fera via une API externe. La collecte se fera à intervalle de temps régulier (toutes 15 min). Elle permettra de nourrir une base de données, hébergée ..., qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d'emplacement.  </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)</span></span>
 <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>**Consulter des données**  </span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>**Collecter des données via une API**  </span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l'API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l'accumulation des données collectés (taux de remplissage, évolution de la disponibilité, durée moyenne des épisodes de saturation et de pénurie).  </span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>La collecte des données concernant la disponibilité et l'état des stations de vélos se fera via une API externe. La collecte se fera à intervalle de temps régulier (toutes 15 min). Elle permettra de nourrir une base de données, hébergée ..., qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d'emplacement.  </span>
 <span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>**Fournir un score de fiabilité**</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>**Consulter des données**  </span>
 <span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>Pour chaque station, l'application calculera et fournira un score de fiabilité. La construction de ce score est détaillée ci-dessous :  </span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l'API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l'accumulation des données collectés (taux de remplissage, évolution de la disponibilité, durée moyenne des épisodes de saturation et de pénurie).  </span>
 <span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>**Recommander une station**  </span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>**Fournir un score de fiabilité**  </span>
 <span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  </span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>Pour chaque station, l'application calculera et fournira un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers doivent donc pouvoir emprunter un vélo (station non vide) et le rendre (station non saturée). Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'application puisse mettre en avant les stations réellement fiables au quotidien.</span>
 <span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="fu">### Déroulé de la navigation</span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'activité](img/diagactivté.png)</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>Pour traduire cette logique mathématiquement, nous avons construit un score sur 100 points. Cette échelle présente l'avantage d'être intuitive pour l'utilisateur final lors de la recommandation de trajets. La formule sera établie par la suite, mais elle tiendra compte des variables suivantes :</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>les pourcentages de temps passé vides (Pvide) et saturés (Psat),  </span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>les durées moyennes des épisodes de saturation (Msat) et de pénurie (Mvide).  </span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>La formule prévue sera de la forme :</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>Score = max(0, 100 - f(Pvide ; Psat ; Msat ; Mvide))</span>
 <span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>**Gestion de compte**</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>**Recommander une station**  </span>
 <span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>La première partie de ce diagramme correspond à la partie de gestion de compte de l'utilisateur. Elle lui permet de créer un compte si il en a pas, de modifier son mot de passe en cas d'oubli ou bien de se connecter à son compte. Seul l'administrateur dispose après connexion à son compte de la possibilité d'influer sur les comptes des utilisateurs "réguliers".</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  </span>
 <span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>**Fonctionnalité principales**</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="fu">### Déroulé de la navigation  </span></span>
 <span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>L'ensemble des fonctionnalités de l'application sont dans la deuxième partie de ce diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'application ou de poursuivre la navigation en retournant à l'étape du choix d'action.</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :</span>
 <span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modélisation</span></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'activité](img/diagactivté.png)</span></span>
 <span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="fu">### Architecture de l'API  </span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>**Gestion de compte**  </span>
 <span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>L'API sera constituée de plusieurs couches afin de repsecter le principe de séparations des responsabilités. Voici un schéma d'ensemble de l'architecture logiciel envisagée, que nous détaillons dans la suite du dossier.</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>La première partie de ce diagramme correspond à la partie de gestion de compte de l'utilisateur. Elle lui permet de créer un compte si il en a pas, de modifier son mot de passe en cas d'oubli ou bien de se connecter à son compte. Seul l'administrateur dispose après connexion à son compte de la possibilité d'influer sur les comptes des utilisateurs "réguliers".</span>
 <span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'architecture logiciel](img/diag_archi_log.png)</span></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>**Fonctionnalité principales**  </span>
 <span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Frontend  </span></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>L'ensemble des fonctionnalités de l'application sont dans la deuxième partie de ce diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'application ou de poursuivre la navigation en retournant à l'étape du choix d'action.  </span>
 <span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>Le *frontend* correspond à l'interface homme-machine. Il prendra la forme d'une application interactive accessible via une page Web.  </span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modélisation  </span></span>
 <span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>L'interface se voudra simple et fonctionnelle : elle se présentera sous la forme d'une page HTML. Un menu à gauche permettra à l'utilisateur de sélectionner la fonctionnalité qu'il souhaite. Les différentes fonctionnalités disponibles porteront les noms suivants :  </span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>rechercher une station,  </span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mes stations favorites,  </span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>recommandation,  </span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>gérer mon compte,  </span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>gérer les comptes utilisateurs (n'apparaitra que pour les administrateurs).  </span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>La gestion des stations favorites se fera de la manière suivante : l'utilisateur pourra ajouter de nouvelles stations lors de la consultation de la page d'une station. Il pourra ensuite consulter ses stations favorites ou les supprimer dans l'onglet "mes stations favorites".</span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Backend  </span></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>Le *frontend* enverra des requêtes http de la part du *backend*, qui sera chargé de traité ces requêtes et de renvoyer la réponse attendue. Ces requêtes concerneront soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d'une station par exemple). Le backend sera séparé en plusieurs couches.  </span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>Tout d'abord, une couche *controller* recevra les requêtes fournies par le frontend lors de l'utilisation de l'API par un usager. Cette couche aura pour but de convertir et transférer ces requêtes à la couche suivante, celles des services.  </span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>La couche *service* est le coeur fonctionnelle de l'API. C'est dans cette couche que seront regrouper les fonctions apportant une valeur ajoutée à notre API. Il s'agira par exemple des fonctions permettant de calculer les indicateurs souhaitées et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services feront donc appelle à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  </span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### Architecture de l'API  </span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>L'API sera constituée de plusieurs couches afin de repsecter le principe de séparations des responsabilités. Voici un schéma d'ensemble de l'architecture logiciel envisagée, que nous détaillons dans la suite du dossier.</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'architecture logiciel](img/diag_archi_log.png)</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Frontend  </span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>Le *frontend* correspond à l'interface homme-machine. Il prendra la forme d'une application interactive accessible via une page Web.  </span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>L'interface se voudra simple et fonctionnelle : elle se présentera sous la forme d'une page HTML. Un menu à gauche permettra à l'utilisateur de sélectionner la fonctionnalité qu'il souhaite. Les différentes fonctionnalités disponibles porteront les noms suivants :  </span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>rechercher une station,  </span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>mes stations favorites,  </span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>recommandation,  </span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>gérer mon compte,  </span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>gérer les comptes utilisateurs (n'apparaitra que pour les administrateurs).  </span>
 <span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>La couche *DAO* recevra les demandes de données de la part de la couche *service*. Elle sera chargée de convertir ces demandes en requêtes SQL. Ces requêtes seront alors traitées par la couche persistente : celle des bases de données. La couche *DAO* aura alors pour mission de convertir en objets python (par exemple en objet *Utilisateur* ou *Station*, cf la section "Modèle de données" pour plus de détails). Ces objets seront ensuite utilisés par la couche service afin de calculer les indicateurs qui seront transmis à la couche *controller* afin de les afficher à l'utilisateur dans l'interface.  </span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>La gestion des stations favorites se fera de la manière suivante : l'utilisateur pourra ajouter de nouvelles stations lors de la consultation de la page d'une station. Il pourra ensuite consulter ses stations favorites ou les supprimer dans l'onglet "mes stations favorites".</span>
 <span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Couche persistente  </span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Backend  </span></span>
 <span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>La couche persistente sera constituée des bases de données qu'utilisera notre API. Deux bases de données sont prévues : l'une pour les données utilisateurs, l'autre pour les données accumulées sur les stations de vélos.  </span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>Le *frontend* enverra des requêtes http de la part du *backend*, qui sera chargé de traité ces requêtes et de renvoyer la réponse attendue. Ces requêtes concerneront soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d'une station par exemple). Le backend sera séparé en plusieurs couches.  </span>
 <span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Outils de développement  </span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>Tout d'abord, une couche *controller* recevra les requêtes fournies par le frontend lors de l'utilisation de l'API par un usager. Cette couche aura pour but de convertir et transférer ces requêtes à la couche suivante, celles des services.  </span>
 <span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>Le projet sera réalisé en Python. Nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  </span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  </span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```FastAPI``` pour le *backend*,  </span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  </span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  </span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ruff pour le formatage du code,  </span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pytest afin d'effectuer les tests unitaires,  </span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Github pour héberger et versionner notre projet.  </span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>La couche *service* est le coeur fonctionnelle de l'API. C'est dans cette couche que seront regrouper les fonctions apportant une valeur ajoutée à notre API. Il s'agira par exemple des fonctions permettant de calculer les indicateurs souhaitées et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services feront donc appelle à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  </span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>La couche *DAO* recevra les demandes de données de la part de la couche *service*. Elle sera chargée de convertir ces demandes en requêtes SQL. Ces requêtes seront alors traitées par la couche persistente : celle des bases de données. La couche *DAO* aura alors pour mission de convertir en objets python (par exemple en objet *Utilisateur* ou *Station*, cf la section "Modèle de données" pour plus de détails). Ces objets seront ensuite utilisés par la couche service afin de calculer les indicateurs qui seront transmis à la couche *controller* afin de les afficher à l'utilisateur dans l'interface.  </span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Couche persistente  </span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>La couche persistente sera constituée des bases de données qu'utilisera notre API. Deux bases de données sont prévues : l'une pour les données utilisateurs, l'autre pour les données accumulées sur les stations de vélos.  </span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="fu">### Modèle de données  </span></span>
 <span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="fu">### Modèle de données  </span></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>Afin que le modèle de données soit cohérent et pérenne, nous veillerons à respecter les trois premières formes normales. </span>
 <span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>Afin que le modèle de données soit cohérent et pérenne, nous veillerons à respecter les trois premières formes normales. </span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>Concernant les utilisateurs, une seule table "Users" sera nécessaire. Elle contiendra les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, statut (utilisateur simple ou administrateur). </span>
 <span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>Concernant les utilisateurs, une seule table "Users" sera nécessaire. Elle contiendra les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, statut (utilisateur simple ou administrateur). </span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>Pour les stations, les données à stocker sont les suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date et heure. Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (id_station, date, heure). Cela créerait plusieurs problèmes :  </span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>l'attribut nom_station serait en dépendance fonctionnelle avec id_station et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  </span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>l'attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).  </span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>Il faudra donc deux tables. La première sera la relation **Stations**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **StationRecords**, dont les attributs stockeront les données fournies par l'API externe. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_spaces```), le nombre d'emplacements libre de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).  </span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>Pour les stations, les données à stocker sont les suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date et heure. Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (id_station, date, heure). Cela créerait plusieurs problèmes :  </span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>l'attribut nom_station serait en dépendance fonctionnelle avec id_station et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  </span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>l'attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).  </span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>Il faudra donc deux tables. La première sera la relation **Stations**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **StationRecords**, dont les attributs stockeront les données fournies par l'API externe. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_spaces```), le nombre d'emplacements libre de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).  </span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association "Favorite" qui permettra de lier un utilisateur à ses stations favorites.  </span>
 <span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association "Favorite" qui permettra de lier un utilisateur à ses stations favorites.  </span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Diagramme UML avec les données suivantes :</span><span class="co">]</span> </span>
 <span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Diagramme UML avec les données suivantes :</span><span class="co">]</span> </span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="fu">### Classes  </span></span>
 <span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="fu">### Classes  </span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles "User", "Station", et "StationRecord" et "Favorite" qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API.  </span>
 <span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles "User", "Station", et "StationRecord". Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API.  </span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>Chacune des quatre classes métiers prévues aura une classe "service" associée. Pour les classes "Users", "StationRecord" et "Favorite", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau des services associés à la classe "Station", notamment via le calcul d'indicateurs. Afin d'éviter d'avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe "Station" seront séparé en deux classes. Tout d'abord une classe "StationService" qui se concentre sur la logique métier, et qui permettra d'obtenir d'obtenir les indicateurs via une méthode ```get_stats``` qui fera appel à la classe ```StationCalculationService```. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).  </span>
 <span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>Chacune des trois classes métiers prévues aura une classe "service" associée. Pour les classes "Users" et "StationRecord", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau des services associés à la classe "Station", notamment via le calcul d'indicateurs. Afin d'éviter d'avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe "Station" seront séparé en deux classes. Tout d'abord une classe "StationService" qui se concentre sur la logique métier, et qui permettra d'obtenir d'obtenir les indicateurs via une méthode ```get_stats``` qui fera appel à la classe ```StationCalculationService```. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).  </span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>La nécessité de l'utilisation de classe "schéma" utilisant "BaseModel" sera étudiée plus tard durant la phase de développement. Ces classes définiraient notamment le format des Json échangé et permettrait de faire le lien entre le backend et le frontend.  </span>
 <span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### Description des endpoints</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### Description des endpoints  </span></span>
 <span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>endpoints utilisateurs:</span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>consulter une station</span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>ajouter une station en favori</span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>obtenir la liste des stations</span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>afficher les stations recommandées</span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>créer un compte</span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>se connecter</span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>ajouter une station en favori</span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>supprimer une station des favoris</span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>endpoints pour administrateur :</span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>changer un mdp</span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>changer un nom utilisateur</span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>supprimer utilisateur</span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH  </span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="fu">### Diagramme de séquence</span></span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calendrier prévisionnel</span></span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>diagramme de Gantt</span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>Les tableaux suivants décrivent les différents endpoints prévus de l'API.  </span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Comptes et authentification</span></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Habilitation <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/create_user`</span> <span class="pp">|</span> POST <span class="pp">|</span> <span class="in">`username`</span>, <span class="in">`password`</span>, <span class="in">`email`</span> <span class="pp">|</span> <span class="in">`User`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Crée un compte <span class="pp">|</span></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/login`</span> <span class="pp">|</span> POST <span class="pp">|</span> <span class="in">`username`</span>, <span class="in">`password`</span> <span class="pp">|</span> jeton d'accès <span class="pp">|</span> connecté <span class="pp">|</span> Authentifie et renvoie un jeton <span class="pp">|</span></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[User]`</span> <span class="pp">|</span> admin <span class="pp">|</span> Liste les comptes <span class="pp">|</span></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users/{id_user}`</span> <span class="pp">|</span> PATCH <span class="pp">|</span> <span class="in">`username`</span> et/ou <span class="in">`password`</span> <span class="pp">|</span> <span class="in">`User`</span> <span class="pp">|</span> admin <span class="pp">|</span> Modifie un compte <span class="pp">|</span></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users/{id_user}`</span> <span class="pp">|</span> DELETE <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> admin <span class="pp">|</span> Supprime un compte <span class="pp">|</span></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Stations</span></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Habilitation <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Liste les stations <span class="pp">|</span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations/{id_station}`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`Station`</span> <span class="pp">|</span> connecté <span class="pp">|</span> État actuel d'une station + indicateurs statistiques + score <span class="pp">|</span></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations/{id_station}/history`</span> <span class="pp">|</span> GET <span class="pp">|</span> période (24h/7j/30j) <span class="pp">|</span> <span class="in">`liste[Releve]`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Évolution de la disponibilité <span class="pp">|</span></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/suggestions`</span> <span class="pp">|</span> GET <span class="pp">|</span> position géographique <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Stations recommandées en fonction des critères <span class="pp">|</span></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Gestion des stations favorites</span></span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Habilitation <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Favoris de l'utilisateur courant <span class="pp">|</span></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites/{station_id}`</span> <span class="pp">|</span> PUT <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> connecté <span class="pp">|</span> Ajoute une station aux favoris <span class="pp">|</span></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites/{station_id}`</span> <span class="pp">|</span> DELETE <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> connecté <span class="pp">|</span> Retire une station des favoris <span class="pp">|</span></span>
 <span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="fu">### Diagramme de séquence d'une fonctionnalité  </span></span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>On présente ci-dessous le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Diagramme de séquence de la fonctionnalité "ajouter une station favorite"</span><span class="co">]</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="fu">## Organisation du projet  </span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calendrier prévisionnel  </span></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>diagramme de Gantt</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a><span class="fu">### Outils de développement  </span></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  </span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  </span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```FastAPI``` pour le *backend*,  </span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  </span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  </span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ruff pour le formatage du code,  </span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pytest afin d'effectuer les tests unitaires,  </span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Github pour héberger et versionner notre projet.  </span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

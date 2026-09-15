@@ -55,38 +55,36 @@ La collecte des données concernant la disponibilité et l'état des stations de
 
 Les utilisateurs pourront consulter, pour la station de leur choix, diverses informations. Premièrement, les données fournis par l'API (état de fonctionnement, disponibilité). Deuxièmement, des données calculées grâce à l'accumulation des données collectés (taux de remplissage, évolution de la disponibilité, durée moyenne des épisodes de saturation et de pénurie).  
 
-**Fournir un score de fiabilité**
+**Fournir un score de fiabilité**  
 
 Pour chaque station, l'application calculera et fournira un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers doivent donc pouvoir emprunter un vélo (station non vide) et le rendre (station non saturée). Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'application puisse mettre en avant les stations réellement fiables au quotidien.
 
-Pour traduire cette logique mathématiquement, nous avons construit un score sur 100 points. Cette échelle présente l'avantage d'être intuitive pour l'utilisateur final lors de la recommandation de trajets. La formule retenue est la suivante :
-Score = max(0, 100 - (Pvide + Psaturée) - α x ln(1 + Dvide) - β x ln(1 + Dsaturée)).
-Où : 
-- Pvide et Psaturée sont les pourcentages de temps passé dans ces états,
-- les durées D de pénurie ou de saturation sont exprimées en minutes,
-- α et β sont des coefficients de pondération, permettant de calibrer la sévérité de la pénalité, susceptibles d’évoluer lors des tests.
+Pour traduire cette logique mathématiquement, nous avons construit un score sur 100 points. Cette échelle présente l'avantage d'être intuitive pour l'utilisateur final lors de la recommandation de trajets. La formule sera établie par la suite, mais elle tiendra compte des variables suivantes :
+- les pourcentages de temps passé vides (Pvide) et saturés (Psat),  
+- les durées moyennes des épisodes de saturation (Msat) et de pénurie (Mvide).  
 
-L’utilisation d’un logarithme se justifie par le fait que l’impact d’une panne sur l’usager n’est pas linéaire. Ainsi, on peut modéliser une sensibilité forte sur les premières minutes d'indisponibilité (la différence entre 2 et 15 minutes d'attente est critique), tout en aplatissant la courbe pour les valeurs extrêmes. Une anomalie isolée très longue (par exemple, une station neutralisée pendant 48 heures pour travaux) ne vient donc pas écraser complètement le score historique.
+La formule prévue sera de la forme :
+Score = max(0, 100 - f(Pvide ; Psat ; Msat ; Mvide))
 
 **Recommander une station**  
 
 L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  
 
-### Déroulé de la navigation
+### Déroulé de la navigation  
 
 Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :
 
 ![Diagramme d'activité](img/diagactivté.png)
 
-**Gestion de compte**
+**Gestion de compte**  
 
 La première partie de ce diagramme correspond à la partie de gestion de compte de l'utilisateur. Elle lui permet de créer un compte si il en a pas, de modifier son mot de passe en cas d'oubli ou bien de se connecter à son compte. Seul l'administrateur dispose après connexion à son compte de la possibilité d'influer sur les comptes des utilisateurs "réguliers".
 
-**Fonctionnalité principales**
+**Fonctionnalité principales**  
 
 L'ensemble des fonctionnalités de l'application sont dans la deuxième partie de ce diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'application ou de poursuivre la navigation en retournant à l'étape du choix d'action.  
 
-## Modélisation
+## Modélisation  
 
 ### Architecture de l'API  
 
@@ -148,38 +146,38 @@ La nécessité de l'utilisation de classe "schéma" utilisant "BaseModel" sera �
 
 Les tableaux suivants décrivent les différents endpoints prévus de l'API.  
 
-#### Comptes et authentification  
+#### Comptes et authentification
 
 | Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
 | :---- | :---- | :---- | :---- | :---- | :---- |
-| `/utilisateurs` | POST | corps : `username`, `password` | `201` + `Utilisateur` | public | Crée un compte |
-| `/login` | POST | corps : `username`, `password` | `200` + jeton d'accès | public | Authentifie et renvoie un jeton |
-| `/utilisateurs` | GET | `?limit=&offset=` | `200` + `liste[Utilisateur]` | admin | Liste les comptes |
-| `/utilisateurs/{user_id}` | PATCH | corps : `username` et/ou `password` | `200` + `Utilisateur` | admin | Modifie un compte |
-| `/utilisateurs/{user_id}` | DELETE | — | `204` | admin | Supprime un compte |
+| `/create_user` | POST | `username`, `password`, `email` | `User` | connecté | Crée un compte |
+| `/login` | POST | `username`, `password` | jeton d'accès | connecté | Authentifie et renvoie un jeton |
+| `/users` | GET | - | `liste[User]` | admin | Liste les comptes |
+| `/users/{id_user}` | PATCH | `username` et/ou `password` | `User` | admin | Modifie un compte |
+| `/users/{id_user}` | DELETE | - | - | admin | Supprime un compte |
 
-#### Stations  
-
-| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
-| :---- | :---- | :---- | :---- | :---- | :---- |
-| `/stations` | GET | `?limit=&offset=&q=` | `200` + `liste[Station]` | connecté | Liste les stations, `q` filtre sur le nom |
-| `/stations/{station_id}` | GET | — | `200` + `Station` | connecté | État actuel d'une station |
-| `/stations/{station_id}/historique` | GET | `?periode=24h\|7j\|30j` | `200` + `liste[Releve]` | connecté | Évolution de la disponibilité (F3) |
-| `/stations/{station_id}/fiabilite` | GET | `?periode=24h\|7j\|30j` | `200` + `ScoreFiabilite` | connecté | Score et indicateurs de fiabilité (F4) |
-| `/recommandations` | GET | `?lat=&lon=&limit=` | `200` + `liste[StationRecommandee]` | connecté | Classement multicritère (F5) |
-
-#### Favoris  
+#### Stations
 
 | Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
 | :---- | :---- | :---- | :---- | :---- | :---- |
-| `/favoris` | GET | — | `200` + `liste[Station]` | connecté | Favoris de l'utilisateur courant |
-| `/favoris/{station_id}` | PUT | — | `204` | connecté | Ajoute une station aux favoris |
-| `/favoris/{station_id}` | DELETE | — | `204` | connecté | Retire une station des favoris |
+| `/stations` | GET | - | `liste[Station]` | connecté | Liste les stations |
+| `/stations/{id_station}` | GET | - | `Station` | connecté | État actuel d'une station + indicateurs statistiques + score |
+| `/stations /{id_station} /history` | GET | période (24h/7j/30j) | `liste[Releve]` | connecté | Évolution de la disponibilité |
+| `/suggestions` | GET | position géographique | `liste[Station]` | connecté | Stations recommandées en fonction des critères |
+
+#### Gestion des stations favorites
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| `/favorites` | GET | - | `liste[Station]` | connecté | Favoris de l'utilisateur courant |
+| `/favorites/{station_id}` | PUT | - | - | connecté | Ajoute une station aux favoris |
+| `/favorites/{station_id}` | DELETE | - | - | connecté | Retire une station des favoris |
+
 
 
 ### Diagramme de séquence d'une fonctionnalité  
 
-On présente ci-dessous le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches.
+On présente ci-dessous le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.
 
 [Diagramme de séquence de la fonctionnalité "ajouter une station favorite"]
 
