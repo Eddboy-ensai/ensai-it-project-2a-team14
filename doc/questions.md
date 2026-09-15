@@ -44,6 +44,24 @@ Réfléchir aux calculs (pour voir comment organiser la classe station_service)
 
 ### Endpoints
 
+endpoints utilisateurs:
+consulter une station
+ajouter une station en favori
+obtenir la liste des stations
+afficher les stations recommandées
+créer un compte
+se connecter
+ajouter une station en favori
+supprimer une station des favoris
+
+
+endpoints pour administrateur :
+changer un mdp
+changer un nom utilisateur
+supprimer utilisateur
+
+Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH  
+
 Proposition :
 
 #### Comptes et authentification
