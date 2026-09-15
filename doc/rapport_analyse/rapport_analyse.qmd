@@ -133,31 +133,13 @@ D'après l'architecture logicielle, le projet nécessitera différents types de 
 
 Chacune des quatre classes métiers prévues aura une classe "service" associée. Pour les classes "Users", "StationRecord" et "Favorite", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau des services associés à la classe "Station", notamment via le calcul d'indicateurs. Afin d'éviter d'avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe "Station" seront séparé en deux classes. Tout d'abord une classe "StationService" qui se concentre sur la logique métier, et qui permettra d'obtenir d'obtenir les indicateurs via une méthode ```get_stats``` qui fera appel à la classe ```StationCalculationService```. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).  
 
-La nécessité de l'utilisation de classe "schéma" utilisant "BaseModel" sera étudiée plus tard durant la phase de développement. Ces classes définiraient notamment le format des Json échangé et permettrait de faire le lien entre le backend et le frontend.
+La nécessité de l'utilisation de classe "schéma" utilisant "BaseModel" sera étudiée plus tard durant la phase de développement. Ces classes définiraient notamment le format des Json échangé et permettrait de faire le lien entre le backend et le frontend.  
 
-### Description des endpoints
+### Description des endpoints  
 
-endpoints utilisateurs:
-consulter une station
-ajouter une station en favori
-obtenir la liste des stations
-afficher les stations recommandées
-créer un compte
-se connecter
-ajouter une station en favori
-supprimer une station des favoris
+Les tableaux suivants décrivent les différents endpoints prévus de l'API.  
 
-
-endpoints pour administrateur :
-changer un mdp
-changer un nom utilisateur
-supprimer utilisateur
-
-Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH  
-
-### Endpoints
-
-#### Comptes et authentification
+#### Comptes et authentification  
 
 | Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
 | :---- | :---- | :---- | :---- | :---- | :---- |
@@ -167,7 +149,7 @@ Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppre
 | `/utilisateurs/{user_id}` | PATCH | corps : `username` et/ou `password` | `200` + `Utilisateur` | admin | Modifie un compte |
 | `/utilisateurs/{user_id}` | DELETE | — | `204` | admin | Supprime un compte |
 
-#### Stations
+#### Stations  
 
 | Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
 | :---- | :---- | :---- | :---- | :---- | :---- |
@@ -177,7 +159,7 @@ Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppre
 | `/stations/{station_id}/fiabilite` | GET | `?periode=24h\|7j\|30j` | `200` + `ScoreFiabilite` | connecté | Score et indicateurs de fiabilité (F4) |
 | `/recommandations` | GET | `?lat=&lon=&limit=` | `200` + `liste[StationRecommandee]` | connecté | Classement multicritère (F5) |
 
-#### Favoris
+#### Favoris  
 
 | Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
 | :---- | :---- | :---- | :---- | :---- | :---- |
@@ -188,7 +170,10 @@ Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppre
 
 ### Diagramme de séquence d'une fonctionnalité  
 
-Afin de visualiser 
+On présente ci-dessous le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches.
+
+[Diagramme de séquence de la fonctionnalité "ajouter une station favorite"]
+
 ## Organisation du projet  
 
 ### Calendrier prévisionnel  
