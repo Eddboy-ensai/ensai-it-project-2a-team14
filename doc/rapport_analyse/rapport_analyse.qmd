@@ -1,5 +1,5 @@
 ---
-bibliography: refs.bib
+#bibliography: refs.bib
 citeproc: false
 nocite: "@*"
 format:
@@ -43,9 +43,9 @@ Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilis
 
 ### Fonctionnalités de base attendues  
 
-L'application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d'utilisation, que nous détaillons ci-dessous :  
+Le cahier des charges prévoit un minimum de fonctionnalités attendues. La @fig-cas_utilisation résume les actions que pourront effectuer les utilisateurs. Nous détaillons ces fonctionnalités par la suite.  
 
-![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)  
+![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png){#fig-cas_utilisation}   
 
 **Collecter des données via une API**  
 
@@ -59,12 +59,13 @@ Les utilisateurs pourront consulter, pour la station de leur choix, diverses inf
 
 Pour chaque station, l'application calculera et fournira un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers doivent donc pouvoir emprunter un vélo (station non vide) et le rendre (station non saturée). Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'application puisse mettre en avant les stations réellement fiables au quotidien.
 
-Pour traduire cette logique mathématiquement, nous avons construit un score sur 100 points. Cette échelle présente l'avantage d'être intuitive pour l'utilisateur final lors de la recommandation de trajets. La formule sera établie par la suite, mais elle tiendra compte des variables suivantes :
-- les pourcentages de temps passé vides (Pvide) et saturés (Psat),  
-- les durées moyennes des épisodes de saturation (Msat) et de pénurie (Mvide).  
+Pour traduire cette logique mathématiquement, nous avons construit un score sur 100 points. Cette échelle présente l'avantage d'être intuitive pour l'utilisateur final lors de la recommandation de trajets. La formule sera établie par la suite, mais elle tiendra compte des variables suivantes :  
+- les pourcentages de temps passé vides ($Pvide$) et saturés ($Psat$),  
+- les durées moyennes des épisodes de saturation ($Msat$) et de pénurie ($Mvide$).  
 
-La formule prévue sera de la forme :
-Score = max(0, 100 - f(Pvide ; Psat ; Msat ; Mvide))
+La formule prévue est de la forme suivante :  
+$score = max(0, 100 - f(Pvide ; Psat ; Msat ; Mvide))$  
+où $f$ sera une fonction croissante en chacune de ses variables que nous construirons ultérieurement durant la phase de développement du projet.  
 
 **Recommander une station**  
 
@@ -72,9 +73,9 @@ L'application permettra de recommander des stations à proximité de l'utilisate
 
 ### Déroulé de la navigation  
 
-Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :
+La @fig-activite montre le diagramme d'activité résumant les étapes de navigation dans l'API.
 
-![Diagramme d'activité](img/diagactivté.png)  
+![Diagramme d'activité](img/diagactivté.png){#fig-activite}   
 
 **Gestion de compte**  
 
@@ -88,9 +89,9 @@ L'ensemble des fonctionnalités de l'application sont dans la deuxième partie d
 
 ### Architecture de l'API  
 
-L'API sera constituée de plusieurs couches afin de repsecter le principe de séparations des responsabilités. Voici un schéma d'ensemble de l'architecture logiciel envisagée, que nous détaillons dans la suite du dossier.
+L'API sera constituée de plusieurs couches afin de repsecter le principe de séparations des responsabilités. L'architecture logiciel envisagée est présentée dans la @fig-archi-log.
 
-![Diagramme d'architecture logiciel](img/diag_archi_log.png)  
+![Diagramme d'architecture logiciel](img/diag_archi_log.png){#fig-archi-log}  
 
 #### Frontend  
 
@@ -123,16 +124,18 @@ La couche persistente sera constituée des bases de données qu'utilisera notre 
 
 Afin que le modèle de données soit cohérent et pérenne, nous veillerons à respecter les trois premières formes normales. 
 
-Concernant les utilisateurs, une seule table "Users" sera nécessaire. Elle contiendra les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, statut (utilisateur simple ou administrateur). 
+Concernant les utilisateurs, une table "Users" sera nécessaire. Elle contiendra les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, statut (utilisateur simple ou administrateur). 
 
-Pour les stations, les données à stocker sont les suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date et heure. Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (id_station, date, heure). Cela créerait plusieurs problèmes :  
-- l'attribut nom_station serait en dépendance fonctionnelle avec id_station et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
-- l'attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).  
+Pour les stations, les données à stocker sont les suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date (avec heure). Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des données nécessiterait une clé composite (```id_station```, ```date```). Cela créerait plusieurs problèmes :  
+- l'attribut ```name_station``` serait en dépendance fonctionnelle avec ```id_station``` et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
+- les attributs de coordonnées géographiques ```lon``` et ```lat``` seraient en dépendance fonctionnelle avec ```name_station``` (contradiction avec le principe de la troisième forme normale).  
 Il faudra donc deux tables. La première sera la relation **Stations**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **StationRecords**, dont les attributs stockeront les données fournies par l'API externe. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_spaces```), le nombre d'emplacements libre de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).  
 
 Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association "Favorite" qui permettra de lier un utilisateur à ses stations favorites.  
 
-[Diagramme UML avec les données suivantes :] 
+Le modèle de données est résumé en @fig-modele_donnees.
+
+![Diagramme UML du modèle de données](img/diag_modele_donnees.png){#fig-modele_donnees}   
 
 ### Classes  
 
@@ -146,9 +149,9 @@ D'après l'architecture logicielle, le projet nécessitera différents types de 
 
 #### Classes liées aux utilisateurs  
 
-Les classes liées aux utilisateurs permettront essentiellement de créer les utilisateurs et de gérer leur rôle (utilisateur ou administrateur). La classe modèle est la classe ```User```. Les autres classes seront essentiellement fonctionnelles et permettront de gérer la connexion et la base de données. Voici le diagramme de classes prévu :  
+Les classes liées aux utilisateurs permettront essentiellement de créer les utilisateurs et de gérer leur rôle (utilisateur ou administrateur). La classe modèle est la classe ```User```. Les autres classes seront essentiellement fonctionnelles et permettront de gérer la connexion et la base de données. Le diagramme de classes prévu lié aux utilisateurs est présenté en @fig-classes-user.   
 
-![Diagramme de classes lié aux utilisateurs](img/diag_classes_user.png)  
+![Diagramme de classes lié aux utilisateurs](img/diag_classes_user.png){#fig-classes-user}   
 
 #### Classes liées aux stations  
 
@@ -156,9 +159,9 @@ Trois classes modèles liées aux stations sont prévues. Tout d'abord, la class
 
 Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe ```StationRecord```, car l'appel à l'API externe se fera via la méthode ```get_data``` de la classe ```StationRecordService```). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe ```StationCalculationService```. Les méthodes de cette classe seront appelées par la méthode ```get_stats``` de la classe ```StationService``` et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode ```get_availability_over_time``` est prévue, afin de déterminer l'évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l'aide de la bibliothèque matplotlib) ou des tableaux de données.  
 
-Voici le diagramme de classes prévu concernant les stations :  
+Le diagramme de classes prévu lié aux stations est présenté en @fig-classes-station.  
 
-![Diagramme de classes lié aux stations](img/diag_classes_station.png)  
+![Diagramme de classes lié aux stations](img/diag_classes_station.png){#fig-classes-station}   
 
 ### Description des endpoints  
 
@@ -182,7 +185,7 @@ Les tableaux suivants décrivent les différents endpoints prévus de l'API.
 | :---- | :---- | :---- | :---- | :---- |
 | `/stations` | GET | - | `liste[Station]` | Liste les stations |
 | `/stations/{id_station}` | GET | - | `Station` | État actuel d'une station + indicateurs statistiques + score |
-| `/stations /{id_station} /history` | GET | période (24h/7j/30j) | `liste[Releve]` | Évolution de la disponibilité |
+| `/stations/{id_station}/history` | GET | période (24h/7j/30j) | `liste[Releve]` | Évolution de la disponibilité |
 | `/suggestions` | GET | position géographique | `liste[Station]` | Stations recommandées en fonction des critères |  
 
 #### Gestion des stations favorites  
@@ -195,9 +198,9 @@ Les tableaux suivants décrivent les différents endpoints prévus de l'API.
 
 ### Diagramme de séquence d'une fonctionnalité  
 
-On présente ci-dessous le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.
+On présente en @fig-sequence le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.
 
-![Diagramme de séquence de la fonctionnalité "ajouter une station favorite"](img/diag_sequence.png)
+![Diagramme de séquence de la fonctionnalité "ajouter une station favorite"](img/diag_sequence.png){#fig-sequence} 
 
 ## Organisation du projet  
 
@@ -214,7 +217,7 @@ Le projet sera réalisé en Python. Durant la phase de développement, nous util
 - la bibliothèque ```pydantic``` pour les classes schémas.  
 
 
-De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  
+De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage. Dans ce but, nous serons amenés à utiliser les outils suivants :  
 - Ruff pour le formatage du code,  
 - Pytest afin d'effectuer les tests unitaires,  
 - Github pour héberger et versionner notre projet.  
