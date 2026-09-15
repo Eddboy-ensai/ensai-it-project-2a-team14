@@ -202,7 +202,7 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <section id="classes-liées-aux-stations" class="level4">
 <h4 class="anchored" data-anchor-id="classes-liées-aux-stations">Classes liées aux stations</h4>
 <p>Trois classes modèles liées aux stations sont prévues. Tout d’abord, la classe <code>Station</code> modélisera une station et dont les attributs stockeront les informations d’une station. Ensuite, la classe <code>Favorite</code> modélisera le lien entre une utilisateur et le fait qu’une station soit en favori. Enfin, une classe <code>StationRecord</code> qui modélisera l’état d’une station à un heure donnée, et dont les attributs seront les informations fournies par l’API externe de la ville.</p>
-<p>Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe <code>StationRecord</code>, car l’appel à l’API externe se fera via la méthode <code>get_data</code> de la classe <code>StationRecordService</code>). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe <code>StationCalculationService</code>. Les méthodes de cette classe seront appelées par la méthode <code>get_stats</code> de la classe <code>StationService</code> et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode <code>get_availability_over_time</code> est prévue, afin de déterminer l’évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l’aide du package matplotlib) ou des tableaux de données.</p>
+<p>Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe <code>StationRecord</code>, car l’appel à l’API externe se fera via la méthode <code>get_data</code> de la classe <code>StationRecordService</code>). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe <code>StationCalculationService</code>. Les méthodes de cette classe seront appelées par la méthode <code>get_stats</code> de la classe <code>StationService</code> et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode <code>get_availability_over_time</code> est prévue, afin de déterminer l’évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l’aide de la bibliothèque matplotlib) ou des tableaux de données.</p>
 <p>Voici le diagramme de classes prévu concernant les stations :</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -389,22 +389,24 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 </section>
 <section id="outils-de-développement" class="level3">
 <h3 class="anchored" data-anchor-id="outils-de-développement">Outils de développement</h3>
-<p>Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :<br>
+<p>Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et bibliothèques fournis pour ce langage. Voici le détail de ces outils pour chaque couche :<br>
 - le framework <code>streamlit</code> pour le <em>frontend</em> (afin de construire l’application Web interactive),<br>
 - le framework <code>FastAPI</code> pour le <em>backend</em>,<br>
-- le package <code>psycopg2</code> pour la couche <em>DAO</em> (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).</p>
+- la bibliothèque <code>psycopg2</code> pour la couche <em>DAO</em> (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL),<br>
+- la bibliothèque <code>pydantic</code> pour les classes schémas.</p>
 <p>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :<br>
 - Ruff pour le formatage du code,<br>
 - Pytest afin d’effectuer les tests unitaires,<br>
 - Github pour héberger et versionner notre projet.</p>
-<div style="page-break-after: always;"></div>
-</section>
-</section>
-<section id="annexes" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="annexes">Annexes</h2>
-<div style="page-break-after: always;"></div>
+<!--
+
+## Annexes {.unnumbered}
+
+
+ -->
 <!-- -->
 
+</section>
 </section>
 
 </main>
@@ -1016,7 +1018,7 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>Trois classes modèles liées aux stations sont prévues. Tout d'abord, la classe ```Station``` modélisera une station et dont les attributs stockeront les informations d'une station. Ensuite, la classe ```Favorite``` modélisera le lien entre une utilisateur et le fait qu'une station soit en favori. Enfin, une classe ```StationRecord``` qui modélisera l'état d'une station à un heure donnée, et dont les attributs seront les informations fournies par l'API externe de la ville.  </span>
 <span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe ```StationRecord```, car l'appel à l'API externe se fera via la méthode ```get_data``` de la classe ```StationRecordService```). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe ```StationCalculationService```. Les méthodes de cette classe seront appelées par la méthode ```get_stats``` de la classe ```StationService``` et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode ```get_availability_over_time``` est prévue, afin de déterminer l'évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l'aide du package matplotlib) ou des tableaux de données.  </span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe ```StationRecord```, car l'appel à l'API externe se fera via la méthode ```get_data``` de la classe ```StationRecordService```). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe ```StationCalculationService```. Les méthodes de cette classe seront appelées par la méthode ```get_stats``` de la classe ```StationService``` et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode ```get_availability_over_time``` est prévue, afin de déterminer l'évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l'aide de la bibliothèque matplotlib) ou des tableaux de données.  </span>
 <span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>Voici le diagramme de classes prévu concernant les stations :  </span>
 <span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
@@ -1069,23 +1071,25 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a><span class="fu">### Outils de développement  </span></span>
 <span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  </span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et bibliothèques fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  </span>
 <span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  </span>
 <span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```FastAPI``` pour le *backend*,  </span>
-<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  </span>
-<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  </span>
-<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ruff pour le formatage du code,  </span>
-<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pytest afin d'effectuer les tests unitaires,  </span>
-<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Github pour héberger et versionner notre projet.  </span>
-<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la bibliothèque ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL),  </span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>la bibliothèque ```pydantic``` pour les classes schémas.  </span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  </span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ruff pour le formatage du code,  </span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pytest afin d'effectuer les tests unitaires,  </span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Github pour héberger et versionner notre projet.  </span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--{{&lt; pagebreak &gt;}}</span></span>
 <span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a><span class="co">## Annexes {.unnumbered}</span></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a><span class="co">{{&lt; pagebreak &gt;}} --&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

@@ -154,7 +154,7 @@ Les classes liées aux utilisateurs permettront essentiellement de créer les ut
 
 Trois classes modèles liées aux stations sont prévues. Tout d'abord, la classe ```Station``` modélisera une station et dont les attributs stockeront les informations d'une station. Ensuite, la classe ```Favorite``` modélisera le lien entre une utilisateur et le fait qu'une station soit en favori. Enfin, une classe ```StationRecord``` qui modélisera l'état d'une station à un heure donnée, et dont les attributs seront les informations fournies par l'API externe de la ville.  
 
-Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe ```StationRecord```, car l'appel à l'API externe se fera via la méthode ```get_data``` de la classe ```StationRecordService```). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe ```StationCalculationService```. Les méthodes de cette classe seront appelées par la méthode ```get_stats``` de la classe ```StationService``` et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode ```get_availability_over_time``` est prévue, afin de déterminer l'évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l'aide du package matplotlib) ou des tableaux de données.  
+Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe ```StationRecord```, car l'appel à l'API externe se fera via la méthode ```get_data``` de la classe ```StationRecordService```). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe ```StationCalculationService```. Les méthodes de cette classe seront appelées par la méthode ```get_stats``` de la classe ```StationService``` et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode ```get_availability_over_time``` est prévue, afin de déterminer l'évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l'aide de la bibliothèque matplotlib) ou des tableaux de données.  
 
 Voici le diagramme de classes prévu concernant les stations :  
 
@@ -207,10 +207,12 @@ diagramme de Gantt
 
 ### Outils de développement  
 
-Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  
+Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et bibliothèques fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  
 - le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  
 - le framework ```FastAPI``` pour le *backend*,  
-- le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  
+- la bibliothèque ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL),  
+- la bibliothèque ```pydantic``` pour les classes schémas.  
+
 
 De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  
 - Ruff pour le formatage du code,  
@@ -218,9 +220,9 @@ De plus, afin de garantir une maintenance aisée, nous tenterons de respecter le
 - Github pour héberger et versionner notre projet.  
 
 
-{{< pagebreak >}}
+<!--{{< pagebreak >}}
 
 ## Annexes {.unnumbered}
 
 
-{{< pagebreak >}}
+{{< pagebreak >}} -->
