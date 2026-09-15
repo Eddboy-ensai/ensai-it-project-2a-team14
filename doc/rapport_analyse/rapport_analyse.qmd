@@ -59,6 +59,15 @@ Les utilisateurs pourront consulter, pour la station de leur choix, diverses inf
 
 Pour chaque station, l'application calculera et fournira un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers doivent donc pouvoir emprunter un vélo (station non vide) et le rendre (station non saturée). Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'application puisse mettre en avant les stations réellement fiables au quotidien.
 
+Pour traduire cette logique mathématiquement, nous avons construit un score sur 100 points. Cette échelle présente l'avantage d'être intuitive pour l'utilisateur final lors de la recommandation de trajets. La formule retenue est la suivante :
+Score = max(0, 100 - (Pvide + Psaturée) - α x ln(1 + Dvide) - β x ln(1 + Dsaturée)).
+Où : 
+- Pvide et Psaturée sont les pourcentages de temps passé dans ces états,
+- les durées D de pénurie ou de saturation sont exprimées en minutes,
+- α et β sont des coefficients de pondération, permettant de calibrer la sévérité de la pénalité, susceptibles d’évoluer lors des tests.
+
+L’utilisation d’un logarithme se justifie par le fait que l’impact d’une panne sur l’usager n’est pas linéaire. Ainsi, on peut modéliser une sensibilité forte sur les premières minutes d'indisponibilité (la différence entre 2 et 15 minutes d'attente est critique), tout en aplatissant la courbe pour les valeurs extrêmes. Une anomalie isolée très longue (par exemple, une station neutralisée pendant 48 heures pour travaux) ne vient donc pas écraser complètement le score historique.
+
 **Recommander une station**  
 
 L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  
