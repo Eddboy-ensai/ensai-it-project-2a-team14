@@ -74,7 +74,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="rapport_analyse_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="rapport_analyse_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="rapport_analyse_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="rapport_analyse_files/libs/bootstrap/bootstrap-04d99a120c289cffc4a1fba6e2dd9051.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="rapport_analyse_files/libs/bootstrap/bootstrap-07de87b8f87faed7118d7f7370a193f9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -183,9 +183,34 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 </section>
 <section id="classes" class="level3">
 <h3 class="anchored" data-anchor-id="classes">Classes</h3>
-<p>D’après l’architecture logicielle, le projet nécessitera différents types de classes. Tout d’abord, il faudra implémenter les classes modèles “User”, “Station”, et “StationRecord” et “Favorite” qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l’API.</p>
-<p>Chacune des quatre classes métiers prévues aura une classe “service” associée. Pour les classes “Users”, “StationRecord” et “Favorite”, les services permettront essentiellement de faire la jonction entre la couche “controller” et la couche “DAO” : ce seront donc des services purement techniques. La réelle plus-value de l’API se fera au niveau des services associés à la classe “Station”, notamment via le calcul d’indicateurs. Afin d’éviter d’avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe “Station” seront séparé en deux classes. Tout d’abord une classe “StationService” qui se concentre sur la logique métier, et qui permettra d’obtenir d’obtenir les indicateurs via une méthode <code>get_stats</code> qui fera appel à la classe <code>StationCalculationService</code>. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).</p>
-<p>La nécessité de l’utilisation de classe “schéma” utilisant “BaseModel” sera étudiée plus tard durant la phase de développement. Ces classes définiraient notamment le format des Json échangé et permettrait de faire le lien entre le backend et le frontend.</p>
+<section id="généralités" class="level4">
+<h4 class="anchored" data-anchor-id="généralités">Généralités</h4>
+<p>D’après l’architecture logicielle, le projet nécessitera différents types de classes. Tout d’abord, il faudra implémenter les classes modèles <code>User</code>, <code>Station</code>, et <code>StationRecord</code> et <code>Favorite</code> qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faudra également implémenter des classes controller permettant de gérer les différents endpoints de l’API. Enfin, chacune des quatre classes métiers prévues aura une classe de services associée. Elles traiteront les objets Python correspondant.</p>
+<p><strong>Remarque :</strong> Afin de ne pas surcharger les diagrammes ci-dessous inutilement, ne figureront pas : - les classes schémas de type “BaseModel”, utilisés par les controllers et qui permettront de faire la traduction entre les objets Python et les informations au format JSON envoyés ou reçus par le frontend;<br>
+- les méthodes spéciales (du type <code>__str__</code>, etc.) qui pourraient être nécessaires.</p>
+</section>
+<section id="classes-liées-aux-utilisateurs" class="level4">
+<h4 class="anchored" data-anchor-id="classes-liées-aux-utilisateurs">Classes liées aux utilisateurs</h4>
+<p>Les classes liées aux utilisateurs permettront essentiellement de créer les utilisateurs et de gérer leur rôle (utilisateur ou administrateur). La classe modèle est la classe <code>User</code>. Les autres classes seront essentiellement fonctionnelles et permettront de gérer la connexion et la base de données. Voici le diagramme de classes prévu :</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/diag_classes_user.png" class="img-fluid figure-img"></p>
+<figcaption>Diagramme de classes lié aux utilisateurs</figcaption>
+</figure>
+</div>
+</section>
+<section id="classes-liées-aux-stations" class="level4">
+<h4 class="anchored" data-anchor-id="classes-liées-aux-stations">Classes liées aux stations</h4>
+<p>Trois classes modèles liées aux stations sont prévues. Tout d’abord, la classe <code>Station</code> modélisera une station et dont les attributs stockeront les informations d’une station. Ensuite, la classe <code>Favorite</code> modélisera le lien entre une utilisateur et le fait qu’une station soit en favori. Enfin, une classe <code>StationRecord</code> qui modélisera l’état d’une station à un heure donnée, et dont les attributs seront les informations fournies par l’API externe de la ville.</p>
+<p>Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe <code>StationRecord</code>, car l’appel à l’API externe se fera via la méthode <code>get_data</code> de la classe <code>StationRecordService</code>). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe <code>StationCalculationService</code>. Les méthodes de cette classe seront appelées par la méthode <code>get_stats</code> de la classe <code>StationService</code> et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode <code>get_availability_over_time</code> est prévue, afin de déterminer l’évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l’aide du package matplotlib) ou des tableaux de données.</p>
+<p>Voici le diagramme de classes prévu concernant les stations :</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/diag_classes_station.png" class="img-fluid figure-img"></p>
+<figcaption>Diagramme de classes lié aux stations</figcaption>
+</figure>
+</div>
+</section>
 </section>
 <section id="description-des-endpoints" class="level3">
 <h3 class="anchored" data-anchor-id="description-des-endpoints">Description des endpoints</h3>
@@ -194,12 +219,11 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <h4 class="anchored" data-anchor-id="comptes-et-authentification">Comptes et authentification</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -207,7 +231,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <th style="text-align: left;">Méthode</th>
 <th style="text-align: left;">Entrée</th>
 <th style="text-align: left;">Sortie (succès)</th>
-<th style="text-align: left;">Habilitation</th>
 <th style="text-align: left;">Description</th>
 </tr>
 </thead>
@@ -217,7 +240,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">POST</td>
 <td style="text-align: left;"><code>username</code>, <code>password</code>, <code>email</code></td>
 <td style="text-align: left;"><code>User</code></td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">Crée un compte</td>
 </tr>
 <tr class="even">
@@ -225,7 +247,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">POST</td>
 <td style="text-align: left;"><code>username</code>, <code>password</code></td>
 <td style="text-align: left;">jeton d’accès</td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">Authentifie et renvoie un jeton</td>
 </tr>
 <tr class="odd">
@@ -233,7 +254,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">GET</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;"><code>liste[User]</code></td>
-<td style="text-align: left;">admin</td>
 <td style="text-align: left;">Liste les comptes</td>
 </tr>
 <tr class="even">
@@ -241,7 +261,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">PATCH</td>
 <td style="text-align: left;"><code>username</code> et/ou <code>password</code></td>
 <td style="text-align: left;"><code>User</code></td>
-<td style="text-align: left;">admin</td>
 <td style="text-align: left;">Modifie un compte</td>
 </tr>
 <tr class="odd">
@@ -249,22 +268,21 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">DELETE</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;">-</td>
-<td style="text-align: left;">admin</td>
 <td style="text-align: left;">Supprime un compte</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Remarque :</strong> les trois derniers endpoints du tableau précédent ne seront accessibles qu’aux comptes <em>administrateurs</em>.</p>
 </section>
 <section id="stations" class="level4">
 <h4 class="anchored" data-anchor-id="stations">Stations</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -272,7 +290,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <th style="text-align: left;">Méthode</th>
 <th style="text-align: left;">Entrée</th>
 <th style="text-align: left;">Sortie (succès)</th>
-<th style="text-align: left;">Habilitation</th>
 <th style="text-align: left;">Description</th>
 </tr>
 </thead>
@@ -282,7 +299,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">GET</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;"><code>liste[Station]</code></td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">Liste les stations</td>
 </tr>
 <tr class="even">
@@ -290,15 +306,13 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">GET</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;"><code>Station</code></td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">État actuel d’une station + indicateurs statistiques + score</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><code>/stations/{id_station}/history</code></td>
+<td style="text-align: left;"><code>/stations /{id_station} /history</code></td>
 <td style="text-align: left;">GET</td>
 <td style="text-align: left;">période (24h/7j/30j)</td>
 <td style="text-align: left;"><code>liste[Releve]</code></td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">Évolution de la disponibilité</td>
 </tr>
 <tr class="even">
@@ -306,7 +320,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">GET</td>
 <td style="text-align: left;">position géographique</td>
 <td style="text-align: left;"><code>liste[Station]</code></td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">Stations recommandées en fonction des critères</td>
 </tr>
 </tbody>
@@ -316,12 +329,11 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <h4 class="anchored" data-anchor-id="gestion-des-stations-favorites">Gestion des stations favorites</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -329,7 +341,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <th style="text-align: left;">Méthode</th>
 <th style="text-align: left;">Entrée</th>
 <th style="text-align: left;">Sortie (succès)</th>
-<th style="text-align: left;">Habilitation</th>
 <th style="text-align: left;">Description</th>
 </tr>
 </thead>
@@ -339,7 +350,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">GET</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;"><code>liste[Station]</code></td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">Favoris de l’utilisateur courant</td>
 </tr>
 <tr class="even">
@@ -347,7 +357,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">PUT</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;">-</td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">Ajoute une station aux favoris</td>
 </tr>
 <tr class="odd">
@@ -355,7 +364,6 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <td style="text-align: left;">DELETE</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;">-</td>
-<td style="text-align: left;">connecté</td>
 <td style="text-align: left;">Retire une station des favoris</td>
 </tr>
 </tbody>
@@ -365,7 +373,12 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <section id="diagramme-de-séquence-dune-fonctionnalité" class="level3">
 <h3 class="anchored" data-anchor-id="diagramme-de-séquence-dune-fonctionnalité">Diagramme de séquence d’une fonctionnalité</h3>
 <p>On présente ci-dessous le diagramme de séquence de la fonctionnalité “ajouter une station favorite”, afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n’est pas déjà en favori.</p>
-<p>[Diagramme de séquence de la fonctionnalité “ajouter une station favorite”]</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/diag_sequence.png" class="img-fluid figure-img"></p>
+<figcaption>Diagramme de séquence de la fonctionnalité “ajouter une station favorite”</figcaption>
+</figure>
+</div>
 </section>
 </section>
 <section id="organisation-du-projet" class="level2">
@@ -894,7 +907,7 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>L'application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d'utilisation, que nous détaillons ci-dessous :  </span>
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)</span>  </span>
 <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>**Collecter des données via une API**  </span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
@@ -923,7 +936,7 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :</span>
 <span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'activité](img/diagactivté.png)</span></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'activité](img/diagactivté.png)</span>  </span>
 <span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>**Gestion de compte**  </span>
 <span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
@@ -939,7 +952,7 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>L'API sera constituée de plusieurs couches afin de repsecter le principe de séparations des responsabilités. Voici un schéma d'ensemble de l'architecture logiciel envisagée, que nous détaillons dans la suite du dossier.</span>
 <span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'architecture logiciel](img/diag_archi_log.png)</span></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme d'architecture logiciel](img/diag_archi_log.png)</span>  </span>
 <span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Frontend  </span></span>
 <span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
@@ -985,76 +998,94 @@ Il faudra donc deux tables. La première sera la relation <strong>Stations</stro
 <span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="fu">### Classes  </span></span>
 <span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles "User", "Station", et "StationRecord" et "Favorite" qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API.  </span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Généralités  </span></span>
 <span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>Chacune des quatre classes métiers prévues aura une classe "service" associée. Pour les classes "Users", "StationRecord" et "Favorite", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau des services associés à la classe "Station", notamment via le calcul d'indicateurs. Afin d'éviter d'avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe "Station" seront séparé en deux classes. Tout d'abord une classe "StationService" qui se concentre sur la logique métier, et qui permettra d'obtenir d'obtenir les indicateurs via une méthode ```get_stats``` qui fera appel à la classe ```StationCalculationService```. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).  </span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles ```User<span class="in">```, ```</span>Station```, et ```StationRecord``` et ```Favorite``` qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faudra également implémenter des classes controller permettant de gérer les différents endpoints de l'API. Enfin, chacune des quatre classes métiers prévues aura une classe de services associée. Elles traiteront les objets Python correspondant.  </span>
 <span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>La nécessité de l'utilisation de classe "schéma" utilisant "BaseModel" sera étudiée plus tard durant la phase de développement. Ces classes définiraient notamment le format des Json échangé et permettrait de faire le lien entre le backend et le frontend.  </span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### Description des endpoints  </span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>**Remarque :** Afin de ne pas surcharger les diagrammes ci-dessous inutilement, ne figureront pas :</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>les classes schémas de type "BaseModel", utilisés par les controllers et qui permettront de faire la traduction entre les objets Python et les informations au format JSON envoyés ou reçus par le frontend;  </span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>les méthodes spéciales (du type ```__str__```, etc.) qui pourraient être nécessaires.  </span>
 <span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>Les tableaux suivants décrivent les différents endpoints prévus de l'API.  </span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Classes liées aux utilisateurs  </span></span>
 <span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Comptes et authentification</span></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>Les classes liées aux utilisateurs permettront essentiellement de créer les utilisateurs et de gérer leur rôle (utilisateur ou administrateur). La classe modèle est la classe ```User```. Les autres classes seront essentiellement fonctionnelles et permettront de gérer la connexion et la base de données. Voici le diagramme de classes prévu :  </span>
 <span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Habilitation <span class="pp">|</span> Description <span class="pp">|</span></span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/create_user`</span> <span class="pp">|</span> POST <span class="pp">|</span> <span class="in">`username`</span>, <span class="in">`password`</span>, <span class="in">`email`</span> <span class="pp">|</span> <span class="in">`User`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Crée un compte <span class="pp">|</span></span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/login`</span> <span class="pp">|</span> POST <span class="pp">|</span> <span class="in">`username`</span>, <span class="in">`password`</span> <span class="pp">|</span> jeton d'accès <span class="pp">|</span> connecté <span class="pp">|</span> Authentifie et renvoie un jeton <span class="pp">|</span></span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[User]`</span> <span class="pp">|</span> admin <span class="pp">|</span> Liste les comptes <span class="pp">|</span></span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users/{id_user}`</span> <span class="pp">|</span> PATCH <span class="pp">|</span> <span class="in">`username`</span> et/ou <span class="in">`password`</span> <span class="pp">|</span> <span class="in">`User`</span> <span class="pp">|</span> admin <span class="pp">|</span> Modifie un compte <span class="pp">|</span></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users/{id_user}`</span> <span class="pp">|</span> DELETE <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> admin <span class="pp">|</span> Supprime un compte <span class="pp">|</span></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme de classes lié aux utilisateurs](img/diag_classes_user.png)</span>  </span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Classes liées aux stations  </span></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>Trois classes modèles liées aux stations sont prévues. Tout d'abord, la classe ```Station``` modélisera une station et dont les attributs stockeront les informations d'une station. Ensuite, la classe ```Favorite``` modélisera le lien entre une utilisateur et le fait qu'une station soit en favori. Enfin, une classe ```StationRecord``` qui modélisera l'état d'une station à un heure donnée, et dont les attributs seront les informations fournies par l'API externe de la ville.  </span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe ```StationRecord```, car l'appel à l'API externe se fera via la méthode ```get_data``` de la classe ```StationRecordService```). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe ```StationCalculationService```. Les méthodes de cette classe seront appelées par la méthode ```get_stats``` de la classe ```StationService``` et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode ```get_availability_over_time``` est prévue, afin de déterminer l'évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l'aide du package matplotlib) ou des tableaux de données.  </span>
 <span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Stations</span></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>Voici le diagramme de classes prévu concernant les stations :  </span>
 <span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Habilitation <span class="pp">|</span> Description <span class="pp">|</span></span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Liste les stations <span class="pp">|</span></span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations/{id_station}`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`Station`</span> <span class="pp">|</span> connecté <span class="pp">|</span> État actuel d'une station + indicateurs statistiques + score <span class="pp">|</span></span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations/{id_station}/history`</span> <span class="pp">|</span> GET <span class="pp">|</span> période (24h/7j/30j) <span class="pp">|</span> <span class="in">`liste[Releve]`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Évolution de la disponibilité <span class="pp">|</span></span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/suggestions`</span> <span class="pp">|</span> GET <span class="pp">|</span> position géographique <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Stations recommandées en fonction des critères <span class="pp">|</span></span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Gestion des stations favorites</span></span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Habilitation <span class="pp">|</span> Description <span class="pp">|</span></span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> connecté <span class="pp">|</span> Favoris de l'utilisateur courant <span class="pp">|</span></span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites/{station_id}`</span> <span class="pp">|</span> PUT <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> connecté <span class="pp">|</span> Ajoute une station aux favoris <span class="pp">|</span></span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites/{station_id}`</span> <span class="pp">|</span> DELETE <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> connecté <span class="pp">|</span> Retire une station des favoris <span class="pp">|</span></span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme de classes lié aux stations](img/diag_classes_station.png)</span>  </span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="fu">### Description des endpoints  </span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>Les tableaux suivants décrivent les différents endpoints prévus de l'API.  </span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Comptes et authentification  </span></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/create_user`</span> <span class="pp">|</span> POST <span class="pp">|</span> <span class="in">`username`</span>, <span class="in">`password`</span>, <span class="in">`email`</span> <span class="pp">|</span> <span class="in">`User`</span> <span class="pp">|</span> Crée un compte <span class="pp">|</span></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/login`</span> <span class="pp">|</span> POST <span class="pp">|</span> <span class="in">`username`</span>, <span class="in">`password`</span> <span class="pp">|</span> jeton d'accès <span class="pp">|</span> Authentifie et renvoie un jeton <span class="pp">|</span></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[User]`</span> <span class="pp">|</span> Liste les comptes <span class="pp">|</span></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users/{id_user}`</span> <span class="pp">|</span> PATCH <span class="pp">|</span> <span class="in">`username`</span> et/ou <span class="in">`password`</span> <span class="pp">|</span> <span class="in">`User`</span> <span class="pp">|</span> Modifie un compte <span class="pp">|</span></span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/users/{id_user}`</span> <span class="pp">|</span> DELETE <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> Supprime un compte <span class="pp">|</span>  </span>
 <span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="fu">### Diagramme de séquence d'une fonctionnalité  </span></span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>On présente ci-dessous le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.</span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Diagramme de séquence de la fonctionnalité "ajouter une station favorite"</span><span class="co">]</span></span>
-<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="fu">## Organisation du projet  </span></span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calendrier prévisionnel  </span></span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>**Remarque :** les trois derniers endpoints du tableau précédent ne seront accessibles qu'aux comptes *administrateurs*.  </span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Stations  </span></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> Liste les stations <span class="pp">|</span></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations/{id_station}`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`Station`</span> <span class="pp">|</span> État actuel d'une station + indicateurs statistiques + score <span class="pp">|</span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/stations /{id_station} /history`</span> <span class="pp">|</span> GET <span class="pp">|</span> période (24h/7j/30j) <span class="pp">|</span> <span class="in">`liste[Releve]`</span> <span class="pp">|</span> Évolution de la disponibilité <span class="pp">|</span></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/suggestions`</span> <span class="pp">|</span> GET <span class="pp">|</span> position géographique <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> Stations recommandées en fonction des critères <span class="pp">|</span>  </span>
 <span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>diagramme de Gantt</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Gestion des stations favorites  </span></span>
 <span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a><span class="fu">### Outils de développement  </span></span>
-<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  </span>
-<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  </span>
-<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```FastAPI``` pour le *backend*,  </span>
-<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  </span>
-<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  </span>
-<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ruff pour le formatage du code,  </span>
-<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pytest afin d'effectuer les tests unitaires,  </span>
-<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Github pour héberger et versionner notre projet.  </span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Chemin <span class="pp">|</span> Méthode <span class="pp">|</span> Entrée <span class="pp">|</span> Sortie (succès) <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a><span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">| :----</span> <span class="pp">|</span></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites`</span> <span class="pp">|</span> GET <span class="pp">|</span> - <span class="pp">|</span> <span class="in">`liste[Station]`</span> <span class="pp">|</span> Favoris de l'utilisateur courant <span class="pp">|</span></span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites/{station_id}`</span> <span class="pp">|</span> PUT <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> Ajoute une station aux favoris <span class="pp">|</span></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`/favorites/{station_id}`</span> <span class="pp">|</span> DELETE <span class="pp">|</span> - <span class="pp">|</span> - <span class="pp">|</span> Retire une station des favoris <span class="pp">|</span>  </span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a><span class="fu">### Diagramme de séquence d'une fonctionnalité  </span></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>On présente ci-dessous le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme de séquence de la fonctionnalité "ajouter une station favorite"](img/diag_sequence.png)</span></span>
 <span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
-<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
-<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a><span class="fu">## Organisation du projet  </span></span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calendrier prévisionnel  </span></span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>diagramme de Gantt</span>
 <span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a><span class="fu">### Outils de développement  </span></span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>Le projet sera réalisé en Python. Durant la phase de développement, nous utiliserons plusieurs outils et packages fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  </span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```streamlit``` pour le *frontend* (afin de construire l'application Web interactive),  </span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le framework ```FastAPI``` pour le *backend*,  </span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>le package ```psycopg2``` pour la couche *DAO* (afin de convertir les instructions Pythopn en requêtes lisibles par les tables PostgreSQL).  </span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de codage tant que faire se peut. Dans ce but, nous serons amenés à utiliser les outils suivants :  </span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ruff pour le formatage du code,  </span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pytest afin d'effectuer les tests unitaires,  </span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Github pour héberger et versionner notre projet.  </span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annexes {.unnumbered}</span></span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>{{&lt; pagebreak &gt;}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

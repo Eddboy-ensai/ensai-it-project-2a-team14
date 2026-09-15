@@ -45,7 +45,7 @@ Deux types d'utilisateurs sont à distingués. Il y aura tout d'abord les utilis
 
 L'application possédera plusieurs fonctionnalités de base. Voici un diagramme de cas d'utilisation, que nous détaillons ci-dessous :  
 
-![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)
+![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png)  
 
 **Collecter des données via une API**  
 
@@ -74,7 +74,7 @@ L'application permettra de recommander des stations à proximité de l'utilisate
 
 Voici ci-dessous un diagramme d'activité modélisant les différentes étapes de navigation dans l'appliation :
 
-![Diagramme d'activité](img/diagactivté.png)
+![Diagramme d'activité](img/diagactivté.png)  
 
 **Gestion de compte**  
 
@@ -90,7 +90,7 @@ L'ensemble des fonctionnalités de l'application sont dans la deuxième partie d
 
 L'API sera constituée de plusieurs couches afin de repsecter le principe de séparations des responsabilités. Voici un schéma d'ensemble de l'architecture logiciel envisagée, que nous détaillons dans la suite du dossier.
 
-![Diagramme d'architecture logiciel](img/diag_archi_log.png)
+![Diagramme d'architecture logiciel](img/diag_archi_log.png)  
 
 #### Frontend  
 
@@ -136,50 +136,68 @@ Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir 
 
 ### Classes  
 
-D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles "User", "Station", et "StationRecord" et "Favorite" qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faut également implémenter des classes controller permettant de gérer les différents endpoints de l'API.  
+#### Généralités  
 
-Chacune des quatre classes métiers prévues aura une classe "service" associée. Pour les classes "Users", "StationRecord" et "Favorite", les services permettront essentiellement de faire la jonction entre la couche "controller" et la couche "DAO" : ce seront donc des services purement techniques. La réelle plus-value de l'API se fera au niveau des services associés à la classe "Station", notamment via le calcul d'indicateurs. Afin d'éviter d'avoir une classe avec de trop nombreuses méthodes, et dans un but de factorisation du code, les services associée à la classe "Station" seront séparé en deux classes. Tout d'abord une classe "StationService" qui se concentre sur la logique métier, et qui permettra d'obtenir d'obtenir les indicateurs via une méthode ```get_stats``` qui fera appel à la classe ```StationCalculationService```. Cette dernière sera chargée de calculer les indicateurs statistiques souhaités (taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité).  
+D'après l'architecture logicielle, le projet nécessitera différents types de classes. Tout d'abord, il faudra implémenter les classes modèles ```User```, ```Station```, et ```StationRecord``` et ```Favorite``` qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre entre une utilisateur et ses stations favorites. Chacune de ces classes nécessitera une classe DAO propre afin de pouvoir faire la correspondance entre ces objets et les tables de données correspondantes. Il faudra également implémenter des classes controller permettant de gérer les différents endpoints de l'API. Enfin, chacune des quatre classes métiers prévues aura une classe de services associée. Elles traiteront les objets Python correspondant.  
 
-La nécessité de l'utilisation de classe "schéma" utilisant "BaseModel" sera étudiée plus tard durant la phase de développement. Ces classes définiraient notamment le format des Json échangé et permettrait de faire le lien entre le backend et le frontend.  
+**Remarque :** Afin de ne pas surcharger les diagrammes ci-dessous inutilement, ne figureront pas :
+- les classes schémas de type "BaseModel", utilisés par les controllers et qui permettront de faire la traduction entre les objets Python et les informations au format JSON envoyés ou reçus par le frontend;  
+- les méthodes spéciales (du type ```__str__```, etc.) qui pourraient être nécessaires.  
+
+#### Classes liées aux utilisateurs  
+
+Les classes liées aux utilisateurs permettront essentiellement de créer les utilisateurs et de gérer leur rôle (utilisateur ou administrateur). La classe modèle est la classe ```User```. Les autres classes seront essentiellement fonctionnelles et permettront de gérer la connexion et la base de données. Voici le diagramme de classes prévu :  
+
+![Diagramme de classes lié aux utilisateurs](img/diag_classes_user.png)  
+
+#### Classes liées aux stations  
+
+Trois classes modèles liées aux stations sont prévues. Tout d'abord, la classe ```Station``` modélisera une station et dont les attributs stockeront les informations d'une station. Ensuite, la classe ```Favorite``` modélisera le lien entre une utilisateur et le fait qu'une station soit en favori. Enfin, une classe ```StationRecord``` qui modélisera l'état d'une station à un heure donnée, et dont les attributs seront les informations fournies par l'API externe de la ville.  
+
+Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe ```StationRecord```, car l'appel à l'API externe se fera via la méthode ```get_data``` de la classe ```StationRecordService```). Deplus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe ```StationCalculationService```. Les méthodes de cette classe seront appelées par la méthode ```get_stats``` de la classe ```StationService``` et permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappels, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode ```get_availability_over_time``` est prévue, afin de déterminer l'évolution de la disponibilité de la station. Selon le développement et les possibilités, elle retournera des graphiques (à l'aide du package matplotlib) ou des tableaux de données.  
+
+Voici le diagramme de classes prévu concernant les stations :  
+
+![Diagramme de classes lié aux stations](img/diag_classes_station.png)  
 
 ### Description des endpoints  
 
 Les tableaux suivants décrivent les différents endpoints prévus de l'API.  
 
-#### Comptes et authentification
+#### Comptes et authentification  
 
-| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
-| :---- | :---- | :---- | :---- | :---- | :---- |
-| `/create_user` | POST | `username`, `password`, `email` | `User` | connecté | Crée un compte |
-| `/login` | POST | `username`, `password` | jeton d'accès | connecté | Authentifie et renvoie un jeton |
-| `/users` | GET | - | `liste[User]` | admin | Liste les comptes |
-| `/users/{id_user}` | PATCH | `username` et/ou `password` | `User` | admin | Modifie un compte |
-| `/users/{id_user}` | DELETE | - | - | admin | Supprime un compte |
+| Chemin | Méthode | Entrée | Sortie (succès) | Description |
+| :---- | :---- | :---- | :---- | :---- |
+| `/create_user` | POST | `username`, `password`, `email` | `User` | Crée un compte |
+| `/login` | POST | `username`, `password` | jeton d'accès | Authentifie et renvoie un jeton |
+| `/users` | GET | - | `liste[User]` | Liste les comptes |
+| `/users/{id_user}` | PATCH | `username` et/ou `password` | `User` | Modifie un compte |
+| `/users/{id_user}` | DELETE | - | - | Supprime un compte |  
 
-#### Stations
+**Remarque :** les trois derniers endpoints du tableau précédent ne seront accessibles qu'aux comptes *administrateurs*.  
 
-| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
-| :---- | :---- | :---- | :---- | :---- | :---- |
-| `/stations` | GET | - | `liste[Station]` | connecté | Liste les stations |
-| `/stations/{id_station}` | GET | - | `Station` | connecté | État actuel d'une station + indicateurs statistiques + score |
-| `/stations /{id_station} /history` | GET | période (24h/7j/30j) | `liste[Releve]` | connecté | Évolution de la disponibilité |
-| `/suggestions` | GET | position géographique | `liste[Station]` | connecté | Stations recommandées en fonction des critères |
+#### Stations  
 
-#### Gestion des stations favorites
+| Chemin | Méthode | Entrée | Sortie (succès) | Description |
+| :---- | :---- | :---- | :---- | :---- |
+| `/stations` | GET | - | `liste[Station]` | Liste les stations |
+| `/stations/{id_station}` | GET | - | `Station` | État actuel d'une station + indicateurs statistiques + score |
+| `/stations /{id_station} /history` | GET | période (24h/7j/30j) | `liste[Releve]` | Évolution de la disponibilité |
+| `/suggestions` | GET | position géographique | `liste[Station]` | Stations recommandées en fonction des critères |  
 
-| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
-| :---- | :---- | :---- | :---- | :---- | :---- |
-| `/favorites` | GET | - | `liste[Station]` | connecté | Favoris de l'utilisateur courant |
-| `/favorites/{station_id}` | PUT | - | - | connecté | Ajoute une station aux favoris |
-| `/favorites/{station_id}` | DELETE | - | - | connecté | Retire une station des favoris |
+#### Gestion des stations favorites  
 
-
+| Chemin | Méthode | Entrée | Sortie (succès) | Description |
+| :---- | :---- | :---- | :---- | :---- |
+| `/favorites` | GET | - | `liste[Station]` | Favoris de l'utilisateur courant |
+| `/favorites/{station_id}` | PUT | - | - | Ajoute une station aux favoris |
+| `/favorites/{station_id}` | DELETE | - | - | Retire une station des favoris |  
 
 ### Diagramme de séquence d'une fonctionnalité  
 
 On présente ci-dessous le diagramme de séquence de la fonctionnalité "ajouter une station favorite", afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.
 
-[Diagramme de séquence de la fonctionnalité "ajouter une station favorite"]
+![Diagramme de séquence de la fonctionnalité "ajouter une station favorite"](img/diag_sequence.png)
 
 ## Organisation du projet  
 
