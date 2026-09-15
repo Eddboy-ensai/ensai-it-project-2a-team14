@@ -79,9 +79,9 @@ Proposition :
 | Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
 | :---- | :---- | :---- | :---- | :---- | :---- |
 | `/stations` | GET | - | `200` + `liste[Station]` | connecté | Liste les stations |
-| `/stations/{id_station}` | GET | - | `200` + `Station` | connecté | État actuel d'une station + indicateurs + score |
-| `/stations/{id_station}/history` | GET | `?periode=24h\|7j\|30j` | `200` + `liste[Releve]` | connecté | Évolution de la disponibilité (F3) |
-| `/suggestions` | GET | `?lat=&lon=&limit=` | `200` + `liste[Station]` | connecté | Classement multicritère (F5) |
+| `/stations/{id_station}` | GET | - | `200` + `Station` | connecté | État actuel d'une station + indicateurs statistiques + score |
+| `/stations/{id_station}/history` | GET | période (24h/7j/30j) | `200` + `liste[Releve]` | connecté | Évolution de la disponibilité |
+| `/suggestions` | GET | position géographique | `200` + `liste[Station]` | connecté | Stations recommandées en fonction des critères |
 
 #### Gestion des stations favorites
 
