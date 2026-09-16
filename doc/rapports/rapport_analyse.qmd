@@ -43,7 +43,9 @@ L'application possédera plusieurs fonctionnalités de base.
 
 **Collecter des données via une API**  
 
-La collecte des données concernant la disponibilité et l'état des stations de vélos se fera via une API externe. La collecte se fera à intervalle de temps régulier (toutes 15 min). Elle permettra de nourrir une base de données, hébergée ..., qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d'emplacement.  
+La collecte des données concernant la disponibilité et l'état des stations de vélos se fera via une API externe. La collecte se fera à intervalle de temps régulier, toutes les 5 minutes pour les relevés de stations et toute les heures pour les informations des stations. Elle permettra de nourrir une base de données, hébergée sur un service postgre SQL, qui contiendra 2 bases, les stations et leurs relevé.
+La base des stations contient notamment le nom des stations, leurs localisations (adresse et coordonées) et leurs capacités.
+Tandis que les rélevés contiennent notament leurs états ainsi que leurs disponibilité en terme de vélos et d'emplacement.  
 
 **Consulter des données**  
 
@@ -135,7 +137,7 @@ L'un des objectifs est de pouvoir aisément transposer l'API à différentes vil
 - l'attribut nom_station serait en dépendance fonctionnelle avec id_station et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
 - l'attribut coordonnees_geo serait en dépendance fonctionnelle avec nom_station (contradiction avec le principe de la troisième forme normale).
 
-La base de données des stations possédera deux tables de données. La première sera la relation **station**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **enregistrements**, dont les attributs stockeront les données fournies par les API externes. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_emplac```), le nombre d'emplacements libre de la station (```nb_emplac_lib```), le nombre de vélos disponibles (```nb_velos_dispo```) et le nombre de vélos électriques disponibles(```nb_evelos_dispo```).  
+La base de données des stations possédera deux tables de données. La première sera la relation **station**. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géoégrpahiques. La seconde sera la relation **enregistrements**, dont les attributs stockeront les données fournies par les API externes. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (attribut ```date```), le nombre d'emplacements de la station (```nb_emplac```), le nombre d'emplacements libre de la station (```nb_emplac_lib```), le nombre de vélos disponibles (```nb_velos_dispo```), le nombre de vélos électriques disponibles(```nb_evelos_dispo```) et la dernière date au quelle cette station est apparue dans les données afin de déceler les stations abandonnées (```vue_le```).  
 
 [Diagramme UML avec les données suivantes :] 
 
