@@ -218,7 +218,7 @@ On présente en @fig-sequence le diagramme de séquence de la fonctionnalité «
 
 ### Calendrier prévisionnel  
 
-Le calendrier prévu est donnée par le diagramme de Gantt en @fig-diag_gantt.
+Le calendrier prévu est donnée par le diagramme de Gantt en @fig-diag_gantt.  
 
 ![Diagramme de Gantt](img/diag_gantt.png){#fig-diag_gantt width="92%"}
 
