@@ -49,7 +49,9 @@ Le cahier des charges prévoit un minimum de fonctionnalités attendues. La @fig
 
 **Collecter des données via une API**  
 
-La collecte des données concernant la disponibilité et l'état des stations de vélos se fera via une API externe. La collecte se fera à intervalle de temps régulier (par exemple toutes les quinze minutes). Elle permettra de nourrir une base de données qui contiendra notamment le nom des stations, leurs localisations, leurs états et la disponibilité en terme de vélos et d'emplacement.  
+La collecte des données concernant la disponibilité et l'état des stations de vélos se fera via une API externe. La collecte se fera à intervalle de temps régulier, toutes les 5 minutes pour les relevés de stations et toute les heures pour les informations des stations. Elle permettra de nourrir une base de données, hébergée sur un service postgre SQL, qui contiendra 2 bases, les stations et leurs relevé.
+La base des stations contient notamment le nom des stations, leurs localisations (adresse et coordonées) et leurs capacités.
+Tandis que les rélevés contiennent notament leurs états ainsi que leurs disponibilité en terme de vélos et d'emplacement.  
 
 **Consulter des données**  
 
@@ -127,7 +129,7 @@ Pour les stations, les données à stocker sont les suivantes : identifiant et n
 - l'attribut ```name_station``` serait en dépendance fonctionnelle avec ```id_station``` et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
 - les attributs de coordonnées géographiques ```lon``` et ```lat``` seraient en dépendance fonctionnelle avec ```name_station``` (contradiction avec le principe de la troisième forme normale).  
 
-Pour respecter les trois formes normales, le projet nécessite donc deux tables. La première sera la relation ```Stations```. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom et ses coordonnées géographiques. La seconde sera la relation ```StationRecords```, dont les attributs stockeront les données fournies par l'API externe. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (```date```), l'état de fonctionnement (```status```), le nombre d'emplacements de la station (```nb_spaces```), le nombre d'emplacements libre de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).  
+Pour respecter les trois formes normales, le projet nécessite donc deux tables. La première sera la relation ```Stations```. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom, ses coordonnées géographiques, le nombre de port, et dernière date à laquelle cette station à été vue afin de repérer les stations abandonnées. La seconde sera la relation ```StationRecords```, dont les attributs stockeront les données fournies par l'API externe. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (```date```), l'état de fonctionnement (```status```), le nombre d'emplacements de la station (```nb_spaces```), le nombre d'emplacements libre de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).  
 
 Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association ```Favorites``` qui permettra de lier un utilisateur à ses stations favorites.  
 
