@@ -33,6 +33,8 @@ format:
 
 Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transports les plus utilisés actuellement figure le vélo. Cependant, l'accès à son propre vélo peut-être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, amélioration technologique des vélos électriques les rendant peu abordables, réduction des surfaces habitées par les ménages empêchant le stockage de son vélo personnel, mobilité des ménages). Pour pallier ces problèmes et développer des mobilités respectueuses de l'environnement, de nombreuses villes se dotent de vélos en libre service, dont la gestion des stations est primordiale. Si de nombreuses applications existent déjà pour connaître l'état des stations de vélos en libre service, elles sont sujettes à de nombreux points faibles. Par exemple, elles ne permettent de connaître que l'état actuel et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C'est pourquoi notre client souhaite développer une API qui irait bien plus loin. Elle permettrait d'étudier les stocks des différentes stations au cours du temps, et ainsi de connaître l'état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d'évolution temporels et des recommandations adaptées.  
 
+{{< pagebreak >}}
+
 ## Cahier des charges
 
 L'objectif du projet est de produire une API donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'API doit également fournir des indicateurs de qualité. Elle donnera notamment un indicateur de fiabilité, qui pourra potentiellement être visualisé grâce à une carte.  
@@ -71,11 +73,15 @@ où $f$ est une fonction croissante en chacune de ses variables que nous constru
 
 L'API permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de station (notamment via le score de fiabilité) et sur son historique récent.  
 
+{{< pagebreak >}}
+
 ### Déroulé de la navigation  
 
 La @fig-activite montre le diagramme d'activité résumant les étapes de navigation dans l'API.
 
-![Diagramme d'activité](img/diag_activite.png){#fig-activite}   
+![Diagramme d'activité](img/diag_activite.png){#fig-activite width="98%"}   
+
+{{< pagebreak >}}
 
 **Gestion de compte**  
 
@@ -84,6 +90,8 @@ La première partie de ce diagramme correspond à la partie de gestion de compte
 **Fonctionnalité principales**  
 
 L'ensemble des fonctionnalités de l'API sont dans la deuxième partie de ce diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'API ou de poursuivre la navigation en retournant à l'étape du choix d'action.  
+
+{{< pagebreak >}}
 
 ## Modélisation  
 
@@ -127,7 +135,7 @@ Pour les stations, les données à stocker sont les suivantes : identifiant et n
 - l'attribut ```name_station``` serait en dépendance fonctionnelle avec ```id_station``` et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
 - les attributs de coordonnées géographiques ```lon``` et ```lat``` seraient en dépendance fonctionnelle avec ```name_station``` (contradiction avec le principe de la troisième forme normale).  
 
-Pour respecter les trois formes normales, le projet nécessite donc deux tables. La première sera la relation ```Stations```. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom, ses coordonnées géographiques, le nombre de port, et dernière date à laquelle cette station à été vue afin de repérer les stations abandonnées. La seconde sera la relation ```StationRecords```, dont les attributs stockeront les données fournies par l'API externe de la ville et qui seront utilisées pour calculer les indicateurs. Voici les données stockées : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (```date```), l'état de fonctionnement (```status```), le nombre d'emplacements de la station (```nb_spaces```), le nombre d'emplacements libre de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).    
+Pour respecter les trois formes normales, le projet nécessite donc deux tables. La première sera la relation ```Stations```. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom, ses coordonnées géographiques, le nombre d'emplacement (attribut ```capacity```). La seconde sera la relation ```StationRecords```, qui stockera les données de disponibilités des stations. Ses attributs seront les suivants : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (```date```), l'état de fonctionnement (```status```), le nombre d'emplacements libres de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).    
 
 Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association ```Favorites``` qui permettra de lier un utilisateur à ses stations favorites.  
 
@@ -159,7 +167,7 @@ Chacune des trois classes métiers prévues possédera une classe DAO, une class
 
 Le diagramme de classes prévu pour les stations est présenté en @fig-classes-station et @fig-classes-record.  
 
-![Diagramme de classes lié aux stations](img/diag_classes_station.png){#fig-classes-station}   
+![Diagramme de classes lié aux stations](img/diag_classes_station.png){#fig-classes-station width="97%"}   
 
 ![Diagramme de classes lié aux enregistrements](img/diag_classes_record.png){#fig-classes-record width="40%"}   
 
@@ -196,17 +204,23 @@ Les tableaux suivants décrivent les différents endpoints prévus de l'API.
 | `/favorites/{station_id}` | PUT | - | - | Ajoute une station aux favoris |
 | `/favorites/{station_id}` | DELETE | - | - | Retire une station des favoris |  
 
+{{< pagebreak >}}
+
 ### Diagramme de séquence d'une fonctionnalité  
 
 On présente en @fig-sequence le diagramme de séquence de la fonctionnalité «ajouter une station favorite», afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.
 
 ![Diagramme de séquence de la fonctionnalité «ajouter une station favorite»](img/diag_sequence.png){#fig-sequence} 
 
+{{< pagebreak >}}
+
 ## Organisation du projet  
 
 ### Calendrier prévisionnel  
 
-diagramme de Gantt
+Le calendrier prévu est donnée par le diagramme de Gantt en @fig-diag_gantt.
+
+![Diagramme de Gantt](img/diag_gantt.png){#fig-diag_gantt width="92%"}
 
 ### Outils de développement  
 
