@@ -39,3 +39,54 @@ Réfléchir au score de fiabilité (Méline)
 
 
 Réfléchir aux calculs (pour voir comment organiser la classe station_service)
+
+
+
+### Endpoints
+
+endpoints utilisateurs:
+consulter une station
+ajouter une station en favori
+obtenir la liste des stations
+afficher les stations recommandées
+créer un compte
+se connecter
+ajouter une station en favori
+supprimer une station des favoris
+
+
+endpoints pour administrateur :
+changer un mdp
+changer un nom utilisateur
+supprimer utilisateur
+
+Commande http GET(récupération)/PUT(mis à jour)/POST(insertion)/DELETE(suppression)/PATCH  
+
+Proposition :
+
+#### Comptes et authentification
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| `/create_user` | POST | corps : `username`, `password` | `201` + `User` | public | Crée un compte |
+| `/login` | POST | corps : `username`, `password` | `200` + jeton d'accès | public | Authentifie et renvoie un jeton |
+| `/users` | GET | `?limit=&offset=` | `200` + `liste[User]` | admin | Liste les comptes |
+| `/users/{id_user}` | PATCH | corps : `username` et/ou `password` | `200` + `User` | admin | Modifie un compte |
+| `/users/{id_user}` | DELETE | - | `204` | admin | Supprime un compte |
+
+#### Stations
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| `/stations` | GET | - | `200` + `liste[Station]` | connecté | Liste les stations |
+| `/stations/{id_station}` | GET | - | `200` + `Station` | connecté | État actuel d'une station + indicateurs statistiques + score |
+| `/stations/{id_station}/history` | GET | période (24h/7j/30j) | `200` + `liste[Releve]` | connecté | Évolution de la disponibilité |
+| `/suggestions` | GET | position géographique | `200` + `liste[Station]` | connecté | Stations recommandées en fonction des critères |
+
+#### Gestion des stations favorites
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Habilitation | Description |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| `/favorites` | GET | - | `200` + `liste[Station]` | connecté | Favoris de l'utilisateur courant |
+| `/favorites/{station_id}` | PUT | - | `204` | connecté | Ajoute une station aux favoris |
+| `/favorites/{station_id}` | DELETE | - | `204` | connecté | Retire une station des favoris |
