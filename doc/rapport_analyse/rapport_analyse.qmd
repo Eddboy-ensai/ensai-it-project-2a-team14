@@ -95,7 +95,7 @@ L'accès aux fonctionnalités de l'API se situe dans la partie basse du diagramm
 
 ## Modélisation  
 
-### Architecture de l'API  
+### Architecture de l'application  
 
 L'API sera constituée de plusieurs couches afin de respecter le principe de séparations des responsabilités. L'architecture logicielle envisagée est présentée dans la @fig-archi-log.
 
@@ -117,7 +117,7 @@ Le *frontend* enverra des requêtes HTTP au *backend*, qui sera chargé de trait
 
 Tout d'abord, une couche *controller* recevra les requêtes fournies par le *frontend* lors de l'utilisation de l'API par un usager. Cette couche aura pour but de convertir et transférer ces requêtes à la couche suivante, celle des services.  
 
-La couche *service* est le cœur de l'API, c'est dans cette couche que seront regroupées les fonctions apportant une valeur ajoutée. Il s'agira par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services feront donc appel à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  
+La couche *service* est le cœur de l'application, c'est dans cette couche que seront regroupées les fonctions apportant une valeur ajoutée. Il s'agira par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services feront donc appel à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  
 
 La couche *DAO* recevra les demandes de données de la part de la couche *service*. Elle sera chargée de convertir ces demandes en requêtes SQL. Ces requêtes seront alors traitées par la couche persistante : celle des bases de données. La couche *DAO* aura alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet *User* ou *Station*, voir la section [Classes](#classes) pour plus de détails). Ces objets seront ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus seront transmis à la couche *controller* puis au *frontend* pour affichage à l'utilisateur.  
 
@@ -208,7 +208,7 @@ Les tableaux suivants décrivent les différents endpoints prévus de l'API.
 
 ### Diagramme de séquence d'une fonctionnalité  
 
-On présente en @fig-sequence le diagramme de séquence de la fonctionnalité «ajouter une station favorite», afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.
+À ce stade, nous avons une vue d'ensemble du fonctionnement de l'application. Nous pouvons résumer ce qui a été vu précédemment grâce à un diagramme de séquence. Pour l'exemple, la @fig-sequence présente le diagramme de séquence de la fonctionnalité «ajouter une station favorite» lorsque la station n'est pas déjà en favori.  
 
 ![Diagramme de séquence de la fonctionnalité «ajouter une station favorite»](img/diag_sequence.png){#fig-sequence} 
 

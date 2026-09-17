@@ -74,7 +74,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="rapport_analyse_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="rapport_analyse_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="rapport_analyse_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="rapport_analyse_files/libs/bootstrap/bootstrap-005e5f49e2105de2e9189abba14d0143.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="rapport_analyse_files/libs/bootstrap/bootstrap-3eab1d601e622de40cca32ca757bd946.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
@@ -182,8 +182,8 @@ Figure&nbsp;2: Diagramme d’activité
 </section>
 <section id="modélisation" class="level2">
 <h2 class="anchored" data-anchor-id="modélisation">Modélisation</h2>
-<section id="architecture-de-lapi" class="level3">
-<h3 class="anchored" data-anchor-id="architecture-de-lapi">Architecture de l’API</h3>
+<section id="architecture-de-lapplication" class="level3">
+<h3 class="anchored" data-anchor-id="architecture-de-lapplication">Architecture de l’application</h3>
 <p>L’API sera constituée de plusieurs couches afin de respecter le principe de séparations des responsabilités. L’architecture logicielle envisagée est présentée dans la <a href="#fig-archi-log" class="quarto-xref">Figure&nbsp;3</a>.</p>
 <div id="fig-archi-log" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -208,7 +208,7 @@ Figure&nbsp;3: Diagramme d’architecture logicielle
 <h4 class="anchored" data-anchor-id="backend">Backend</h4>
 <p>Le <em>frontend</em> enverra des requêtes HTTP au <em>backend</em>, qui sera chargé de traiter ces requêtes et de renvoyer la réponse attendue. Ces requêtes concerneront soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d’une station par exemple). Le <em>backend</em> sera séparé en plusieurs couches.</p>
 <p>Tout d’abord, une couche <em>controller</em> recevra les requêtes fournies par le <em>frontend</em> lors de l’utilisation de l’API par un usager. Cette couche aura pour but de convertir et transférer ces requêtes à la couche suivante, celle des services.</p>
-<p>La couche <em>service</em> est le cœur de l’API, c’est dans cette couche que seront regroupées les fonctions apportant une valeur ajoutée. Il s’agira par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche <em>service</em> a besoin de données. Ces services feront donc appel à une couche <em>DAO</em> (Data Access Object) afin de communiquer avec les bases de données.</p>
+<p>La couche <em>service</em> est le cœur de l’application, c’est dans cette couche que seront regroupées les fonctions apportant une valeur ajoutée. Il s’agira par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche <em>service</em> a besoin de données. Ces services feront donc appel à une couche <em>DAO</em> (Data Access Object) afin de communiquer avec les bases de données.</p>
 <p>La couche <em>DAO</em> recevra les demandes de données de la part de la couche <em>service</em>. Elle sera chargée de convertir ces demandes en requêtes SQL. Ces requêtes seront alors traitées par la couche persistante : celle des bases de données. La couche <em>DAO</em> aura alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet <em>User</em> ou <em>Station</em>, voir la section <a href="#classes">Classes</a> pour plus de détails). Ces objets seront ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus seront transmis à la couche <em>controller</em> puis au <em>frontend</em> pour affichage à l’utilisateur.</p>
 </section>
 <section id="couche-persistante" class="level4">
@@ -449,7 +449,7 @@ Figure&nbsp;7: Diagramme de classes lié aux enregistrements
 </section>
 <section id="diagramme-de-séquence-dune-fonctionnalité" class="level3">
 <h3 class="anchored" data-anchor-id="diagramme-de-séquence-dune-fonctionnalité">Diagramme de séquence d’une fonctionnalité</h3>
-<p>On présente en <a href="#fig-sequence" class="quarto-xref">Figure&nbsp;8</a> le diagramme de séquence de la fonctionnalité «ajouter une station favorite», afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n’est pas déjà en favori.</p>
+<p>À ce stade, nous avons une vue d’ensemble du fonctionnement de l’application. Nous pouvons résumer ce qui a été vu précédemment grâce à un diagramme de séquence. Pour l’exemple, la <a href="#fig-sequence" class="quarto-xref">Figure&nbsp;8</a> présente le diagramme de séquence de la fonctionnalité «ajouter une station favorite» lorsque la station n’est pas déjà en favori.</p>
 <div id="fig-sequence" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-sequence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1051,7 +1051,7 @@ Figure&nbsp;9: Diagramme de Gantt
 <span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modélisation  </span></span>
 <span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="fu">### Architecture de l'API  </span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="fu">### Architecture de l'application  </span></span>
 <span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>L'API sera constituée de plusieurs couches afin de respecter le principe de séparations des responsabilités. L'architecture logicielle envisagée est présentée dans la @fig-archi-log.</span>
 <span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
@@ -1073,7 +1073,7 @@ Figure&nbsp;9: Diagramme de Gantt
 <span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>Tout d'abord, une couche *controller* recevra les requêtes fournies par le *frontend* lors de l'utilisation de l'API par un usager. Cette couche aura pour but de convertir et transférer ces requêtes à la couche suivante, celle des services.  </span>
 <span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>La couche *service* est le cœur de l'API, c'est dans cette couche que seront regroupées les fonctions apportant une valeur ajoutée. Il s'agira par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services feront donc appel à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  </span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>La couche *service* est le cœur de l'application, c'est dans cette couche que seront regroupées les fonctions apportant une valeur ajoutée. Il s'agira par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services feront donc appel à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  </span>
 <span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>La couche *DAO* recevra les demandes de données de la part de la couche *service*. Elle sera chargée de convertir ces demandes en requêtes SQL. Ces requêtes seront alors traitées par la couche persistante : celle des bases de données. La couche *DAO* aura alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet *User* ou *Station*, voir la section [Classes](#classes) pour plus de détails). Ces objets seront ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus seront transmis à la couche *controller* puis au *frontend* pour affichage à l'utilisateur.  </span>
 <span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
@@ -1164,7 +1164,7 @@ Figure&nbsp;9: Diagramme de Gantt
 <span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a><span class="fu">### Diagramme de séquence d'une fonctionnalité  </span></span>
 <span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>On présente en @fig-sequence le diagramme de séquence de la fonctionnalité «ajouter une station favorite», afin de visualiser le lien entre les différentes couches. Ce diagramme traite du cas où la station n'est pas déjà en favori.</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>À ce stade, nous avons une vue d'ensemble du fonctionnement de l'application. Nous pouvons résumer ce qui a été vu précédemment grâce à un diagramme de séquence. Pour l'exemple, la @fig-sequence présente le diagramme de séquence de la fonctionnalité «ajouter une station favorite» lorsque la station n'est pas déjà en favori.  </span>
 <span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a><span class="al">![Diagramme de séquence de la fonctionnalité «ajouter une station favorite»](img/diag_sequence.png)</span>{#fig-sequence} </span>
 <span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a></span>
