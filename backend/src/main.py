@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from controller import user_controller
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI(title="VeloScope")
 
@@ -19,6 +22,6 @@ if __name__ == "__main__":
 
     uvicorn.run(
         app,
-        host=os.getenv("UVICORN_HOST", "0.0.0.0"),
+        host=os.getenv("UVICORN_HOST", "127.0.0.1"),
         port=int(os.getenv("UVICORN_PORT", "5000")),
     )

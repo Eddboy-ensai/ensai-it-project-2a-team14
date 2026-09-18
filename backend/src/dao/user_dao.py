@@ -20,7 +20,8 @@ class UserDao(metaclass=Singleton):
                     )
                     res = cursor.fetchone()
         except Exception as e:
-            print(e)
+            print("ERREUR SQL :", repr(e))
+            raise
 
         created = False
         if res:

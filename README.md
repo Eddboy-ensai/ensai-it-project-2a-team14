@@ -21,7 +21,7 @@ BACKEND_TIMEOUT=5
 
 3) Create the schema project and the table Users by executing this code (for example in cloudbeaver) :
 ```default
-CREATE SCHEMA project
+CREATE SCHEMA project;
 
 CREATE TABLE project.Users (
     id_user SERIAL PRIMARY KEY,
