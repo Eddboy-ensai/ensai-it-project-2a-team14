@@ -34,5 +34,5 @@ CREATE TABLE Users (
 4) Install dependies by executing `uv sync --project backend`
 5) In a terminal, execute `uv run --project backend python backend/src/main.py`
 
-Execute in a new terminal : 
-curl -X POST https://user-eddboy-847740-user-5000.user.lab.sspcloud.fr/user/   -H "Content-Type: application/json"   -d '{"pseudo": "test", "pwdh": "123"}'
+Execute after filling in a new terminal : 
+curl -X POST https://...user.lab.sspcloud.fr/user/   -H "Content-Type: application/json"   -d '{"pseudo": "test", "pwdh": "123"}'
