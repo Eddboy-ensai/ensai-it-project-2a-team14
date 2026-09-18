@@ -4,7 +4,7 @@ from controller import user_controller
 
 app = FastAPI(title="VeloScope")
 
-app.include_router(user_controller.router, prefix="/user", tags=["User"])
+app.include_router(user_controller.router, prefix="/user", tags=["Users"])
 
 
 @app.get("/", include_in_schema=False)
@@ -19,6 +19,6 @@ if __name__ == "__main__":
 
     uvicorn.run(
         app,
-        host=os.getenv("UVICORN_HOST", "127.0.0.1"),
+        host=os.getenv("UVICORN_HOST", "0.0.0.0"),
         port=int(os.getenv("UVICORN_PORT", "5000")),
     )

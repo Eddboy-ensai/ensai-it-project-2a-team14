@@ -1,7 +1,6 @@
 from dao.db_connection import DBConnection
 from utils.singleton import Singleton
-from dotenv import load_dotenv
-load_dotenv()
+
 
 class UserDao(metaclass=Singleton):
 
@@ -21,7 +20,7 @@ class UserDao(metaclass=Singleton):
                     )
                     res = cursor.fetchone()
         except Exception as e:
-            print(f"Erreur DAO create: {e}", flush=True)
+            print(e)
 
         created = False
         if res:

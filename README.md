@@ -23,7 +23,7 @@ BACKEND_TIMEOUT=5
 ```default
 CREATE SCHEMA project
 
-CREATE TABLE Users (
+CREATE TABLE project.Users (
     id_user SERIAL PRIMARY KEY,
     pseudo VARCHAR(50) NOT NULL UNIQUE,
     pwdh VARCHAR(255) NOT NULL,
@@ -33,6 +33,4 @@ CREATE TABLE Users (
 
 4) Install dependies by executing `uv sync --project backend`
 5) In a terminal, execute `uv run --project backend python backend/src/main.py`
-
-Execute after filling in a new terminal : 
-curl -X POST https://...user.lab.sspcloud.fr/user/   -H "Content-Type: application/json"   -d '{"pseudo": "test", "pwdh": "123"}'
+6) Go to the swagger
