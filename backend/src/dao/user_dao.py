@@ -1,6 +1,7 @@
 from dao.db_connection import DBConnection
 from utils.singleton import Singleton
 from utils.log_utils import get_logger, log
+from business_object.user import User
 
 logger = get_logger(__name__)
 
@@ -8,7 +9,17 @@ logger = get_logger(__name__)
 class UserDao(metaclass=Singleton):
 
     @log
-    def create(self, user) -> bool:
+    def create(self, user: User) -> bool:
+        """ Create a user
+        Parameters
+        ----------
+        user:User
+            user who should be created
+        Returns
+        -------
+        bool
+            True if the user is created in the database, false else
+        """
         res = None
         try:
             with DBConnection().connection as connection:
@@ -24,7 +35,7 @@ class UserDao(metaclass=Singleton):
                     )
                     res = cursor.fetchone()
         except Exception as e:
-            print("ERREUR SQL :", repr(e))
+            logger.error(e)
             raise
 
         created = False
@@ -32,5 +43,53 @@ class UserDao(metaclass=Singleton):
             user.id_player = res["id_user"]
             created = True
         return created
+
+
+    @log
+    def list_all(self) -> list[User]:
+        """ List all users
+        Returns
+        -------
+        list[User]
+            list of all the users
+        """
+        res = None
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT id_user, pseudo, pwdh, admin"
+                        "FROM project.Users"
+                    )
+                    res = cursor.fetchall()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        users_list = []
+        if res:
+            for row in res:
+                user = User(
+                    id_user=row["id_player"],
+                    pseudo=row["pseudo"],
+                    pwdh=row["pwdh"],
+                    admin=row["admin"]
+                )
+                users_list.append(user)
+        return users_list
+
+    @log
+    def login(self, pseudo: str, pwdh: str) -> User:
+        res = None
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT id_user, pseudo, pwdh, admin"
+                        "FROM project.Users"
+                        "WHERE pseudo == %(pseudo)s AND pwdh == %(pwdh)s",
+                        {"pseudo": pseudo, "pwdh": pwdh}
+                    )
+                
 
 
