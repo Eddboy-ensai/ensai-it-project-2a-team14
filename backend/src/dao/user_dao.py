@@ -10,7 +10,7 @@ class UserDao(metaclass=Singleton):
 
     @log
     def create(self, user: User) -> bool:
-        """ Create a user
+        """Create a user in the database
         Parameters
         ----------
         user:User
@@ -44,10 +44,9 @@ class UserDao(metaclass=Singleton):
             created = True
         return created
 
-
     @log
     def list_all(self) -> list[User]:
-        """ List all users
+        """ List all users found in the database
         Returns
         -------
         list[User]
@@ -80,6 +79,18 @@ class UserDao(metaclass=Singleton):
 
     @log
     def login(self, pseudo: str, pwdh: str) -> User:
+        """Verify the match between given variables and database variables
+        Parameters
+        ----------
+        pseudo: str
+            pseudo of the user
+        pwdh: str
+            hashed password
+        Returns
+        -------
+        User:
+            user associated if the pseudo and password match
+        """
         res = None
         try:
             with DBConnection().connection as connection:
@@ -90,6 +101,16 @@ class UserDao(metaclass=Singleton):
                         "WHERE pseudo == %(pseudo)s AND pwdh == %(pwdh)s",
                         {"pseudo": pseudo, "pwdh": pwdh}
                     )
-                
-
-
+                    res = cursor.fetchone()
+        except Exception as e:
+            logger.error(e)
+            raise
+        user = None
+        if res:
+            user = User(
+                id_user=res["id_player"],
+                pseudo=res["pseudo"],
+                pwdh=res["pwdh"],
+                admin=res["admin"]
+            )
+        return user
