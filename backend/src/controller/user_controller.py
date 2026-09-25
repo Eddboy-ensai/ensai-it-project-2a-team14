@@ -2,8 +2,11 @@ from fastapi import APIRouter, HTTPException
 
 from schema.user_model import UserCreateModel
 from service.user_service import UserService
+from utils.log_utils import get_logger
 
 router = APIRouter()
+
+logger = get_logger(__name__)
 
 
 @router.post("/", tags=["Users"])

@@ -1,9 +1,13 @@
 from dao.db_connection import DBConnection
 from utils.singleton import Singleton
+from utils.log_utils import get_logger, log
+
+logger = get_logger(__name__)
 
 
 class UserDao(metaclass=Singleton):
 
+    @log
     def create(self, user) -> bool:
         res = None
         try:
