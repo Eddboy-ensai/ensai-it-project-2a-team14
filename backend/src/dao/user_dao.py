@@ -40,8 +40,7 @@ class UserDao(metaclass=Singleton):
 
         created = False
         if res:
-            user.id_player = res["id_user"]
-            print(user)
+            user.id_user = int(res["id_user"])
             created = True
         return created
 
@@ -70,7 +69,7 @@ class UserDao(metaclass=Singleton):
         if res:
             for row in res:
                 user = User(
-                    id_user=row["id_player"],
+                    id_user=row["id_user"],
                     username=row["username"],
                     pwdh=row["pwdh"],
                     admin=row["admin"]
@@ -99,7 +98,7 @@ class UserDao(metaclass=Singleton):
                     cursor.execute(
                         "SELECT id_user, username, pwdh, admin"
                         "FROM project.Users"
-                        "WHERE username == %(username)s AND pwdh == %(pwdh)s",
+                        "WHERE username = %(username)s AND pwdh = %(pwdh)s",
                         {"username": username, "pwdh": pwdh}
                     )
                     res = cursor.fetchone()
@@ -109,7 +108,7 @@ class UserDao(metaclass=Singleton):
         user = None
         if res:
             user = User(
-                id_user=res["id_player"],
+                id_user=res["id_user"],
                 username=res["username"],
                 pwdh=res["pwdh"],
                 admin=res["admin"]

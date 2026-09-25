@@ -29,7 +29,7 @@ async def create_user(u: UserCreateModel, user_service=Depends(get_user_service)
     logger.info("Create a user")
     #if user_service.username_already_used(u.username):
     #    raise HTTPException(status_code=400, detail="Username already used.")
-
+    print("hello")
     user = user_service.create(u.username, u.pwd)
     if not user:
         raise HTTPException(status_code=500, detail="Error while creating user.")
@@ -44,7 +44,7 @@ async def list_all_users(user_service=Depends(get_user_service)):
         list[UserReadModel]: A list of all registered users.
     """
     logger.info("List all users")
-    users_list = user_service.find_all()
+    users_list = user_service.list_all()
     return users_list
 
 
