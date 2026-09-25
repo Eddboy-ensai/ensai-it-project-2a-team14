@@ -8,38 +8,47 @@ import secrets
 class UserService:
 
     @log
-    def create(self, username, password) -> User:
-        """Creates a new user in the system.
-        Args:
-            username (str)
-            password (str) will be hashed before storage
-        Returns:
+    def create(self, username: str, pwd: str) -> User:
+        """Asks to create a new user in the system
+        Parameters
+        ----------
+        username : str
+            username of the new user
+        pwd : str
+            password, will be hashed before storage
+        Returns
+        -------
             User object created or None if creation failed.
         """
         new_user = User(
             username=username,
-            password=hash_password(password, username)
+            pwdh=hash_password(pwd, username)
         )
-        return new_user if user_dao().create(new_user) else None
+        return new_user if UserDao().create(new_user) else None
 
     @log
     def list_all(self) -> list[User]:
         """Retrieves all users from the database by asking to the dao
-        Returns:
+        Returns
+        --------
             list[User]
         """
-        return user_dao().list_all()
+        return UserDao().list_all()
 
     @log
-    def login(self, username: str, password: str) -> User:
-        """Authenticates a player using their credentials.
-        Args:
-            username (str)
-            password (str)
-        Returns:
-            User object if authentication is successful, otherwise None.
+    def login(self, username: str, pwd: str) -> User:
+        """Asks to authenticate a player using their credentials
+        Parameters
+        ----------
+        username : str
+            username of the new user
+        pwd : str
+            password, will be hashed
+        Returns
+        -------
+            User object if authentication is successful, otherwise None
         """
-        user = user_dao().login(username, hash_password(password, username))
+        user = User().login(username, hash_password(pwd, username))
         if user:
             # Generate a token and update the Player
             user.access_token = secrets.token_urlsafe(32)

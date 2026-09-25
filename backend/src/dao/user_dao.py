@@ -25,11 +25,11 @@ class UserDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "INSERT INTO project.Users(pseudo, pwdh) VALUES "
-                        "(%(pseudo)s, %(pwdh)s) "
+                        "INSERT INTO project.Users(username, pwdh) VALUES "
+                        "(%(username)s, %(pwdh)s) "
                         "RETURNING id_user;",
                         {
-                            "pseudo": user.pseudo,
+                            "username": user.username,
                             "pwdh": user.pwdh
                         },
                     )
@@ -57,7 +57,7 @@ class UserDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT id_user, pseudo, pwdh, admin"
+                        "SELECT id_user, username, pwdh, admin"
                         "FROM project.Users"
                     )
                     res = cursor.fetchall()
@@ -70,7 +70,7 @@ class UserDao(metaclass=Singleton):
             for row in res:
                 user = User(
                     id_user=row["id_player"],
-                    pseudo=row["pseudo"],
+                    username=row["username"],
                     pwdh=row["pwdh"],
                     admin=row["admin"]
                 )
@@ -78,28 +78,28 @@ class UserDao(metaclass=Singleton):
         return users_list
 
     @log
-    def login(self, pseudo: str, pwdh: str) -> User:
+    def login(self, username: str, pwdh: str) -> User:
         """Verify the match between given variables and database variables
         Parameters
         ----------
-        pseudo: str
-            pseudo of the user
+        username: str
+            username of the user
         pwdh: str
             hashed password
         Returns
         -------
         User:
-            user associated if the pseudo and password match
+            user associated if the username and password match
         """
         res = None
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT id_user, pseudo, pwdh, admin"
+                        "SELECT id_user, username, pwdh, admin"
                         "FROM project.Users"
-                        "WHERE pseudo == %(pseudo)s AND pwdh == %(pwdh)s",
-                        {"pseudo": pseudo, "pwdh": pwdh}
+                        "WHERE username == %(username)s AND pwdh == %(pwdh)s",
+                        {"username": username, "pwdh": pwdh}
                     )
                     res = cursor.fetchone()
         except Exception as e:
@@ -109,7 +109,7 @@ class UserDao(metaclass=Singleton):
         if res:
             user = User(
                 id_user=res["id_player"],
-                pseudo=res["pseudo"],
+                username=res["username"],
                 pwdh=res["pwdh"],
                 admin=res["admin"]
             )
