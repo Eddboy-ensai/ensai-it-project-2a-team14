@@ -41,6 +41,7 @@ class UserDao(metaclass=Singleton):
         created = False
         if res:
             user.id_player = res["id_user"]
+            print(user)
             created = True
         return created
 

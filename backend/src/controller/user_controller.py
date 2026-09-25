@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.user_model import UserModel, UserReadModel
+from schema.user_model import UserModel, UserReadModel, UserCreateModel
 from service.user_service import UserService
 from utils.log_utils import get_logger
 
@@ -15,10 +15,10 @@ def get_user_service():
 
 
 @router.post("/", response_model=UserReadModel, tags=["Users"])
-async def create_user(u: UserModel, user_service=Depends(get_user_service)):
+async def create_user(u: UserCreateModel, user_service=Depends(get_user_service)):
     """Create a new user.
     Args:
-        u (UserModel): The user data to create.
+        u (UserCreateModel): The user data to create.
         user_service (UserService): The service used to interact with user data.
     Returns:
         UserReadModel: The newly created user data.
@@ -27,10 +27,10 @@ async def create_user(u: UserModel, user_service=Depends(get_user_service)):
         HTTPException: 500 error if the creation process fails.
     """
     logger.info("Create a user")
-    if user_service.username_already_used(u.username):
-        raise HTTPException(status_code=400, detail="Username already used.")
+    #if user_service.username_already_used(u.username):
+    #    raise HTTPException(status_code=400, detail="Username already used.")
 
-    user = user_service.create(u.username, u.pwdh)
+    user = user_service.create(u.username, u.pwd)
     if not user:
         raise HTTPException(status_code=500, detail="Error while creating user.")
 

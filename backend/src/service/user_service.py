@@ -20,11 +20,11 @@ class UserService:
         -------
             User object created or None if creation failed.
         """
-        new_user = User(
-            username=username,
-            pwdh=hash_password(pwd, username)
-        )
-        return new_user if UserDao().create(new_user) else None
+        new_user = User(username, hash_password(pwd, username))
+        created = UserDao().create(new_user)
+        if created:
+            return new_user
+        return None
 
     @log
     def list_all(self) -> list[User]:

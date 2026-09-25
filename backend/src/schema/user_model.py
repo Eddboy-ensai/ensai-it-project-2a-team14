@@ -3,11 +3,17 @@ from pydantic import BaseModel
 
 class UserModel(BaseModel):
     id_user: int
-    pseudo: str
+    username: str
     pwdh: str
     admin: bool
 
 
 class UserCreateModel(BaseModel):
-    pseudo: str
-    pwdh: str
+    username: str
+    pwd: str
+
+
+class UserReadModel(BaseModel):
+    id_user: int
+    username: str
+    admin: bool
