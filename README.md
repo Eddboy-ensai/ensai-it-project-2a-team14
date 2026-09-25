@@ -27,7 +27,8 @@ CREATE TABLE project.Users (
     id_user SERIAL PRIMARY KEY,
     pseudo VARCHAR(50) NOT NULL UNIQUE,
     pwdh VARCHAR(255) NOT NULL,
-    admin BOOLEAN NOT NULL DEFAULT FALSE
+    admin BOOLEAN NOT NULL DEFAULT FALSE,
+    token VARCHAR(255)
 );
 ```
 
