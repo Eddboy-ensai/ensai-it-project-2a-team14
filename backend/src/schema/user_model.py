@@ -17,3 +17,8 @@ class UserReadModel(BaseModel):
     id_user: int
     username: str
     admin: bool
+
+
+class UserLoginModel(BaseModel):
+    username: str
+    pwd: str

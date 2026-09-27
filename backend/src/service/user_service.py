@@ -48,10 +48,23 @@ class UserService:
         -------
             User object if authentication is successful, otherwise None
         """
-        user = User().login(username, hash_password(pwd, username))
+        user = UserDao().login(username, hash_password(pwd, username))
         if user:
             # Generate a token and update the Player
             user.access_token = secrets.token_urlsafe(32)
             self.update(user)
             return user
         return None
+
+    @log
+    def update(self, user: User) -> User:
+        """Updates an existing user's information.
+        Parameters
+        ----------
+        user: User
+            User object containing updated information
+        Returns
+        -------
+        User : the updated user object, or None if the update failed
+        """
+        return user if UserDao().update(user) else None

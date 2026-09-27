@@ -57,7 +57,7 @@ class UserDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT id_user, username, pwdh, admin"
+                        "SELECT id_user, username, pwdh, admin "
                         "FROM project.Users"
                     )
                     res = cursor.fetchall()
@@ -96,8 +96,8 @@ class UserDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT id_user, username, pwdh, admin"
-                        "FROM project.Users"
+                        "SELECT id_user, username, pwdh, admin "
+                        "FROM project.Users "
                         "WHERE username = %(username)s AND pwdh = %(pwdh)s",
                         {"username": username, "pwdh": pwdh}
                     )
@@ -114,3 +114,42 @@ class UserDao(metaclass=Singleton):
                 admin=res["admin"]
             )
         return user
+
+    @log
+    def update(self, user: User) -> bool:
+        """Update a user in the database.
+        Parameters
+        ----------
+        user: User
+            user to be updated
+        Returns
+        -------
+            True if update is successful, False otherwise
+        """
+        nb_affected_rows = 0
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "UPDATE project.Users                                           "
+                        "   SET username = %(username)s,                                "
+                        "       id_user = COALESCE(%(id_user)s, id_user), "
+                        "       admin = COALESCE(%(admin)s, admin), "
+                        "       pwdh = COALESCE(%(pwdh)s, pwdh),            "
+                        "       access_token = COALESCE(%(access_token)s, access_token) "
+                        " WHERE id_user = %(id_user)s;                              ",
+                        {
+                            "username": user.username,
+                            "id_user": user.id_user,
+                            "admin": user.admin,
+                            "pwdh": user.pwdh,
+                            "access_token": user.access_token,
+                        },
+                    )
+                    nb_affected_rows = cursor.rowcount
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return nb_affected_rows == 1

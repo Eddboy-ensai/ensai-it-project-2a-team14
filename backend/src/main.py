@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from controller import user_controller
+from controller import user_controller, login_controller
 from dotenv import load_dotenv
 from utils.log_utils import LogMiddleware, get_logger, initialize_logs
 from utils.env_variables import display_values, load_environment_variables
@@ -18,6 +18,7 @@ app = FastAPI(title="VeloScope")
 app.add_middleware(LogMiddleware)
 
 app.include_router(user_controller.router, prefix="/user", tags=["Users"])
+app.include_router(login_controller.router, prefix="/login", tags=["Login"])
 
 
 @app.get("/", include_in_schema=False)
