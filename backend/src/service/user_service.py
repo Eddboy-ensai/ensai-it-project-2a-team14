@@ -1,12 +1,12 @@
+import secrets
+
 from business_object.user import User
 from dao.user_dao import UserDao
 from utils.log_utils import log
 from utils.security import hash_password
-import secrets
 
 
 class UserService:
-
     @log
     def create(self, username: str, pwd: str) -> User:
         """Asks to create a new user in the system
@@ -68,3 +68,18 @@ class UserService:
         User : the updated user object, or None if the update failed
         """
         return user if UserDao().update(user) else None
+
+    @log
+    def username_already_used(self, username: str) -> bool:
+        """Check if a username is already used.
+        Parameters
+        ----------
+        username : str
+            username to check
+        Returns
+        -------
+        bool
+            True if the username already exists in the database.
+        """
+        users = UserDao().list_all()
+        return username in [p.username for p in users]

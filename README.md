@@ -34,4 +34,4 @@ CREATE TABLE project.Users (
 
 4) Install dependies by executing `uv sync --project backend`
 5) In a terminal, execute `uv run --project backend python backend/src/main.py`
-6) Go to the swagger (Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 5000")
+6) Go to the swagger (Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 5000") or use the webservice ("port 8000" after executing, in a terminal the commands `cd frontend` and `uv run --project . streamlit run src/app.py`)

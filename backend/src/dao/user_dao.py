@@ -1,13 +1,12 @@
-from dao.db_connection import DBConnection
-from utils.singleton import Singleton
-from utils.log_utils import get_logger, log
 from business_object.user import User
+from dao.db_connection import DBConnection
+from utils.log_utils import get_logger, log
+from utils.singleton import Singleton
 
 logger = get_logger(__name__)
 
 
 class UserDao(metaclass=Singleton):
-
     @log
     def create(self, user: User) -> bool:
         """Create a user in the database
@@ -28,10 +27,7 @@ class UserDao(metaclass=Singleton):
                         "INSERT INTO project.Users(username, pwdh) VALUES "
                         "(%(username)s, %(pwdh)s) "
                         "RETURNING id_user;",
-                        {
-                            "username": user.username,
-                            "pwdh": user.pwdh
-                        },
+                        {"username": user.username, "pwdh": user.pwdh},
                     )
                     res = cursor.fetchone()
         except Exception as e:
@@ -46,7 +42,7 @@ class UserDao(metaclass=Singleton):
 
     @log
     def list_all(self) -> list[User]:
-        """ List all users found in the database
+        """List all users found in the database
         Returns
         -------
         list[User]
@@ -56,10 +52,7 @@ class UserDao(metaclass=Singleton):
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(
-                        "SELECT id_user, username, pwdh, admin "
-                        "FROM project.Users"
-                    )
+                    cursor.execute("SELECT id_user, username, pwdh, admin FROM project.Users")
                     res = cursor.fetchall()
         except Exception as e:
             logger.error(e)
@@ -72,7 +65,7 @@ class UserDao(metaclass=Singleton):
                     id_user=row["id_user"],
                     username=row["username"],
                     pwdh=row["pwdh"],
-                    admin=row["admin"]
+                    admin=row["admin"],
                 )
                 users_list.append(user)
         return users_list
@@ -99,7 +92,7 @@ class UserDao(metaclass=Singleton):
                         "SELECT id_user, username, pwdh, admin "
                         "FROM project.Users "
                         "WHERE username = %(username)s AND pwdh = %(pwdh)s",
-                        {"username": username, "pwdh": pwdh}
+                        {"username": username, "pwdh": pwdh},
                     )
                     res = cursor.fetchone()
         except Exception as e:
@@ -111,7 +104,7 @@ class UserDao(metaclass=Singleton):
                 id_user=res["id_user"],
                 username=res["username"],
                 pwdh=res["pwdh"],
-                admin=res["admin"]
+                admin=res["admin"],
             )
         return user
 
