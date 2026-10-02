@@ -37,7 +37,7 @@ class UserService:
 
     @log
     def login(self, username: str, pwd: str) -> User:
-        """Asks to authenticate a player using their credentials
+        """Asks to authenticate a user using their credentials
         Parameters
         ----------
         username : str
@@ -50,7 +50,7 @@ class UserService:
         """
         user = UserDao().login(username, hash_password(pwd, username))
         if user:
-            # Generate a token and update the Player
+            # Generate a token and update the User
             user.access_token = secrets.token_urlsafe(32)
             self.update(user)
             return user
@@ -83,3 +83,13 @@ class UserService:
         """
         users = UserDao().list_all()
         return username in [p.username for p in users]
+
+    @log
+    def find_by_id(self, id_user: int) -> User:
+        """Finds a specific user by their unique id.
+        Args:
+            id_user (int)
+        Returns:
+            User object if found, otherwise None.
+        """
+        return UserDao().find_by_id(id_user)

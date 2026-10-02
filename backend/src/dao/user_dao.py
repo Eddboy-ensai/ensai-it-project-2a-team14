@@ -146,3 +146,36 @@ class UserDao(metaclass=Singleton):
             raise
 
         return nb_affected_rows == 1
+
+    @log
+    def find_by_id(self, id_user: int) -> User:
+        """Find a user by their id.
+        Args:
+            id_user (int): The ID of the user to find
+        Returns:
+            User matching the given id
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT *                            "
+                        "  FROM users                       "
+                        " WHERE id_user = %(id_user)s;   ",
+                        {"id_user": id_user},
+                    )
+                    res = cursor.fetchone()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        user = None
+        if res:
+            user = User(
+                username=res["username"],
+                id_user=res["id_user"],
+                admin=res["admin"],
+                pwdh=res["pwdh"]
+            )
+
+        return user
