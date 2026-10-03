@@ -1,6 +1,6 @@
 import hashlib
 
-from fastapi import Header, HTTPException
+from fastapi import Depends, Header, HTTPException
 
 from dao.user_dao import UserDao
 
@@ -41,3 +41,14 @@ def verify_token(x_auth_token=Header(None)) -> UserDao:
         raise HTTPException(status_code=401, detail="Invalid token.")
 
     return user
+
+
+def require_admin(current_user=Depends(verify_token)):
+    """Allows the request only if the authenticated user is an admin.
+    Raises:
+        HTTPException: 401 if not authenticated (raised by verify_token),
+            403 if authenticated but not admin.
+    """
+    if not current_user.admin:
+        raise HTTPException(status_code=403, detail="Admin rights required.")
+    return current_user

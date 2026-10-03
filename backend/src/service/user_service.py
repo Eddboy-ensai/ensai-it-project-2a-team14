@@ -93,3 +93,13 @@ class UserService:
             User object if found, otherwise None.
         """
         return UserDao().find_by_id(id_user)
+
+    @log
+    def delete(self, user) -> bool:
+        """Delete a user account.
+        Args:
+            User object to be deleted.
+        Returns:
+            True if deletion was successful, False otherwise.
+        """
+        return UserDao().delete(user)

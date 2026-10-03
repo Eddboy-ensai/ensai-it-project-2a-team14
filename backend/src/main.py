@@ -1,9 +1,10 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from controller import user_controller, login_controller
-from dotenv import load_dotenv
-from utils.log_utils import LogMiddleware, get_logger, initialize_logs
+
+from controller import login_controller, user_controller
 from utils.env_variables import display_values, load_environment_variables
+from utils.log_utils import LogMiddleware, get_logger, initialize_logs
 
 logger = get_logger(__name__)
 initialize_logs("Webservice")

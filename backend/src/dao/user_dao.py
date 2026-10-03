@@ -179,3 +179,63 @@ class UserDao(metaclass=Singleton):
             )
 
         return user
+
+    @log
+    def delete(self, user) -> bool:
+        """Delete a user from the database.
+        Args:
+            User to delete from the database
+        Returns:
+            True if the user was successfully deleted, False otherwise
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "DELETE FROM users                               "
+                        " WHERE id_user = %(id_user)s                 ",
+                        {"id_user": user.id_user},
+                    )
+                    res = cursor.rowcount
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return res > 0
+
+    @log
+    def find_by_token(self, access_token: str) -> User:
+        """Find a user by their access token.
+        Args:
+            access_token (str): The token to search for.
+        Returns:
+            User object if found, otherwise None.
+        """
+        if not access_token:
+            return None
+
+        res = None
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT *                                "
+                        "  FROM users                           "
+                        " WHERE access_token = %(token)s;        ",
+                        {"token": access_token},
+                    )
+                    res = cursor.fetchone()
+        except Exception as e:
+            logger.error(f"Error finding user by token: {e}")
+            raise
+
+        user = None
+        if res:
+            user = User(
+                id_user=res["id_user"],
+                username=res["username"],
+                pwdh=res["pwdh"],
+                admin=res["admin"],
+            )
+
+        return user

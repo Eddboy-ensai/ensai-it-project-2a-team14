@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from schema.user_model import UserCreateModel, UserModel, UserReadModel
 from service.user_service import UserService
 from utils.log_utils import get_logger
+from utils.security import hash_password, require_admin
 
 router = APIRouter()
 
@@ -29,7 +30,6 @@ async def create_user(u: UserCreateModel, user_service=Depends(get_user_service)
     logger.info("Create a user")
     if user_service.username_already_used(u.username):
         raise HTTPException(status_code=400, detail="Username already used.")
-    print("hello")
     user = user_service.create(u.username, u.pwd)
     if not user:
         raise HTTPException(status_code=500, detail="Error while creating user.")
@@ -87,8 +87,8 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
     if u.username != user.username and user_service.username_already_used(u.username):
         raise HTTPException(status_code=400, detail="Username already used.")
     user.username = u.username
-    user.pwdh = u.pwdh
-    user.favorite = u.favorite
+    user.pwdh = hash_password(u.pwdh, u.username)
+    user.id_user = u.id_user
     user.admin = u.admin
 
     user = user_service.update(user)
@@ -99,7 +99,7 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
 
 
 @router.delete("/{id_user}", tags=["Users"])
-async def delete_user(id_user: int, user_service=Depends(get_user_service)):
+async def delete_user(id_user: int, user_service=Depends(get_user_service), admin=Depends(require_admin)):
     """Delete a user from the system.
     Args:
         id_user (int)
