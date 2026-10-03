@@ -99,7 +99,11 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
 
 
 @router.delete("/{id_user}", tags=["Users"])
-async def delete_user(id_user: int, user_service=Depends(get_user_service), admin=Depends(require_admin)):
+async def delete_user(
+    id_user: int,
+    user_service=Depends(get_user_service),
+    admin=Depends(require_admin),
+):
     """Delete a user from the system.
     Args:
         id_user (int)
