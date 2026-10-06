@@ -22,7 +22,7 @@ st.set_page_config(page_title="Veloscope", page_icon="🪙", layout="centered")
 st.markdown(
     f"""
     <div style="text-align:center">
-        <h1 style="color:{config.get_option("theme.primaryColor")}">Coin flip game</h1>
+        <h1 style="color:{config.get_option("theme.primaryColor")}">Projet veloscope</h1>
     </div>
     """,
     unsafe_allow_html=True,
