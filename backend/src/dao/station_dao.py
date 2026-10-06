@@ -46,4 +46,23 @@ class StationDao(metaclass=Singleton):
 
         return nb_rows
 
-    # find_by_id() et list_all() viendront ici pour StationService
+    def find_by_id(self, id_station: int) -> Station:
+        """Find a station by its id.
+        Parameters
+        ----------
+        id_station : int
+            The ID of the station to find
+        Returns
+        -------
+            Station matching the given id
+        """
+        pass
+
+    def list_all(self) -> list[Station]:
+        """List all stations found in the database
+        Returns
+        -------
+        list[Station]
+            list of all the users
+        """
+        pass
