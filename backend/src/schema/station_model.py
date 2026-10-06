@@ -7,3 +7,8 @@ class StationReadModel(BaseModel):
     lat: float
     lon: float
     capacity: int | None
+
+
+class FavoriteAddModel(BaseModel):
+    id_user: int
+    id_station: int
