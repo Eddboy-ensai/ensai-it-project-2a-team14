@@ -53,8 +53,8 @@ CREATE TABLE project.StationRecords (
 );
 
 CREATE INDEX idx_station_records_date ON project.StationRecords(date);
-```
-
+```  
+3 and 4 bis) : Use the file db_tests.sql to create a mocked database for tests
 
 5) Install dependencies by executing `uv sync --project backend`
 6) In a terminal, execute `uv run --project backend python backend/src/main.py`

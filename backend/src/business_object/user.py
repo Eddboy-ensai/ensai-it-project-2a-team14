@@ -1,4 +1,5 @@
 class User:
+    """Class representing a user"""
 
     def __init__(
         self,
@@ -6,7 +7,7 @@ class User:
         pwdh: str,
         id_user: int | None = None,
         admin: bool = False,
-        access_token: str | None = None
+        access_token: str | None = None,
     ):
         """Constructor"""
         self.id_user = id_user

@@ -46,6 +46,7 @@ class StationDao(metaclass=Singleton):
 
         return nb_rows
 
+    @log
     def find_by_id(self, id_station: int) -> Station:
         """Find a station by its id.
         Parameters
@@ -56,8 +57,29 @@ class StationDao(metaclass=Singleton):
         -------
             Station matching the given id
         """
-        pass
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * FROM Stations WHERE id_station = %(id_station)s; ",
+                        {"id_station": id_station},
+                    )
+                    res = cursor.fetchone()
+        except Exception as e:
+            logger.error(e)
+            raise
+        station = None
+        if res:
+            station = Station(
+                id_station=res["id_station"],
+                name=res["name"],
+                lat=res["lat"],
+                lon=res["lon"],
+                capacity=res["capacity"],
+            )
+        return station
 
+    @log
     def list_all(self) -> list[Station]:
         """List all stations found in the database
         Returns
@@ -65,4 +87,25 @@ class StationDao(metaclass=Singleton):
         list[Station]
             list of all the users
         """
-        pass
+        res = None
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT * FROM project.Stations")
+                    res = cursor.fetchall()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        stations_list = []
+        if res:
+            for row in res:
+                station = Station(
+                    id_station=row["id_station"],
+                    name=row["name"],
+                    lat=row["lat"],
+                    lon=row["lon"],
+                    capacity=row["capacity"],
+                )
+            stations_list.append(station)
+        return stations_list

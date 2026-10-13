@@ -1,4 +1,6 @@
 class Station:
+    """Class representing a station"""
+
     def __init__(
         self, id_station: int, name: str, lat: float, lon: float, capacity: int | None = None
     ):

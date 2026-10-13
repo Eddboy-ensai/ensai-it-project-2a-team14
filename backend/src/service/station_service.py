@@ -2,6 +2,7 @@ from business_object.Favorite import Favorite
 from business_object.Station import Station
 from plt.figure import Figure
 
+from dao.station_dao import StationDao
 from utils.log_utils import log
 
 
@@ -18,7 +19,7 @@ class StationService:
         Station:
             Station object if found, otherwise None.
         """
-        pass
+        return StationDao().find_by_id(id_station)
 
     @log
     def list_all(self) -> list[Station]:
@@ -27,7 +28,7 @@ class StationService:
         --------
             list[Station]
         """
-        pass
+        return StationDao().list_all()
 
     @log
     def get_stats(self, station: Station) -> list[float]:
