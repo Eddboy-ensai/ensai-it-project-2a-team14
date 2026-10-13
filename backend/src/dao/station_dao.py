@@ -107,5 +107,5 @@ class StationDao(metaclass=Singleton):
                     lon=row["lon"],
                     capacity=row["capacity"],
                 )
-            stations_list.append(station)
+                stations_list.append(station)
         return stations_list

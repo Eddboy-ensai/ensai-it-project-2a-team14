@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS project.Users (
 );
 
 CREATE TABLE IF NOT EXISTS project.Stations (
-    id_station VARCHAR(50) PRIMARY KEY,
+    id_station INTEGER PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     lat DOUBLE PRECISION NOT NULL,
     lon DOUBLE PRECISION NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS project.Stations (
 );
 
 CREATE TABLE IF NOT EXISTS project.StationRecords (
-    id_station VARCHAR(50) NOT NULL REFERENCES project.Stations(id_station),
+    id_station INTEGER NOT NULL REFERENCES project.Stations(id_station),
     date TIMESTAMPTZ NOT NULL,
     status VARCHAR(50),
     nb_available_spaces INTEGER,

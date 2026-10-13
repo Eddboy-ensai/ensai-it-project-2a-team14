@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
-from controller import login_controller, user_controller
+from controller import login_controller, station_controller, user_controller
 from utils.env_variables import display_values, load_environment_variables
 from utils.log_utils import LogMiddleware, get_logger, initialize_logs
 
@@ -20,12 +20,14 @@ app.add_middleware(LogMiddleware)
 
 app.include_router(user_controller.router, prefix="/user", tags=["Users"])
 app.include_router(login_controller.router, prefix="/login", tags=["Login"])
+app.include_router(station_controller.router, prefix="/station", tags=["Stations"])
 
 
 @app.get("/", include_in_schema=False)
 async def redirect_to_docs():
     """Redirect to the API documentation"""
     return RedirectResponse(url="/docs")
+
 
 if __name__ == "__main__":
     import os

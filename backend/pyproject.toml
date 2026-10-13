@@ -15,6 +15,7 @@ dependencies = [
     "requests",
     "regex",
     "uvicorn",
+    "pandas",
 ]
 
 # Dependencies used only for development, not for runtime

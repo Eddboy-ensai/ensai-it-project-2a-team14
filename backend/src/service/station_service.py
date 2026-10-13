@@ -1,7 +1,7 @@
-from business_object.Favorite import Favorite
-from business_object.Station import Station
-from plt.figure import Figure
+import pandas as pd
 
+from business_object.favorite import Favorite
+from business_object.station import Station
 from dao.station_dao import StationDao
 from utils.log_utils import log
 
@@ -45,7 +45,7 @@ class StationService:
         pass
 
     @log
-    def get_availibility_over_time(self, station: Station, range: int) -> Figure:
+    def get_availibility_over_time(self, station: Station, range: int) -> pd.DataFrame:
         """Call the method of the DAO to get availibility over time of a station.
         Parameters
         ----------
