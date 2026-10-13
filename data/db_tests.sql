@@ -29,11 +29,9 @@ CREATE TABLE IF NOT EXISTS project.StationRecords (
 );
 
 CREATE TABLE IF NOT EXISTS project.Favorites (
-    id_user INTEGER,
-    id_station INTEGER,
-    PRIMARY KEY (id_user, id_station),
-    FOREIGN KEY (id_user) REFERENCES project.Users(id_user),
-    FOREIGN KEY (id_station) REFERENCES project.Stations(id_station)
+    id_user INTEGER REFERENCES project.Users(id_user),
+    id_station INTEGER REFERENCES project.Stations(id_station),
+    PRIMARY KEY (id_user, id_station)
 );
 
 CREATE INDEX IF NOT EXISTS idx_station_records_date ON project.StationRecords(date);
