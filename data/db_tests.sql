@@ -35,8 +35,8 @@ INSERT INTO project.Users(username, pwdh, admin) VALUES
 ('mimi', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', false);
 
 INSERT INTO project.Stations(id_station, name, lat, lon, capacity) VALUES
-(1, 'Republique', 48.8675, 2.3638, 18),
-(2, 'Prefecture', 48.8584, 2.3470, 23);
+(1000, 'Republique', 48.8675, 2.3638, 18),
+(1001, 'Prefecture', 48.8584, 2.3470, 23);
 
 INSERT INTO project.StationRecords(
   id_station,
@@ -47,7 +47,7 @@ INSERT INTO project.StationRecords(
   nb_available_ebikes
 )
 VALUES
-(1, '2026-10-13 08:00:00+02', 'OPEN', 10, 5, 3),
-(1, '2026-10-13 08:15:00+02', 'OPEN', 9, 6, 3),
-(2, '2026-10-13 08:00:00+02', 'OPEN', 20, 1, 2),
-(2, '2026-10-13 08:15:00+02', 'OPEN', 7, 11, 5);
+(1000, '2026-10-13 08:00:00+02', 'OPEN', 10, 5, 3),
+(1000, '2026-10-13 08:15:00+02', 'OPEN', 9, 6, 3),
+(1001, '2026-10-13 08:00:00+02', 'OPEN', 20, 1, 2),
+(1001, '2026-10-13 08:15:00+02', 'OPEN', 7, 11, 5);

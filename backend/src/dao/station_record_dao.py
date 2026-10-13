@@ -44,3 +44,44 @@ class StationRecordDao(metaclass=Singleton):
             raise
 
         return nb_inserted
+
+    @log
+    def list_all_by_id(id_station: int) -> list[StationRecord]:
+        """List all records in the database of the choosen station.
+
+        Parameters:
+        -----------
+        id_station: int
+            The id of the choosen station
+
+        Returns
+        -------
+        list[StationRecord]
+            list of all the records of the station
+        """
+        res = None
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * FROM project.StationRecord WHERE id_station=%(id_station)s",
+                        {"id_station": id_station},
+                    )
+                    res = cursor.fetchall()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        stationrecords_list = []
+        if res:
+            for row in res:
+                stationrecord = StationRecord(
+                    id_station=row["id_station"],
+                    date=row["date"],
+                    status=row["status"],
+                    nb_available_spaces=row["nb_available_spaces"],
+                    nb_available_bikes=row["nb_available_bikes"],
+                    nb_available_ebikes=row["nb_available_ebikes"],
+                )
+                stationrecords_list.append(stationrecord)
+        return stationrecords_list
