@@ -1,4 +1,4 @@
-from plt.figure import Figure
+import pandas as pd
 
 from business_object.station import Station
 from dao.station_record_dao import StationRecordDao
@@ -158,13 +158,13 @@ class CalculationService:
         return saturation_mean_time
 
     @log
-    def get_availability_over_time(self) -> Figure:
-        """Plot a figure which represent the availabilty of the station over time.
+    def get_availability_over_time(self) -> pd.DataFrame:
+        """Returns a dataframe which gives the availabilty of the station over time.
 
         Return :
         --------
-        Figure
-            the availability of the station over time plotted
+        pd.DataFrame
+            the dataframe of availability of the station over time
         """
         pass
 

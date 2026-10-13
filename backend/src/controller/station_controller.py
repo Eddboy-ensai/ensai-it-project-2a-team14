@@ -48,7 +48,7 @@ async def station_by_id(id_station: int, station_service=Depends(get_station_ser
     return station
 
 
-@router.post("/", response_model=StationReadModel, tags=["Stations"])
+@router.post("/", response_model=FavoriteAddModel, tags=["Stations"])
 async def add_favorite(favorite: FavoriteAddModel, station_service=Depends(get_station_service)):
     """Add a new favorite to the database.
     Parameters

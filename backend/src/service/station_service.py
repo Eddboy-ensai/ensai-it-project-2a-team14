@@ -2,7 +2,9 @@ import pandas as pd
 
 from business_object.favorite import Favorite
 from business_object.station import Station
+from dao.favorite_dao import FavoriteDao
 from dao.station_dao import StationDao
+from service.calculation_service import CalculationService
 from utils.log_utils import log
 
 
@@ -42,7 +44,12 @@ class StationService:
         list[float]
             list of all the statistics
         """
-        pass
+        fill_rate = CalculationService().compute_fill_rate()
+        shortage_rate = CalculationService().compute_shortage_rate()
+        saturation_rate = CalculationService().compute_saturation_rate()
+        shortage_mean_time = CalculationService().compute_shortage_mean_time()
+        saturation_mean_time = CalculationService().compute_saturation_mean_time()
+        return [fill_rate, shortage_rate, saturation_rate, shortage_mean_time, saturation_mean_time]
 
     @log
     def get_availibility_over_time(self, station: Station, range: int) -> pd.DataFrame:
@@ -55,8 +62,8 @@ class StationService:
             Range of time
         Returns
         -------
-        Figure
-            availibility
+        pd.DataFrame
+            the dataframe containing availibilities
 
         """
         pass
@@ -73,7 +80,11 @@ class StationService:
         bool
             True if the favorite already exists in the database.
         """
-        pass
+        favorites = FavoriteDao().list_all()
+        for fav in favorites:
+            if fav.id_user == favorite.id_user and fav.id_station == favorite.id_station:
+                return True
+        return False
 
     @log
     def add_favorite(self, favorite: Favorite) -> Favorite | None:
@@ -87,7 +98,10 @@ class StationService:
         Favorite
             Favorite object created or None if creation failed.
         """
-        pass
+        created = FavoriteDao().add_favorite(favorite)
+        if created:
+            return favorite
+        return None
 
     @log
     def delete_favorite(self, favorite: Favorite) -> bool:

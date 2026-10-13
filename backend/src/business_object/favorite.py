@@ -3,5 +3,5 @@ class Favorite:
 
     def __init__(self, id_user: int, id_station: int):
         """Constructor"""
-        self.id_user = id.user
+        self.id_user = id_user
         self.id_station = id_station

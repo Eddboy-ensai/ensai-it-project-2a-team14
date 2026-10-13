@@ -28,6 +28,14 @@ CREATE TABLE IF NOT EXISTS project.StationRecords (
     PRIMARY KEY (id_station, date)
 );
 
+CREATE TABLE IF NOT EXISTS project.Favorites (
+    id_user INTEGER,
+    id_station INTEGER,
+    PRIMARY KEY (id_user, id_station),
+    FOREIGN KEY (id_user) REFERENCES project.Users(id_user),
+    FOREIGN KEY (id_station) REFERENCES project.Stations(id_station)
+);
+
 CREATE INDEX IF NOT EXISTS idx_station_records_date ON project.StationRecords(date);
 
 INSERT INTO project.Users(username, pwdh, admin) VALUES
@@ -51,3 +59,12 @@ VALUES
 (1000, '2026-10-13 08:15:00+02', 'OPEN', 9, 6, 3),
 (1001, '2026-10-13 08:00:00+02', 'OPEN', 20, 1, 2),
 (1001, '2026-10-13 08:15:00+02', 'OPEN', 7, 11, 5);
+
+INSERT INTO project.Favorites(
+  id_user,
+  id_station
+)
+VALUES
+(1, 1000),
+(2,1000),
+(2,1001);
