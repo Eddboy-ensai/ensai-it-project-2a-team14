@@ -21,7 +21,7 @@ app.add_middleware(LogMiddleware)
 app.include_router(user_controller.router, prefix="/user", tags=["Users"])
 app.include_router(login_controller.router, prefix="/login", tags=["Login"])
 app.include_router(station_controller.router, prefix="/station", tags=["Stations"])
-app.include_router(station_controller.router, prefix="/favorite", tags=["Favorites"])
+app.include_router(favorite_controller.router, prefix="/favorite", tags=["Favorites"])
 
 
 @app.get("/", include_in_schema=False)
