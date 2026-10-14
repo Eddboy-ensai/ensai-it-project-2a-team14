@@ -38,14 +38,14 @@ CREATE INDEX IF NOT EXISTS idx_station_records_date ON project.StationRecords(da
 
 INSERT INTO project.Users(username, pwdh, admin) VALUES
 ('jojo', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', true),
-('mimi', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', false);
-('fafa', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', false);
+('mimi', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', false),
+('fafa', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', false),
 ('beber', 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', false);
 
 INSERT INTO project.Stations(id_station, name, lat, lon, capacity) VALUES
 (5501, 'République', -1.678037, 48.110026, 45),
-(5502, 'Mairie-Opéra', -1.678757, 48.111624, 24);
-(5504, 'Place Hoche', -1.677073, 48.115074, 39);
+(5502, 'Mairie-Opéra', -1.678757, 48.111624, 24),
+(5504, 'Place Hoche', -1.677073, 48.115074, 39),
 (5505, 'Sainte-Anne', -1.680534, 48.114219, 24);
 
 
@@ -102,7 +102,7 @@ INSERT INTO project.Favorites(
 )
 VALUES
 (1, 5501),
-(1,5502),
-(2,5504)
-(4,5504)
-(4,5505);
+(1, 5502),
+(2, 5504),
+(4, 5504),
+(4, 5505);

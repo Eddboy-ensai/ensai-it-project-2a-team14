@@ -33,7 +33,7 @@ class StationService:
         return StationDao().list_all()
 
     @log
-    def get_stats(self, station: Station) -> list[float]:
+    def get_stats(self, station: Station) -> dict:
         """Get the statistics of a station by asking the methods of the class StationCalculationService
         Parameters
         ----------
@@ -41,15 +41,21 @@ class StationService:
             the station from which we want to get the statistics
         Returns
         -------
-        list[float]
-            list of all the statistics
+        dict
+            dictionary of all the informations and statistics about a station
         """
         fill_rate = CalculationService().compute_fill_rate()
         shortage_rate = CalculationService().compute_shortage_rate()
         saturation_rate = CalculationService().compute_saturation_rate()
         shortage_mean_time = CalculationService().compute_shortage_mean_time()
         saturation_mean_time = CalculationService().compute_saturation_mean_time()
-        return [fill_rate, shortage_rate, saturation_rate, shortage_mean_time, saturation_mean_time]
+        return {
+            "fill_rate": fill_rate,
+            "shortage_rate": shortage_rate,
+            "saturation_rate": saturation_rate,
+            "shortage_mean_time": shortage_mean_time,
+            "saturation_mean_time": saturation_mean_time,
+        }
 
     @log
     def get_availibility_over_time(self, station: Station, range: int) -> pd.DataFrame:

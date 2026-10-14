@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from schema.station_model import FavoriteAddModel
-from service.station_service import FavoriteService
+from service.favorite_service import FavoriteService
 from utils.log_utils import get_logger
 
 router = APIRouter()
