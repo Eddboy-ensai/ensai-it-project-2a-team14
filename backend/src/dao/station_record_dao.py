@@ -64,7 +64,7 @@ class StationRecordDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT * FROM project.StationRecord WHERE id_station=%(id_station)s",
+                        "SELECT * FROM project.StationRecords WHERE id_station=%(id_station)s",
                         {"id_station": id_station},
                     )
                     res = cursor.fetchall()

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.station_model import StationReadModel
+from schema.station_model import StationReadModel, Statistics
 from service.station_service import StationService
 from utils.log_utils import get_logger
 
@@ -44,11 +44,11 @@ async def station_by_id(id_station: int, station_service=Depends(get_station_ser
     logger.info("Find a station by id")
     station = station_service.find_by_id(id_station)
     if not station:
-        raise HTTPException(status_code=404, detail=f"User (id={id_station}) not found.")
+        raise HTTPException(status_code=404, detail=f"Station (id={id_station}) not found.")
     return station
 
 
-@router.get("/{id_station}", tags=["Stations"])
+@router.get("/{id_station}/stats", response_model=Statistics, tags=["Stations"])
 async def get_stats(id_station: int, station_service=Depends(get_station_service)):
     """Returns the statistics of a station
     Parameters
@@ -67,6 +67,6 @@ async def get_stats(id_station: int, station_service=Depends(get_station_service
     logger.info("Get the statistics of a station")
     station = station_service.find_by_id(id_station)
     if not station:
-        raise HTTPException(status_code=404, detail=f"User (id={id_station}) not found.")
+        raise HTTPException(status_code=404, detail=f"Station (id={id_station}) not found.")
     stats = station_service.get_stats(station)
     return stats

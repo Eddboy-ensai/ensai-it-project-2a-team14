@@ -7,6 +7,7 @@ from utils.log_utils import log
 
 class CalculationService:
     def __init__(self, station: Station):
+        self.station = station
         self.station_records = StationRecordDao.list_all_by_id(station.id_station)
 
     @log
@@ -18,7 +19,7 @@ class CalculationService:
         float
              the fraction of the station actually filled
         """
-        if not self.station or self.station.capacity == 0:
+        if not self.station or self.station.capacity == 0 or self.station.capacity is None:
             return 0.0
         latest_records = max(self.station_records, key=lambda r: r.date, default=None)
         if not latest_records:

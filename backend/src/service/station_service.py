@@ -44,11 +44,12 @@ class StationService:
         dict
             dictionary of all the informations and statistics about a station
         """
-        fill_rate = CalculationService().compute_fill_rate()
-        shortage_rate = CalculationService().compute_shortage_rate()
-        saturation_rate = CalculationService().compute_saturation_rate()
-        shortage_mean_time = CalculationService().compute_shortage_mean_time()
-        saturation_mean_time = CalculationService().compute_saturation_mean_time()
+        calculation_service = CalculationService(station)
+        fill_rate = calculation_service.compute_fill_rate()
+        shortage_rate = calculation_service.compute_shortage_rate()
+        saturation_rate = calculation_service.compute_saturation_rate()
+        shortage_mean_time = calculation_service.compute_shortage_mean_time()
+        saturation_mean_time = calculation_service.compute_saturation_mean_time()
         return {
             "fill_rate": fill_rate,
             "shortage_rate": shortage_rate,
