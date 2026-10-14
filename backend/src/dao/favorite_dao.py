@@ -63,3 +63,28 @@ class FavoriteDao(metaclass=Singleton):
                 station = Favorite(id_user=row["id_user"], id_station=row["id_station"])
                 favorites_list.append(station)
         return favorites_list
+
+    @log
+    def delete(self, favorite) -> bool:
+        """Delete a favorite from the database.
+        Parameters
+        ----------
+            Favorite to delete from the database
+        Returns
+        -------
+            True if the favorite was successfully deleted, False otherwise
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "DELETE FROM project.Favorites                               "
+                        " WHERE id_user = %(id_user)s AND id_station = %(id_station)s                ",
+                        {"id_user": favorite.id_user, "id_station": favorite.id_station},
+                    )
+                    res = cursor.rowcount
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return res > 0

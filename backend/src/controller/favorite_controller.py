@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.station_model import FavoriteAddModel
+from business_object.favorite import Favorite
+from schema.station_model import FavoriteAddModel, FavoriteDeleteModel
 from service.favorite_service import FavoriteService
 from utils.log_utils import get_logger
 
@@ -41,6 +42,12 @@ async def add_favorite(favorite: FavoriteAddModel, favorite_service=Depends(get_
 
 # à retravailler : quel argument ? quelles vérifications ? Similaire à delete un joueur ?
 @router.delete("/{id_user}", tags=["Favorites"])
-async def delete_favorite(station_service=Depends(get_favorite_service)):
+async def delete_favorite(
+    id_user: int, body: FavoriteDeleteModel, favorite_service=Depends(get_favorite_service)
+):
     """Delete a favorite from the database."""
-    pass
+    favorite = Favorite(id_user, body.id_station)
+    if not favorite_service.favorite_already_exists(favorite):
+        raise HTTPException(status_code=404, detail="Favorite not found.")
+    favorite_service.delete_favorite(favorite)
+    return "Favori supprimé"

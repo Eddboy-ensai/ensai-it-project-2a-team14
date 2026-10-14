@@ -120,4 +120,4 @@ class StationService:
         bool
             True if deletion was successful, False otherwise.
         """
-        pass
+        return FavoriteDao().delete(favorite)

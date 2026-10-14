@@ -14,6 +14,10 @@ class FavoriteAddModel(BaseModel):
     id_station: int
 
 
+class FavoriteDeleteModel(BaseModel):
+    id_station: int
+
+
 class Statistics(BaseModel):
     fill_rate: float
     shortage_rate: float
