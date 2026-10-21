@@ -28,7 +28,7 @@ class StationDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     for station in stations:
                         cursor.execute(
-                            "INSERT INTO project.Stations"
+                            "INSERT INTO Stations"
                             "(id_station, name, lat, lon, capacity) "
                             "VALUES (%(id_station)s, %(name)s, %(lat)s, "
                             "        %(lon)s, %(capacity)s) "
@@ -91,7 +91,7 @@ class StationDao(metaclass=Singleton):
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute("SELECT * FROM project.Stations")
+                    cursor.execute("SELECT * FROM Stations")
                     res = cursor.fetchall()
         except Exception as e:
             logger.error(e)
