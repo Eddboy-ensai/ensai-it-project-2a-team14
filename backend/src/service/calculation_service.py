@@ -146,29 +146,19 @@ class CalculationService:
                 < index_of_the_last_time_the_saturation_period_ended
             ):
                 if sorted_records[i].nb_available_spaces == 0:
+                    j = i
                     time = 0
                     index_of_the_last_time_the_saturation_period_started = i
-                    while sorted_records[i].nb_available_spaces == 0:
-                        i += 1
-                    time += (sorted_records[i + 1].date - sorted_records[i].date).total_seconds()
+                    while sorted_records[j].nb_available_spaces == 0:
+                        j += 1
+                    time += (sorted_records[j + 1].date - sorted_records[j].date).total_seconds()
                     total_time += time
                     number_of_saturation += 1
-                    index_of_the_last_time_the_saturation_period_ended = i + 1
+                    index_of_the_last_time_the_saturation_period_ended = j + 1
         if number_of_saturation == 0:
             return 0.0
         saturation_mean_time = total_time / number_of_saturation
         return saturation_mean_time
-
-    @log
-    def get_availability_over_time(self) -> pd.DataFrame:
-        """Returns a dataframe which gives the availabilty of the station over time.
-
-        Return :
-        --------
-        pd.DataFrame
-            the dataframe of availability of the station over time
-        """
-        pass
 
     @log
     def compute_sat_score(self) -> float:
@@ -219,3 +209,14 @@ class CalculationService:
         d = 0.5
         score = round(100 * (1 - c * self.compute_sat_score - d * self.compute_short_score))
         return score
+
+    @log
+    def get_availability_over_time(self) -> pd.DataFrame:
+        """Returns a dataframe which gives the availabilty of the station over time.
+
+        Return :
+        --------
+        pd.DataFrame
+            the dataframe of availability of the station over time
+        """
+        pass
