@@ -24,7 +24,7 @@ class UserDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "INSERT INTO project.Users(username, pwdh) VALUES "
+                        "INSERT INTO Users(username, pwdh) VALUES "
                         "(%(username)s, %(pwdh)s) "
                         "RETURNING id_user;",
                         {"username": user.username, "pwdh": user.pwdh},
@@ -52,7 +52,7 @@ class UserDao(metaclass=Singleton):
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute("SELECT id_user, username, pwdh, admin FROM project.Users")
+                    cursor.execute("SELECT id_user, username, pwdh, admin FROM Users")
                     res = cursor.fetchall()
         except Exception as e:
             logger.error(e)
@@ -90,7 +90,7 @@ class UserDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT id_user, username, pwdh, admin "
-                        "FROM project.Users "
+                        "FROM Users "
                         "WHERE username = %(username)s AND pwdh = %(pwdh)s",
                         {"username": username, "pwdh": pwdh},
                     )
@@ -125,7 +125,7 @@ class UserDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "UPDATE project.Users                                           "
+                        "UPDATE Users                                           "
                         "   SET username = %(username)s,                                "
                         "       id_user = COALESCE(%(id_user)s, id_user), "
                         "       admin = COALESCE(%(admin)s, admin), "
@@ -160,7 +160,7 @@ class UserDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                            "
-                        "  FROM users                       "
+                        "  FROM Users                       "
                         " WHERE id_user = %(id_user)s;   ",
                         {"id_user": id_user},
                     )
@@ -175,7 +175,7 @@ class UserDao(metaclass=Singleton):
                 username=res["username"],
                 id_user=res["id_user"],
                 admin=res["admin"],
-                pwdh=res["pwdh"]
+                pwdh=res["pwdh"],
             )
 
         return user
@@ -192,7 +192,7 @@ class UserDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "DELETE FROM users                               "
+                        "DELETE FROM Users                               "
                         " WHERE id_user = %(id_user)s                 ",
                         {"id_user": user.id_user},
                     )
@@ -220,7 +220,7 @@ class UserDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                                "
-                        "  FROM users                           "
+                        "  FROM Users                           "
                         " WHERE access_token = %(token)s;        ",
                         {"token": access_token},
                     )
