@@ -170,23 +170,37 @@ class CalculationService:
         pass
 
     @log
-    def compute_score(self) -> float:
-        """Calculate the score of the station based on caracteristics like fiability, location etc...
+    def compute_sat_score(self) -> float:
+        """Calculate the saturation score of the station based on saturation mean time, and saturation rate
 
         Returns :
         ---------
         float
-            the score of the station
+            the saturation score of the station
         """
         pass
 
     @log
-    def get_suggestion(self) -> Station:
-        """Find the best station for the user based on their localisation.
+    def compute_sho_score(self) -> float:
+        """Calculate the shortage score of the station based on shortage mean time, and shortage rate
 
-        Return :
-        --------
-        Station
-            The best station station for the user based on their localisation
+
+        Returns :
+        ---------
+        float
+            the shortage score of the station
+        """
+        pass
+
+    @log
+    def compute_score(self) -> int:
+        """Calculate the fiability score of the station
+
+        The score will be calculated using the shortage score and the saturation and some choosen parameters
+
+        Returns :
+        ---------
+        float
+            the fiability score of the station
         """
         pass
