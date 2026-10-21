@@ -1,6 +1,5 @@
 import pandas as pd
 import math
-
 from business_object.station import Station
 from dao.station_record_dao import StationRecordDao
 from utils.log_utils import log
@@ -101,23 +100,14 @@ class CalculationService:
         sorted_records = sorted(self.station_records, key=lambda r: r.date)
         number_of_shortage = 0.0
         total_time = 0.0
-        index_of_the_last_time_the_shortage_period_started = 0
-        index_of_the_last_time_the_shortage_period_ended = 0
-        for i in range(len(sorted_records) - 1):
-            if (
-                not index_of_the_last_time_the_shortage_period_started
-                < i
-                < index_of_the_last_time_the_shortage_period_ended
-            ):
-                if sorted_records[i].nb_available_spaces == self.station.capacity:
-                    time = 0
-                    index_of_the_last_time_the_shortage_period_started = i
-                    while sorted_records[i].nb_available_spaces == self.station.capacity:
-                        i += 1
-                    time += (sorted_records[i + 1].date - sorted_records[i].date).total_seconds()
-                    total_time += time
-                    number_of_shortage += 1
-                    index_of_the_last_time_the_shortage_period_ended = i + 1
+        shortage_start = None
+        for records in sorted_records:
+            if records.nb_available_spaces == self.station.capacity:
+                if shortage_start is None:
+                    shortage_start = records.date
+            elif shortage_start is not None:
+                total_time += (records.date - shortage_start).total_seconds()
+                number_of_shortage += 1
         if number_of_shortage == 0:
             return 0.0
         shortage_mean_time = total_time / number_of_shortage
@@ -137,24 +127,14 @@ class CalculationService:
         sorted_records = sorted(self.station_records, key=lambda r: r.date)
         number_of_saturation = 0.0
         total_time = 0.0
-        index_of_the_last_time_the_saturation_period_started = 0
-        index_of_the_last_time_the_saturation_period_ended = 0
-        for i in range(len(sorted_records) - 1):
-            if (
-                not index_of_the_last_time_the_saturation_period_started
-                < i
-                < index_of_the_last_time_the_saturation_period_ended
-            ):
-                if sorted_records[i].nb_available_spaces == 0:
-                    j = i
-                    time = 0
-                    index_of_the_last_time_the_saturation_period_started = i
-                    while sorted_records[j].nb_available_spaces == 0:
-                        j += 1
-                    time += (sorted_records[j + 1].date - sorted_records[j].date).total_seconds()
-                    total_time += time
-                    number_of_saturation += 1
-                    index_of_the_last_time_the_saturation_period_ended = j + 1
+        saturation_start = None
+        for records in sorted_records:
+            if records.nb_available_spaces == 0:
+                if saturation_start is None:
+                    saturation_start = records.date
+            elif saturation_start is not None:
+                total_time += (records.date - saturation_start).total_seconds()
+                number_of_saturation += 1
         if number_of_saturation == 0:
             return 0.0
         saturation_mean_time = total_time / number_of_saturation
