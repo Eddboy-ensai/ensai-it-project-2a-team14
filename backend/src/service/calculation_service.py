@@ -1,4 +1,5 @@
 import pandas as pd
+import math
 
 from business_object.station import Station
 from dao.station_record_dao import StationRecordDao
@@ -178,19 +179,30 @@ class CalculationService:
         float
             the saturation score of the station
         """
-        pass
+        a = 0.5
+        t = 3600
+        Tsat = self.compute_saturation_rate
+        Dsat = self.compute_saturation_mean_time
+        dsat = 1 - math.exp(-Dsat / t)
+        sat_score = round(Tsat ** (1 - a) * dsat ** a)
+        return sat_score
 
     @log
-    def compute_sho_score(self) -> float:
+    def compute_short_score(self) -> float:
         """Calculate the shortage score of the station based on shortage mean time, and shortage rate
-
 
         Returns :
         ---------
         float
             the shortage score of the station
         """
-        pass
+        b = 0.5
+        t = 3600
+        Tshort = self.compute_shortage_rate
+        Dshort = self.compute_shortage_mean_time
+        dshort = 1 - math.exp(-Dshort / t)
+        short_score = round(Tshort ** (1 - b) * dshort ** b)
+        return short_score
 
     @log
     def compute_score(self) -> int:
@@ -203,4 +215,7 @@ class CalculationService:
         float
             the fiability score of the station
         """
-        pass
+        c = 0.5
+        d = 0.5
+        score = round(100 * (1 - c * self.compute_sat_score - d * self.compute_short_score))
+        return score
