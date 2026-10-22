@@ -1,6 +1,7 @@
 import pandas as pd
 import math
 from business_object.station import Station
+from business_object.station_record import StationRecord
 from dao.station_record_dao import StationRecordDao
 from utils.log_utils import log
 
@@ -9,6 +10,11 @@ class CalculationService:
     def __init__(self, station: Station):
         self.station = station
         self.station_records = StationRecordDao.list_all_by_id(station.id_station)
+
+    @log
+    def latest_record(self) -> StationRecord:
+        latest_record = max(self.station_records, key=lambda r: r.date, default=None)
+        return latest_record
 
     @log
     def compute_fill_rate(self) -> float:
@@ -21,10 +27,9 @@ class CalculationService:
         """
         if not self.station or self.station.capacity == 0 or self.station.capacity is None:
             return 0.0
-        latest_records = max(self.station_records, key=lambda r: r.date, default=None)
-        if not latest_records:
+        if not self.latest_record:
             return 0.0
-        filled_spaces = latest_records.nb_available_bikes + latest_records.nb_available_ebikes
+        filled_spaces = self.latest_record.nb_available_bikes + self.latest_record.nb_available_ebikes
         filled_rate = filled_spaces / self.station.capacity
         return filled_rate
 
