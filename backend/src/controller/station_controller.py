@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.station_model import StationReadModel
+from schema.station_model import StationDataModel, StationReadModel
 from service.station_service import StationService
 from utils.log_utils import get_logger
 
@@ -25,7 +25,7 @@ async def list_all_stations(station_service=Depends(get_station_service)):
     return stations_list
 
 
-@router.get("/{id_station}", response_model=StationReadModel, tags=["Stations"])
+@router.get("/{id_station}", response_model=StationDataModel, tags=["Stations"])
 async def station_by_id(id_station: int, station_service=Depends(get_station_service)):
     """Find a station by its unique ID.
     Parameters

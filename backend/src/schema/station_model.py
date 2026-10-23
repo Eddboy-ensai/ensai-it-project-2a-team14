@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class StationReadModel(BaseModel):
+class StationDataModel(BaseModel):
     id_station: int
     name: str
     lat: float
@@ -12,6 +12,14 @@ class StationReadModel(BaseModel):
     saturation_rate: float | None
     shortage_mean_time: float | None
     saturation_mean_time: float | None
+
+
+class StationReadModel(BaseModel):
+    id_station: int
+    name: str
+    lat: float
+    lon: float
+    capacity: int | None
 
 
 class FavoriteAddModel(BaseModel):
