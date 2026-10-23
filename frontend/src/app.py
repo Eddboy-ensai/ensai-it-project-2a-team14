@@ -1,6 +1,6 @@
 import streamlit as st
-from utils.env_variables import display_values, load_environment_variables
 
+from utils.env_variables import display_values, load_environment_variables
 from utils.log_init import initialize_logs
 
 if "logs_initialized" not in st.session_state:
