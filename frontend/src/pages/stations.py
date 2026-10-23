@@ -1,5 +1,6 @@
 # page des stations
 
+import pandas as pd
 import streamlit as st
 
 from utils.api_client import api_client
@@ -14,17 +15,32 @@ if col2.button("Compte"):
 
 # chercher = st.text_input("Chercher une station")
 
-response = api_client.get("/stations/")
+stations = api_client.get("/station/")
 
-st.write("Type de response :", type(response))
-st.write("Réponse :", response)
+# st.write("Type de response :", type(response))
+# st.write("Réponse :", response)
 
-if response["status_code"] != 200:
-    st.error("Error loading players")
-    st.stop()
+# if response["status_code"] != 200:
+#    st.error("Error loading players")
+#    st.stop()
 
-stations = api_client.get("/stations/")["data"]
-st.write(stations)
+df_stations = pd.DataFrame(api_client.get("/station/")["data"])
+df_stations["url"] = "/station/" + df_stations["id_station"].astype(str)
+st.dataframe(
+    df_stations,
+    hide_index=True,
+    column_config={"url": st.column_config.LinkColumn(label="Informations", display_text="📊")},
+)
+# dataframe = stations.loc[:, ["name"]]
+# dataframe["url"] = "pouet"
+# st.dataframe(
+#   dataframe,
+#   hide_index=True,
+#   column_config={"name": st.column_config.LinkColumn(label="Nom", display_text="name")},
+# )
+
+# df["url"] = "/player_stats?id_player=" + df["id_player"].astype(str)
+# st.dataframe(df, hide_index=True, column_config={"url": st.column_config.LinkColumn(label="Stats", display_text="📊")})
 # if chercher:
 #    stations = stations[stations["name"].str.contains(chercher, case=False)]
 
