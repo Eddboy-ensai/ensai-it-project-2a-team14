@@ -1,5 +1,7 @@
-import pandas as pd
 import math
+
+import pandas as pd
+
 from business_object.station import Station
 from business_object.station_record import StationRecord
 from dao.station_record_dao import StationRecordDao
@@ -27,9 +29,11 @@ class CalculationService:
         """
         if not self.station or self.station.capacity == 0 or self.station.capacity is None:
             return 0.0
-        if not self.latest_record:
+        if not self.latest_record():
             return 0.0
-        filled_spaces = self.latest_record.nb_available_bikes + self.latest_record.nb_available_ebikes
+        filled_spaces = (
+            self.latest_record().nb_available_bikes + self.latest_record().nb_available_ebikes
+        )
         filled_rate = filled_spaces / self.station.capacity
         return filled_rate
 
@@ -159,7 +163,7 @@ class CalculationService:
         Tsat = self.compute_saturation_rate
         Dsat = self.compute_saturation_mean_time
         dsat = 1 - math.exp(-Dsat / t)
-        sat_score = round(Tsat ** (1 - a) * dsat ** a)
+        sat_score = round(Tsat ** (1 - a) * dsat**a)
         return sat_score
 
     @log
@@ -176,7 +180,7 @@ class CalculationService:
         Tshort = self.compute_shortage_rate
         Dshort = self.compute_shortage_mean_time
         dshort = 1 - math.exp(-Dshort / t)
-        short_score = round(Tshort ** (1 - b) * dshort ** b)
+        short_score = round(Tshort ** (1 - b) * dshort**b)
         return short_score
 
     @log

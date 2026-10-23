@@ -7,6 +7,11 @@ class StationReadModel(BaseModel):
     lat: float
     lon: float
     capacity: int | None
+    fill_rate: float | None
+    shortage_rate: float | None
+    saturation_rate: float | None
+    shortage_mean_time: float | None
+    saturation_mean_time: float | None
 
 
 class FavoriteAddModel(BaseModel):
