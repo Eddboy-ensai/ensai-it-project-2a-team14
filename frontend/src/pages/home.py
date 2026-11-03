@@ -17,7 +17,7 @@ if st.button("Se connecter"):
         st.session_state["access_token"] = reponse["data"]["access_token"]
         st.switch_page("pages/user_menu.py")
     else:
-        st.error("Identifiants invalides")
+        st.error(f"Erreur {response ['status_code']} : {response['data']}")
 
 if st.button("Créer un compte"):
     st.switch_page("pages/create_user.py")
