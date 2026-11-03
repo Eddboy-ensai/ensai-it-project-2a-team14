@@ -29,8 +29,7 @@ for nom in favoris:
 
 if st.button("Se déconnecter"):
     st.session_state.clear()
-    st.switch_page("pages/menu.py")
+    st.switch_page("pages/home.py")
 
 if st.button("Retour"):
-    st.session_state.clear()
     st.switch_page("pages/station.py")
