@@ -1,4 +1,7 @@
 # créer un user
+from utils.log_init import get_page_logger
+logger = get_page_logger("create_user")
+
 import streamlit as st
 from utils.api_client import api_client
 

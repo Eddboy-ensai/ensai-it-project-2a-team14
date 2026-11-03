@@ -1,4 +1,7 @@
 #compte
+from utils.log_init import get_page_logger
+logger = get_page_logger("account")
+
 import streamlit as st
 
 st.title("Mon compte")

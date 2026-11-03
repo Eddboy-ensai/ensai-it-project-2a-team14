@@ -1,4 +1,7 @@
 #menu/accueil/menu
+from utils.log_init import get_page_logger
+logger = get_page_logger("home")
+
 import streamlit as st
 from utils.api_client import api_client
 
