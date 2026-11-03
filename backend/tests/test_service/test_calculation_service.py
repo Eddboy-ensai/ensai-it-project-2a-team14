@@ -96,4 +96,4 @@ def test_compute_saturation_rate():
     assert calculation_service_rep.compute_shortage_rate() == 0.625
     assert calculation_service_mai.compute_shortage_rate() == 0.0
     assert calculation_service_pla.compute_shortage_rate() == 0.0
-    assert calculation_service_sai.compute_shortage_rate() == 1.0
+    assert calculation_service_sai.compute_shortage_rate() == 1.00
