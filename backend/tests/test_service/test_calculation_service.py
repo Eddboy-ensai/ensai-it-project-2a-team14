@@ -91,6 +91,8 @@ calculation_service_pla = CalculationService(station=stations[2])
 calculation_service_pla.station_records = station_records[18:27]
 calculation_service_sai = CalculationService(station=stations[3])
 calculation_service_sai.station_records = station_records[27:36]
+calculation_service_pis = CalculationService(station=stations[4])
+calculation_service_pis.station_records = station_records[36:53]
 
 
 def test_latest_record():
@@ -118,8 +120,7 @@ def test_compute_saturation_rate():
     assert calculation_service_sai.compute_saturation_rate() == 1.00
 
 
-def test_shortage_mean_time():
-    assert calculation_service_rep.compute_saturation_rate() == 0.625
-    assert calculation_service_mai.compute_saturation_rate() == 0.0
-    assert calculation_service_pla.compute_saturation_rate() == 0.0
-    assert calculation_service_sai.compute_saturation_rate() == 1.00
+def test_compute_shortage_mean_time():
+    assert calculation_service_pis.compute_shortage_mean_time() == 8910.0
+
+def 
