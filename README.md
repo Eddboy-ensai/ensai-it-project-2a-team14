@@ -1,5 +1,11 @@
 # ensai-it-project-2a-team14
 
+Pour régler le problème de token/merge :
+*) taper la commande suivante dans un terminal, en remplaçant ... par le token onxyia
+```git remote set-url origin https://...@github.com/eddboy-ensai/ensai-it-project-2a-team14.git```
+**) vérifier que vous êtes sur le bon remote avec la commande suivante (l'adresse doit comporter deux slash, et non trois)
+```git remote -v```
+
 1) Create a PostgreSQL service
 
 2) Create a .env file in the root of the project and complete the following variables :
