@@ -21,6 +21,9 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
     API_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
     station = requests.get(f"{API_URL}/station/{id_station}").json()
     st.json(station)
+    if st.button("Retour"):
+        st.query_params.clear()
+        st.rerun() 
 
 else:  # affichage de la page sans query
     col1, col2 = st.columns([6, 1])
@@ -28,8 +31,16 @@ else:  # affichage de la page sans query
     if col2.button("Compte"):
         st.switch_page("pages/account.py")
 
-    stations = api_client.get("/station/")["data"]
-    df_stations = pd.DataFrame(stations)
+    resultat = api_client.get("/station/")
+
+    if resultat["status_code"] == 200:
+        stations = resultat["data"]
+    st.error(f"Erreur {resultat['status_code']} : {resultat['data']}")
+    st.stop()
+
+    if not stations:
+        st.info("Aucune information à afficher")
+        st.stop()
 
     user_id = st.session_state["user"]["id_user"]
 
