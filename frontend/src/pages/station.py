@@ -31,7 +31,7 @@ else:  # affichage de la page sans query
     stations = api_client.get("/station/")["data"]
     df_stations = pd.DataFrame(stations)
 
-    user_id = st.session_state["user"]["id_ser"]
+    user_id = st.session_state["user"]["id_user"]
 
     favoris_ids = []
     reponse_favs = api_client.get(f"/favorite/{user_id}")
@@ -45,9 +45,7 @@ else:  # affichage de la page sans query
         hide_index=True,
         column_config={
             "Favorite": st.column_config.CheckboxColumn(
-                "Favori",
-                help="Cocher pour ajouter à vos favoris",
-                default=False
+                "Favori", help="Cocher pour ajouter à vos favoris", default=False
             )
         },
         disabled=["id_station", "name", "lat", "lon", "capacity"],
