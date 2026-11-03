@@ -1,8 +1,11 @@
 #compte
+from utils.api_client import api_client
 from utils.log_init import get_page_logger
 logger = get_page_logger("account")
-
 import streamlit as st
+
+if "user" not in st.session_state :
+    st.switch_page("pages/home.py")
 
 st.title("Mon compte")
 
@@ -23,5 +26,9 @@ for nom in favoris:
             st.error(f"Erreur {reponse['status_code']}")
 
 if st.button("Se déconnecter"):
+    st.session_state.clear()
+    st.switch_page("pages/menu.py")
+
+if st.button("Retour"):
     st.session_state.clear()
     st.switch_page("pages/menu.py")
