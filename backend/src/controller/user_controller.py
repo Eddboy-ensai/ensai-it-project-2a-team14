@@ -1,11 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-<<<<<<< HEAD
 from schema.user_model import UserCreateModel, UserReadModel, UserSelfUpdateModel
-=======
-from schema.user_model import UserCreateModel, UserModel, UserReadModel
 from service.favorite_service import FavoriteService
->>>>>>> f5e5eaabdb6639ba5900d47c9aa2712fa17ce5f0
 from service.user_service import UserService
 from utils.log_utils import get_logger
 from utils.security import require_admin, verify_token
