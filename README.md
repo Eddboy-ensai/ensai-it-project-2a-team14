@@ -19,7 +19,18 @@ BACKEND_URL=http://localhost:5000
 BACKEND_TIMEOUT=5
 ```
 
-3) Create the schema project and the table Users by executing this code (for example in cloudbeaver) :
+ 
+3) Copy the content of the file data/db_tests.sql
+4) Paste and execute it in cloudbeaver to create a mocked database for tests
+5) Install dependencies by executing `uv sync --project backend`
+6) In a terminal, execute `uv run --project backend python backend/src/main.py`
+7) Go to the swagger (Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 5000") or use the webservice ("port 8000" after executing, in a terminal the commands `cd frontend` and `uv run --project . streamlit run src/app.py`)
+8) To execute the test :
+`uv sync --project backend --extra dev` (to install dependencies)
+`uv run --project backend pytest -v`(to execute the tests)
+
+
+3 old) Create the schema project and the table Users by executing this code (for example in cloudbeaver) :
 ```default
 CREATE SCHEMA project;
 
@@ -32,7 +43,7 @@ CREATE TABLE project.Users (
 );
 ```
 
-4) Create the tables Stations and StationRecords by executing this code :
+4 old) Create the tables Stations and StationRecords by executing this code :
 ```default
 CREATE TABLE project.Stations (
     id_station INTEGER PRIMARY KEY,
@@ -53,12 +64,4 @@ CREATE TABLE project.StationRecords (
 );
 
 CREATE INDEX idx_station_records_date ON project.StationRecords(date);
-```  
-3 and 4 bis) : Use the file db_tests.sql to create a mocked database for tests
-
-5) Install dependencies by executing `uv sync --project backend`
-6) In a terminal, execute `uv run --project backend python backend/src/main.py`
-7) Go to the swagger (Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 5000") or use the webservice ("port 8000" after executing, in a terminal the commands `cd frontend` and `uv run --project . streamlit run src/app.py`)
-8) To execute the test :
-`uv sync --project backend --extra dev` (to install dependencies)
-`uv run --project backend pytest -v`(to execute the tests)
+``` 
