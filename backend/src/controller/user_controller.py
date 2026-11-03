@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from schema.user_model import UserCreateModel, UserReadModel, UserSelfUpdateModel
 from service.favorite_service import FavoriteService
+from service.station_service import StationService
 from service.user_service import UserService
 from utils.log_utils import get_logger
 from utils.security import require_admin, verify_token
