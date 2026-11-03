@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.user_model import UserCreateModel, UserReadModel, UserSelfUpdateModel
+from schema.user_model import UserCreateModel, UserDisplayModel, UserReadModel, UserSelfUpdateModel
 from service.favorite_service import FavoriteService
 from service.station_service import StationService
 from service.user_service import UserService
@@ -50,7 +50,7 @@ async def list_all_users(user_service=Depends(get_user_service)):
     return users_list
 
 
-@router.get("/{id_user}", response_model=UserReadModel, tags=["Users"])
+@router.get("/{id_user}", response_model=UserDisplayModel, tags=["Users"])
 async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     """Find a user by their unique ID.
     Args:
