@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.user_model import UserCreateModel, UserModel, UserReadModel
+from schema.user_model import UserCreateModel, UserReadModel, UserSelfUpdateModel
 from service.favorite_service import FavoriteService
-from service.station_service import StationService
 from service.user_service import UserService
 from utils.log_utils import get_logger
-from utils.security import hash_password, require_admin
+from utils.security import require_admin, verify_token
 
 router = APIRouter()
 
@@ -80,35 +79,35 @@ async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     return user_read
 
 
-@router.put("/{id_user}", response_model=UserReadModel, tags=["Users"])
-async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_service)):
-    """Update an existing user's information.
+@router.put("/me", response_model=UserReadModel, tags=["Users"])
+async def update_my_profile(
+    u: UserSelfUpdateModel,
+    user_service=Depends(get_user_service),
+    current_user=Depends(verify_token),
+):
+    """Update the profile (username and/or password) of the logged-in user.
     Args:
-        id_user (int)
-        u (UserModel): The new data for the user.
+        u (UserSelfUpdateModel): current password, new username and/or new password.
         user_service (UserService): The service used to interact with user data.
+        current_user (User): The logged-in user, identified by the X-Auth-Token header.
     Returns:
-        str: A confirmation message indicating the user was updated.
+        UserReadModel: The updated user data.
     Raises:
-        HTTPException: 404 error if the user is not found.
+        HTTPException: 401 error if not logged in or if the current password is wrong.
+        HTTPException: 400 error if there is nothing to update or the username is already used.
         HTTPException: 500 error if the update process fails.
     """
-    logger.info("Update a user")
-    user = user_service.find_by_id(id_user)
-    if not user:
-        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
-
-    if u.username != user.username and user_service.username_already_used(u.username):
-        raise HTTPException(status_code=400, detail="Username already used.")
-    user.username = u.username
-    user.pwdh = hash_password(u.pwdh, u.username)
-    user.id_user = u.id_user
-    user.admin = u.admin
-
-    user = user_service.update(user)
+    logger.info("Update own profile")
+    try:
+        user = user_service.update_own_profile(
+            current_user, u.current_pwd, u.new_username, u.new_pwd
+        )
+    except PermissionError as e:
+        raise HTTPException(status_code=401, detail=str(e)) from e
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     if not user:
         raise HTTPException(status_code=500, detail="Error while updating user.")
-
     return user
 
 
