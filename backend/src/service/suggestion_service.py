@@ -10,7 +10,7 @@ from utils.log_utils import log
 class SuggestionScore:
     def __init__(self, station: Station):
         self.station = station
-        self.latest_record = CalculationService.latest_record(self.station)
+        self.latest_record = CalculationService.latest_record()
 
     @log
     def station_pick_suggestion_score(self) -> int:
@@ -26,8 +26,8 @@ class SuggestionScore:
         b = 0.33  # coef of dispo in the suggestion score#
         c = 0.33  # coef of the shortage score in the suggestion score#
         n0 = 3  # reference constant set at 3 of availability#
-        Spick = CalculationService.compute_short_score(self.station)
-        nb_bikes = self.latest_record(self.station).nb_available_bikes
+        Spick = CalculationService.compute_short_score()
+        nb_bikes = self.latest_record().nb_available_bikes
         Dispo = 1 - math.exp(-nb_bikes / n0)
         if nb_bikes == 0:
             return 0
@@ -49,8 +49,8 @@ class SuggestionScore:
         b = 0.33  # coef of dispo in the suggestion score#
         c = 0.33  # coef of the saturation score in the suggestion score#
         n0 = 3  # reference constant set at 3 of availability#
-        Sdrop = CalculationService.compute_short_score(self.station)
-        nb_spot = self.latest_record(self.station).nb_available_spaces
+        Sdrop = CalculationService.compute_short_score()
+        nb_spot = self.latest_record().nb_available_spaces
         Dispo = 1 - math.exp(-nb_spot / n0)
         if nb_spot == 0:
             return 0
@@ -67,7 +67,7 @@ class SuggestionScore:
         bool
             True if the pick suggestion score is high enough, False if not
         """
-        if self.station_pick_suggestion_score <= 50:
+        if self.station_pick_suggestion_score() <= 50:
             return False
         return True
 
@@ -80,7 +80,7 @@ class SuggestionScore:
         bool
             True if the drop suggestion score is high enough, False if not
         """
-        if self.station_drop_suggestion_score <= 50:
+        if self.station_drop_suggestion_score() <= 50:
             return False
         return True
 
@@ -133,7 +133,7 @@ class SuggestionScore:
             )
             nb_bikes = self.latest_record(stations).nb_available_bikes
             if dist <= 1000 and nb_bikes >= 2:  # 1000 is arbitrary#
-                Spick = CalculationService.compute_short_score(self.stations)
+                Spick = CalculationService.compute_short_score()
                 d = 1 - math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_bikes / n0)
                 sugg_score = d**a * Disp**b * Spick**c
@@ -166,7 +166,7 @@ class SuggestionScore:
             )
             nb_spot = self.latest_record(stations).nb_available_spaces
             if dist <= 1000 and nb_spot >= 2:  # 1000 is arbitrary#
-                Sdrop = CalculationService.compute_sat_score(self.stations)
+                Sdrop = CalculationService.compute_sat_score()
                 d = 1 - math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_spot / n0)
                 sugg_score = d**a * Disp**b * Sdrop**c

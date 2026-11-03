@@ -160,10 +160,10 @@ class CalculationService:
         """
         a = 0.5
         t = 3600
-        Tsat = self.compute_saturation_rate
-        Dsat = self.compute_saturation_mean_time
+        Tsat = self.compute_saturation_rate()
+        Dsat = self.compute_saturation_mean_time()
         dsat = 1 - math.exp(-Dsat / t)
-        sat_score = round(Tsat ** (1 - a) * dsat**a)
+        sat_score = round(Tsat ** (1 - a) * dsat**a, 2)
         return sat_score
 
     @log
@@ -177,10 +177,10 @@ class CalculationService:
         """
         b = 0.5
         t = 3600
-        Tshort = self.compute_shortage_rate
-        Dshort = self.compute_shortage_mean_time
+        Tshort = self.compute_shortage_rate()
+        Dshort = self.compute_shortage_mean_time()
         dshort = 1 - math.exp(-Dshort / t)
-        short_score = round(Tshort ** (1 - b) * dshort**b)
+        short_score = round(Tshort ** (1 - b) * dshort**b, 2)
         return short_score
 
     @log
@@ -196,7 +196,7 @@ class CalculationService:
         """
         c = 0.5
         d = 0.5
-        score = round(100 * (1 - c * self.compute_sat_score - d * self.compute_short_score))
+        score = round(100 * (1 - c * self.compute_sat_score() - d * self.compute_short_score()))
         return score
 
     @log
