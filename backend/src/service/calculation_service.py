@@ -117,6 +117,7 @@ class CalculationService:
             elif shortage_start is not None:
                 total_time += (records.date - shortage_start).total_seconds()
                 number_of_shortage += 1
+                shortage_start = None
         if number_of_shortage == 0:
             return 0.0
         shortage_mean_time = total_time / number_of_shortage
