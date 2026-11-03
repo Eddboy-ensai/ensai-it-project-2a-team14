@@ -1,9 +1,11 @@
-# créer un user
-from utils.log_init import get_page_logger
-logger = get_page_logger("create_user")
+# Créer un user
 
 import streamlit as st
+
 from utils.api_client import api_client
+from utils.log_init import get_page_logger
+
+logger = get_page_logger("create_user")
 
 st.title("Créer un compte")
 
