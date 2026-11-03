@@ -9,6 +9,10 @@ import streamlit as st
 from utils.api_client import api_client
 from utils.log_init import get_page_logger
 
+if "user" not in st.session_state :
+    st.session_state["message"] = "Veuillez vous connecter pour accéder aux stations"
+    st.switch_page("pages/home.py")
+
 logger = get_page_logger("station")
 
 id_station = st.query_params.get("id_station")
