@@ -23,7 +23,7 @@ else:  # affichage de la page sans query
     col1, col2 = st.columns([6, 1])
     col1.title("Veloscope")
     if col2.button("Compte"):
-        st.switch_page("pages/compte.py")
+        st.switch_page("pages/account.py")
     stations = api_client.get("/station/")["data"]
     df_stations = pd.DataFrame(stations)
     st.dataframe(df_stations, hide_index=True)
