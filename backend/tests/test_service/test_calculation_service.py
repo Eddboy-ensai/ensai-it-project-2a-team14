@@ -17,7 +17,7 @@ stations = [
 
 
 def d(heure: str) -> datetime:
-    """Construit un datetime du 2026-10-13 à l'heure donnée (fuseau +02)."""
+    """Constructs a value in datetime format for 2026-10-13 at the specified time (time zone +02)."""
     return datetime.fromisoformat(f"2026-10-13 {heure}:00").replace(tzinfo=TZ)
 
 
@@ -150,7 +150,7 @@ def test_compute_sat_score():
     assert calculation_service_rep.compute_sat_score() == 0.33
     assert calculation_service_mai.compute_sat_score() == 1.0
     assert calculation_service_pla.compute_sat_score() == 1.0
-    assert calculation_service_sai.compute_sat_score() == 0
+    assert calculation_service_sai.compute_sat_score() == 0.0
     assert calculation_service_pis.compute_sat_score() == 0.51
 
 

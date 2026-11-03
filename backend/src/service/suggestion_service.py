@@ -1,16 +1,15 @@
 import math
 
-from calculation_service import CalculationService
-from station_service import StationService
-
 from business_object.station import Station
+from service.calculation_service import CalculationService
+from service.station_service import StationService
 from utils.log_utils import log
 
 
-class SuggestionScore:
+class SuggestionService:
     def __init__(self, station: Station):
         self.station = station
-        self.latest_record = CalculationService().latest_record()
+        self.latest_record = CalculationService(station).latest_record()
 
     @log
     def station_pick_suggestion_score(self) -> int:
@@ -23,17 +22,17 @@ class SuggestionScore:
         int
             The "pick suggestion score" of the station
         """
-        b = 0.33  # coef of dispo in the suggestion score#
-        c = 0.33  # coef of the shortage score in the suggestion score#
-        n0 = 3  # reference constant set at 3 of availability#
-        Spick = CalculationService().compute_short_score
+        b = 0.5  # coef of dispo in the suggestion score#
+        c = 0.2  # coef of the shortage score in the suggestion score#
+        n0 = 5  # reference constant set at 3 of availability#
+        score_pick = CalculationService().compute_short_score()
         nb_bikes = self.latest_record().nb_available_bikes
         Dispo = 1 - math.exp(-nb_bikes / n0)
         if nb_bikes == 0:
             return 0
-        elif nb_bikes == 1 and Spick <= 75:
+        elif nb_bikes == 1 and score_pick <= 75:
             return 0
-        return 100 * round(Dispo**b * Spick**c, 2)
+        return 100 * round(Dispo**b * score_pick**c, 2)
 
     @log
     def station_drop_suggestion_score(self) -> int:
@@ -46,17 +45,17 @@ class SuggestionScore:
         int
             The "drop suggestion score" of the station
         """
-        b = 0.33  # coef of dispo in the suggestion score#
-        c = 0.33  # coef of the saturation score in the suggestion score#
+        b = 0.5  # coef of dispo in the suggestion score#
+        c = 0.2  # coef of the saturation score in the suggestion score#
         n0 = 3  # reference constant set at 3 of availability#
-        Sdrop = CalculationService.compute_short_score()
+        score_drop = CalculationService.compute_sat_score()
         nb_spot = self.latest_record().nb_available_spaces
         Dispo = 1 - math.exp(-nb_spot / n0)
         if nb_spot == 0:
             return 0
-        elif nb_spot == 1 and Sdrop <= 75:
+        elif nb_spot == 1 and score_drop <= 75:
             return 0
-        return 100 * round(Dispo**b * Sdrop**c, 2)
+        return 100 * round(Dispo**b * score_drop**c, 2)
 
     @log
     def is_recommended_pick(self) -> bool:
@@ -112,7 +111,7 @@ class SuggestionScore:
         return round(2 * R * math.asin(math.sqrt(alpha)))
 
     @log
-    def get_suggestion_pick(self) -> list(Station, int):
+    def get_suggestion_pick(self) -> list[Station, int]:
         """Select the suggested stations around
 
         Select all the stations in a close area around the choosen station and with at least 2 available bikes which  have a  pick suggestion score over 50 or at least better than the pick suggestion score than the one of the station choosen by the user (station_pick_suggestion_score)
@@ -122,9 +121,9 @@ class SuggestionScore:
         list(Station, int)
             The list of the recommended stations with their score
         """
-        a = 0.33
-        b = 0.33
-        c = 0.34
+        a = 0.3
+        b = 0.5
+        c = 0.2
         n0 = 3
         station_sugg = {}
         for stations in StationService.list_all():
@@ -133,10 +132,10 @@ class SuggestionScore:
             )
             nb_bikes = self.latest_record(stations).nb_available_bikes
             if dist <= 1000 and nb_bikes >= 2:  # 1000 is arbitrary#
-                Spick = CalculationService.compute_short_score()
+                score_pick = CalculationService.compute_short_score()
                 d = 1 - math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_bikes / n0)
-                sugg_score = d**a * Disp**b * Spick**c
+                sugg_score = d**a * Disp**b * score_pick**c
                 if (
                     sugg_score >= 50 or sugg_score >= self.station_pick_suggestion_score
                 ):  # 50 is arbitrary#
@@ -145,7 +144,7 @@ class SuggestionScore:
         return sugg
 
     @log
-    def get_suggestion_drop(self) -> list(Station, int):
+    def get_suggestion_drop(self) -> list[Station, int]:
         """Select the suggested stations around
 
         Select all the stations in a close area around the choosen station and with at least 2 available spots which  have a  drop suggestion score over 50 or at least better than the drop suggestion score than the one of the station choosen by the user (station_drop_suggestion_score)
@@ -155,9 +154,9 @@ class SuggestionScore:
         list(Station, int)
             The list of the recommended stations and their score
         """
-        a = 0.33
-        b = 0.33
-        c = 0.34
+        a = 0.3
+        b = 0.5
+        c = 0.2
         n0 = 3
         station_sugg = {}
         for stations in StationService.list_all():
@@ -166,10 +165,10 @@ class SuggestionScore:
             )
             nb_spot = self.latest_record(stations).nb_available_spaces
             if dist <= 1000 and nb_spot >= 2:  # 1000 is arbitrary#
-                Sdrop = CalculationService.compute_sat_score()
+                score_drop = CalculationService.compute_sat_score()
                 d = 1 - math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_spot / n0)
-                sugg_score = d**a * Disp**b * Sdrop**c
+                sugg_score = d**a * Disp**b * score_drop**c
                 if (
                     sugg_score >= 50 or sugg_score >= self.station_drop_suggestion_score
                 ):  # 50 is arbitrary#
