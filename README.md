@@ -26,7 +26,7 @@ BACKEND_TIMEOUT=5
 ```
 
  
-3) Copy the content of the file data/db_tests.sql
+3) Copy the content of the file data/db_tests. (or you can create empty schemas by running : `uv run --project backend python backend/src/init_db.py`)
 4) Paste and execute it in cloudbeaver to create a mocked database for tests
 5) Install dependencies by executing `uv sync --project backend`
 6) In a terminal, execute `uv run --project backend python backend/src/main.py`

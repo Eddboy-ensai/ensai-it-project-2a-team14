@@ -48,3 +48,19 @@ class UserSelfUpdateModel(BaseModel):
     new_pwd: str | None = Field(default=None, min_length=1)
 
     _blank_to_none = field_validator("new_username", "new_pwd", mode="before")(blank_to_none)
+
+
+class UserAdminUpdateModel(BaseModel):
+    """Body for an admin updating another user's profile.
+    If the username changes, a new password is required, because the admin does
+    not know the user's current password and the hash is salted with the username.
+    """
+
+    username: str | None = Field(default=None, min_length=1)
+    pwd: str | None = Field(default=None, min_length=1)
+
+
+class AdminRightsModel(BaseModel):
+    """Body for granting (True) or revoking (False) admin rights."""
+
+    admin: bool

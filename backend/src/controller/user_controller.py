@@ -1,6 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.user_model import UserCreateModel, UserDisplayModel, UserReadModel, UserSelfUpdateModel
+from schema.user_model import (
+    AdminRightsModel,
+    UserAdminUpdateModel,
+    UserCreateModel,
+    UserDisplayModel,
+    UserReadModel,
+    UserSelfUpdateModel,
+)
 from service.favorite_service import FavoriteService
 from service.station_service import StationService
 from service.user_service import UserService
@@ -134,3 +141,83 @@ async def delete_user(
 
     user_service.delete(user)
     return f"User {user.username} deleted"
+
+
+@router.put("/{id_user}", response_model=UserReadModel, tags=["Users"])
+async def update_user_as_admin(
+    id_user: int,
+    u: UserAdminUpdateModel,
+    user_service=Depends(get_user_service),
+    admin=Depends(require_admin),
+):
+    """Update another user's profile (admin only).
+    Args:
+        id_user (int): id of the user to modify.
+        u (UserAdminUpdateModel): new username and/or new password.
+        user_service (UserService): The service used to interact with user data.
+        admin (User): The logged-in admin, identified by the X-Auth-Token header.
+    Returns:
+        UserReadModel: The updated user data.
+    Raises:
+        HTTPException: 401/403 error if not logged in or not admin.
+        HTTPException: 400 error if the admin targets himself (use PUT /user/me),
+            if there is nothing to update, if the username is already used,
+            or if the username changes without a new password.
+        HTTPException: 403 error if a non-first admin tries to modify the first admin.
+        HTTPException: 404 error if the user is not found.
+        HTTPException: 500 error if the update process fails.
+    """
+    logger.info("Update a user as admin")
+    if id_user == admin.id_user:
+        raise HTTPException(status_code=400, detail="Use PUT /user/me to update your own profile.")
+    user = user_service.find_by_id(id_user)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
+    if user_service.is_first_admin(user):
+        raise HTTPException(status_code=403, detail="The first admin's profile cannot be modified.")
+
+    try:
+        user = user_service.update_profile_as_admin(user, u.username, u.pwd)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    if not user:
+        raise HTTPException(status_code=500, detail="Error while updating user.")
+    return user
+
+
+@router.put("/{id_user}/admin", response_model=UserReadModel, tags=["Users"])
+async def set_admin_rights(
+    id_user: int,
+    rights: AdminRightsModel,
+    user_service=Depends(get_user_service),
+    admin=Depends(require_admin),
+):
+    """Grant or revoke admin rights (first admin only).
+    Args:
+        id_user (int): id of the user whose rights are changed.
+        rights (AdminRightsModel): {"admin": true} to grant, {"admin": false} to revoke.
+        user_service (UserService): The service used to interact with user data.
+        admin (User): The logged-in admin, identified by the X-Auth-Token header.
+    Returns:
+        UserReadModel: The updated user data.
+    Raises:
+        HTTPException: 401/403 error if not logged in or not admin.
+        HTTPException: 403 error if the logged-in admin is not the first admin.
+        HTTPException: 400 error if the first admin tries to change his own rights.
+        HTTPException: 404 error if the user is not found.
+        HTTPException: 500 error if the update process fails.
+    """
+    logger.info("Set admin rights")
+    user = user_service.find_by_id(id_user)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
+
+    try:
+        user = user_service.set_admin_rights(admin, user, rights.admin)
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e)) from e
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    if not user:
+        raise HTTPException(status_code=500, detail="Error while updating user.")
+    return user
