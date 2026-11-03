@@ -5,6 +5,10 @@ logger = get_page_logger("home")
 import streamlit as st
 from utils.api_client import api_client
 
+if "message" in st.session_state :
+    st.success(st.session_state["message"])
+    del st.session_state["message"]
+
 st.title("Veloscope")
 
 username = st.text_input("Identifiant")
