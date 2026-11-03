@@ -118,6 +118,9 @@ class CalculationService:
                 total_time += (records.date - shortage_start).total_seconds()
                 number_of_shortage += 1
                 shortage_start = None
+        if self.latest_record().nb_available_spaces == self.station.capacity:
+            total_time += (records.date - shortage_start).total_seconds()
+            number_of_shortage += 1
         if number_of_shortage == 0:
             return 0.0
         shortage_mean_time = total_time / number_of_shortage
@@ -145,6 +148,10 @@ class CalculationService:
             elif saturation_start is not None:
                 total_time += (records.date - saturation_start).total_seconds()
                 number_of_saturation += 1
+                saturation_start = None
+        if self.latest_record().nb_available_spaces == 0:
+            total_time += (records.date - saturation_start).total_seconds()
+            number_of_saturation += 1
         if number_of_saturation == 0:
             return 0.0
         saturation_mean_time = total_time / number_of_saturation
@@ -152,7 +159,8 @@ class CalculationService:
 
     @log
     def compute_sat_score(self) -> float:
-        """Calculate the saturation score of the station based on saturation mean time, and saturation rate
+        """Calculate the saturation score of the station based on saturation mean time,
+        and saturation rate
 
         Returns :
         ---------
@@ -169,7 +177,8 @@ class CalculationService:
 
     @log
     def compute_short_score(self) -> float:
-        """Calculate the shortage score of the station based on shortage mean time, and shortage rate
+        """Calculate the shortage score of the station based on shortage mean time,
+        and shortage rate
 
         Returns :
         ---------
@@ -188,7 +197,8 @@ class CalculationService:
     def compute_score(self) -> int:
         """Calculate the fiability score of the station
 
-        The score will be calculated using the shortage score and the saturation and some choosen parameters
+        The score will be calculated using the shortage score and the saturation and some
+        choosen parameters
 
         Returns :
         ---------
@@ -233,7 +243,9 @@ class CalculationService:
         for records in sorted_records:
             a = []
             a.append(records[1])  # records[1] est la date du record
-            a.append(records[4] + records[5])  # records[4] est available bikes et records[5] les e-bikes
+            a.append(
+                records[4] + records[5]
+            )  # records[4] est available bikes et records[5] les e-bikes
             data.append(a)
         df = pd.DataFrame(data, columns=("date", "available bikes"))
         return df

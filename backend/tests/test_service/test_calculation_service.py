@@ -64,23 +64,23 @@ station_records = [
     StationRecord(5505, d("09:45"), "NOT_INSTALLED", 0, 0, 0),
     StationRecord(5505, d("10:00"), "NOT_INSTALLED", 0, 0, 0),
     # Station 5509
-    StationRecord(5504, d("08:00"), "IN_SERVICE", 18, 0, 0),
-    StationRecord(5504, d("08:15"), "IN_SERVICE", 18, 0, 0),
-    StationRecord(5504, d("08:30"), "IN_SERVICE", 18, 0, 0),
-    StationRecord(5504, d("08:45"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5504, d("09:00"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5504, d("09:15"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5504, d("09:30"), "IN_SERVICE", 0, 18, 0),
-    StationRecord(5504, d("09:45"), "IN_SERVICE", 18, 0, 0),
-    StationRecord(5504, d("10:00"), "IN_SERVICE", 18, 0, 0),
-    StationRecord(5504, d("10:15"), "IN_SERVICE", 18, 0, 0),
-    StationRecord(5504, d("10:30"), "IN_SERVICE", 18, 0, 0),
-    StationRecord(5504, d("10:45"), "IN_SERVICE", 0, 18, 0),
-    StationRecord(5504, d("11:00"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5504, d("11:15"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5504, d("11:30"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5504, d("11:45"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5504, d("12:00"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("08:00"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5509, d("08:15"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5509, d("08:30"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5509, d("08:45"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("09:00"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("09:15"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("09:30"), "IN_SERVICE", 0, 18, 0),
+    StationRecord(5509, d("09:45"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5509, d("10:00"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5509, d("10:15"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5509, d("10:30"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5509, d("10:45"), "IN_SERVICE", 0, 18, 0),
+    StationRecord(5509, d("11:00"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("11:15"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("11:30"), "IN_SERVICE", 12, 3, 3),
+    StationRecord(5509, d("11:45"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("12:00"), "IN_SERVICE", 0, 15, 3),
 ]
 
 calculation_service_rep = CalculationService(station=stations[0])
@@ -121,6 +121,8 @@ def test_compute_saturation_rate():
 
 
 def test_compute_shortage_mean_time():
-    assert calculation_service_pis.compute_shortage_mean_time() == 8910.0
+    assert calculation_service_pis.compute_shortage_mean_time() == 3150.0
 
-def 
+
+def test_compute_saturation_mean_time():
+    assert calculation_service_pis.compute_saturation_mean_time() == 2400.0
