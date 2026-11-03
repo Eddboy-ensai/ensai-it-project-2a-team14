@@ -64,12 +64,22 @@ station_records = [
     StationRecord(5505, d("10:00"), "NOT_INSTALLED", 0, 0, 0),
 ]
 
+calculation_service_rep = CalculationService(station=stations[0])
+calculation_service_rep.station_records = station_records[0:9]
+calculation_service_mai = CalculationService(station=stations[1])
+calculation_service_mai.station_records = station_records[9:18]
+calculation_service_pla = CalculationService(station=stations[2])
+calculation_service_pla.station_records = station_records[18:27]
+calculation_service_sai = CalculationService(station=stations[3])
+calculation_service_sai.station_records = station_records[27:36]
+
+
 def test_latest_record():
-    calculation_service_rep = CalculationService(station=stations[0])
-    calculation_service_rep.station_records = station_records[0:9]
     assert calculation_service_rep.latest_record() == calculation_service_rep.station_records[8]
 
+
 def test_compute_fill_rate():
-    calculation_service_rep = CalculationService(station=stations[0])
-    calculation_service_rep.station_records = station_records[0:9]
     assert calculation_service_rep.compute_fill_rate() == 1.0
+    assert round(calculation_service_mai.compute_fill_rate(), 2) == 0.54
+    assert round(calculation_service_pla.compute_fill_rate(), 2) == 0.21
+    assert calculation_service_sai.compute_fill_rate() == 0.0
