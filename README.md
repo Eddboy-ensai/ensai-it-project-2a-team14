@@ -28,6 +28,7 @@ BACKEND_TIMEOUT=5
 8) To execute the test :
 `uv sync --project backend --extra dev` (to install dependencies)
 `uv run --project backend pytest -v`(to execute the tests)
+9) To initialize data collection run in a new terminal : `uv run --project backend python backend/src/collector.py`
 
 
 3 old) Create the schema project and the table Users by executing this code (for example in cloudbeaver) :
