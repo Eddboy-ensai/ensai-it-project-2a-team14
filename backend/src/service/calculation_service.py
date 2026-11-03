@@ -160,10 +160,10 @@ class CalculationService:
         """
         a = 0.5
         t = 3600
-        Tsat = self.compute_saturation_rate
-        Dsat = self.compute_saturation_mean_time
+        Tsat = self.compute_saturation_rate()
+        Dsat = self.compute_saturation_mean_time()
         dsat = 1 - math.exp(-Dsat / t)
-        sat_score = round(Tsat ** (1 - a) * dsat**a)
+        sat_score = round(Tsat ** (1 - a) * dsat**a, 2)
         return sat_score
 
     @log
@@ -177,10 +177,10 @@ class CalculationService:
         """
         b = 0.5
         t = 3600
-        Tshort = self.compute_shortage_rate
-        Dshort = self.compute_shortage_mean_time
+        Tshort = self.compute_shortage_rate()
+        Dshort = self.compute_shortage_mean_time()
         dshort = 1 - math.exp(-Dshort / t)
-        short_score = round(Tshort ** (1 - b) * dshort**b)
+        short_score = round(Tshort ** (1 - b) * dshort**b, 2)
         return short_score
 
     @log
@@ -196,16 +196,43 @@ class CalculationService:
         """
         c = 0.5
         d = 0.5
-        score = round(100 * (1 - c * self.compute_sat_score - d * self.compute_short_score))
+        score = round(100 * (1 - c * self.compute_sat_score() - d * self.compute_short_score()))
         return score
 
     @log
-    def get_availability_over_time(self) -> pd.DataFrame:
-        """Returns a dataframe which gives the availabilty of the station over time.
+    def get_availability_spaces_over_time(self) -> pd.DataFrame:
+        """Returns a dataframe which gives the availabilty of the station's spaces over time.
 
         Return :
         --------
         pd.DataFrame
-            the dataframe of availability of the station over time
+            the dataframe of availability of the station's spaces over time
         """
-        pass
+        data = []
+        sorted_records = sorted(self.station_records, key=lambda r: r.date)
+        for records in sorted_records:
+            a = []
+            a.append(records[1])  # records[1] est la date du record
+            a.append(records[3])  # records[3] est available space au moment du record
+            data.append(a)
+        df = pd.DataFrame(data, columns=("date", "available spaces"))
+        return df
+
+    @log
+    def get_availability_bikes_over_time(self) -> pd.DataFrame:
+        """Returns a dataframe which gives the availabilty of the station's bikes over time.
+
+        Return :
+        --------
+        pd.DataFrame
+            the dataframe of availability of the station's bikes over time
+        """
+        data = []
+        sorted_records = sorted(self.station_records, key=lambda r: r.date)
+        for records in sorted_records:
+            a = []
+            a.append(records[1])  # records[1] est la date du record
+            a.append(records[4] + records[5])  # records[4] est available bikes et records[5] les e-bikes
+            data.append(a)
+        df = pd.DataFrame(data, columns=("date", "available bikes"))
+        return df
