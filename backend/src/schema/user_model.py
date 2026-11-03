@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class UserModel(BaseModel):
@@ -22,3 +22,9 @@ class UserReadModel(BaseModel):
 class UserLoginModel(BaseModel):
     username: str
     pwd: str
+
+
+class UserSelfUpdateModel(BaseModel):
+    current_pwd: str
+    new_username: str | None = Field(default=None, min_length=1)
+    new_pwd: str | None = Field(default=None, min_length=1)
