@@ -12,6 +12,7 @@ stations = [
     Station(5502, "Mairie-Opéra", -1.678757, 48.111624, 24),
     Station(5504, "Place Hoche", -1.677073, 48.115074, 39),
     Station(5505, "Sainte-Anne", -1.680534, 48.114219, 24),
+    Station(5509, "Saint-Georges Piscine", -1.674417, 48.112385, 18),
 ]
 
 
@@ -62,6 +63,24 @@ station_records = [
     StationRecord(5505, d("09:30"), "NOT_INSTALLED", 0, 0, 0),
     StationRecord(5505, d("09:45"), "NOT_INSTALLED", 0, 0, 0),
     StationRecord(5505, d("10:00"), "NOT_INSTALLED", 0, 0, 0),
+    # Station 5509
+    StationRecord(5504, d("08:00"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5504, d("08:15"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5504, d("08:30"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5504, d("08:45"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5504, d("09:00"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5504, d("09:15"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5504, d("09:30"), "IN_SERVICE", 0, 18, 0),
+    StationRecord(5504, d("09:45"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5504, d("10:00"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5504, d("10:15"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5504, d("10:30"), "IN_SERVICE", 18, 0, 0),
+    StationRecord(5504, d("10:45"), "IN_SERVICE", 0, 18, 0),
+    StationRecord(5504, d("11:00"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5504, d("11:15"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5504, d("11:30"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5504, d("11:45"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5504, d("12:00"), "IN_SERVICE", 0, 15, 3),
 ]
 
 calculation_service_rep = CalculationService(station=stations[0])
@@ -93,7 +112,14 @@ def test_compute_shortage_rate():
 
 
 def test_compute_saturation_rate():
-    assert calculation_service_rep.compute_shortage_rate() == 0.625
-    assert calculation_service_mai.compute_shortage_rate() == 0.0
-    assert calculation_service_pla.compute_shortage_rate() == 0.0
-    assert calculation_service_sai.compute_shortage_rate() == 1.00
+    assert calculation_service_rep.compute_saturation_rate() == 0.625
+    assert calculation_service_mai.compute_saturation_rate() == 0.0
+    assert calculation_service_pla.compute_saturation_rate() == 0.0
+    assert calculation_service_sai.compute_saturation_rate() == 1.00
+
+
+def test_shortage_mean_time():
+    assert calculation_service_rep.compute_saturation_rate() == 0.625
+    assert calculation_service_mai.compute_saturation_rate() == 0.0
+    assert calculation_service_pla.compute_saturation_rate() == 0.0
+    assert calculation_service_sai.compute_saturation_rate() == 1.00
