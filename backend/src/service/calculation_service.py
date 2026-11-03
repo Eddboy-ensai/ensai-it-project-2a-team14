@@ -200,12 +200,39 @@ class CalculationService:
         return score
 
     @log
-    def get_availability_over_time(self) -> pd.DataFrame:
-        """Returns a dataframe which gives the availabilty of the station over time.
+    def get_availability_spaces_over_time(self) -> pd.DataFrame:
+        """Returns a dataframe which gives the availabilty of the station's spaces over time.
 
         Return :
         --------
         pd.DataFrame
-            the dataframe of availability of the station over time
+            the dataframe of availability of the station's spaces over time
         """
-        pass
+        data = []
+        sorted_records = sorted(self.station_records, key=lambda r: r.date)
+        for records in sorted_records:
+            a = []
+            a.append(records[1])  # records[1] est la date du record
+            a.append(records[3])  # records[3] est available space au moment du record
+            data.append(a)
+        df = pd.DataFrame(data, columns=("date", "available spaces"))
+        return df
+
+    @log
+    def get_availability_bikes_over_time(self) -> pd.DataFrame:
+        """Returns a dataframe which gives the availabilty of the station's bikes over time.
+
+        Return :
+        --------
+        pd.DataFrame
+            the dataframe of availability of the station's bikes over time
+        """
+        data = []
+        sorted_records = sorted(self.station_records, key=lambda r: r.date)
+        for records in sorted_records:
+            a = []
+            a.append(records[1])  # records[1] est la date du record
+            a.append(records[4] + records[5])  # records[4] est available bikes et records[5] les e-bikes
+            data.append(a)
+        df = pd.DataFrame(data, columns=("date", "available bikes"))
+        return df
