@@ -145,3 +145,95 @@ class UserService:
             True if deletion was successful, False otherwise.
         """
         return UserDao().delete(user)
+
+    @log
+    def update_profile_as_admin(
+        self,
+        user: User,
+        new_username: str | None = None,
+        new_pwd: str | None = None,
+    ) -> User:
+        """Updates another user's profile on behalf of an admin.
+        Parameters
+        ----------
+        user : User
+            the user to modify
+        new_username : str | None
+            new username, or None to keep the current one
+        new_pwd : str | None
+            new password, or None to keep the current one
+        Returns
+        -------
+        User : the updated user, or None if the update failed in the database
+        Raises
+        ------
+        ValueError : if there is nothing to update, if the username is already used,
+            or if the username changes without a new password
+        """
+        username_changes = bool(new_username) and new_username != user.username
+        if not username_changes and not new_pwd:
+            raise ValueError("Nothing to update.")
+        if username_changes and not new_pwd:
+            # The admin does not know the current password, so the hash
+            # (salted with the username) could not be recomputed.
+            raise ValueError("A new password is required when changing the username.")
+        if username_changes and self.username_already_used(new_username):
+            raise ValueError("Username already used.")
+
+        if username_changes:
+            user.username = new_username
+        user.pwdh = hash_password(new_pwd, user.username)
+        return self.update(user)
+
+    @log
+    def first_admin(self) -> User:
+        """Returns the first admin created (the admin with the smallest id).
+        This admin is the only one allowed to grant or revoke admin rights.
+        Returns
+        -------
+        User : the first admin, or None if there is no admin
+        """
+        admins = [u for u in UserDao().list_all() if u.admin]
+        if not admins:
+            return None
+        return min(admins, key=lambda u: u.id_user)
+
+    @log
+    def is_first_admin(self, user: User) -> bool:
+        """Checks if the given user is the first admin created.
+        Parameters
+        ----------
+        user : User
+        Returns
+        -------
+        bool
+        """
+        first = self.first_admin()
+        return first is not None and user is not None and first.id_user == user.id_user
+
+    @log
+    def set_admin_rights(self, granter: User, target: User, admin: bool) -> User:
+        """Grants or revokes admin rights. Only the first admin created can do it.
+        Parameters
+        ----------
+        granter : User
+            the user asking for the change (must be the first admin)
+        target : User
+            the user whose rights are changed
+        admin : bool
+            True to grant admin rights, False to revoke them
+        Returns
+        -------
+        User : the updated target, or None if the update failed in the database
+        Raises
+        ------
+        PermissionError : if the granter is not the first admin
+        ValueError : if the first admin tries to change his own rights
+        """
+        if not self.is_first_admin(granter):
+            raise PermissionError("Only the first admin can grant or revoke admin rights.")
+        if granter.id_user == target.id_user:
+            raise ValueError("The first admin cannot change his own rights.")
+
+        target.admin = admin
+        return self.update(target)
