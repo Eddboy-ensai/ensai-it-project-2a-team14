@@ -10,7 +10,7 @@ from utils.log_utils import log
 class SuggestionScore:
     def __init__(self, station: Station):
         self.station = station
-        self.latest_record = CalculationService.latest_record()
+        self.latest_record = CalculationService().latest_record()
 
     @log
     def station_pick_suggestion_score(self) -> int:
@@ -26,7 +26,7 @@ class SuggestionScore:
         b = 0.33  # coef of dispo in the suggestion score#
         c = 0.33  # coef of the shortage score in the suggestion score#
         n0 = 3  # reference constant set at 3 of availability#
-        Spick = CalculationService.compute_short_score()
+        Spick = CalculationService().compute_short_score
         nb_bikes = self.latest_record().nb_available_bikes
         Dispo = 1 - math.exp(-nb_bikes / n0)
         if nb_bikes == 0:

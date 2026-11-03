@@ -46,7 +46,7 @@ class StationRecordDao(metaclass=Singleton):
         return nb_inserted
 
     @log
-    def list_all_by_id(id_station: int) -> list[StationRecord]:
+    def list_all_by_id(self, id_station: int) -> list[StationRecord]:
         """List all records in the database of the choosen station.
 
         Parameters:

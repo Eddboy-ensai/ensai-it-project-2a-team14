@@ -11,7 +11,7 @@ from utils.log_utils import log
 class CalculationService:
     def __init__(self, station: Station):
         self.station = station
-        self.station_records = StationRecordDao.list_all_by_id(station.id_station)
+        self.station_records = StationRecordDao().list_all_by_id(station.id_station)
 
     @log
     def latest_record(self) -> StationRecord:
@@ -169,9 +169,9 @@ class CalculationService:
         """
         a = 0.5
         t = 3600
-        Tsat = self.compute_saturation_rate()
+        Tsat = 1 - self.compute_saturation_rate()
         Dsat = self.compute_saturation_mean_time()
-        dsat = 1 - math.exp(-Dsat / t)
+        dsat = math.exp(-Dsat / t)
         sat_score = round(Tsat ** (1 - a) * dsat**a, 2)
         return sat_score
 
@@ -187,9 +187,9 @@ class CalculationService:
         """
         b = 0.5
         t = 3600
-        Tshort = self.compute_shortage_rate()
+        Tshort = 1 - self.compute_shortage_rate()
         Dshort = self.compute_shortage_mean_time()
-        dshort = 1 - math.exp(-Dshort / t)
+        dshort = math.exp(-Dshort / t)
         short_score = round(Tshort ** (1 - b) * dshort**b, 2)
         return short_score
 
@@ -206,8 +206,8 @@ class CalculationService:
             the fiability score of the station
         """
         c = 0.5
-        d = 0.5
-        score = round(100 * (1 - c * self.compute_sat_score() - d * self.compute_short_score()))
+        d = 0.5  # c + d = 1 (toujours)
+        score = round(100 * (c * self.compute_sat_score() + d * self.compute_short_score()))
         return score
 
     @log
