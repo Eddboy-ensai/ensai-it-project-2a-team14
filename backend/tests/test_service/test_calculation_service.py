@@ -111,6 +111,23 @@ def test_compute_shortage_rate():
     assert calculation_service_mai.compute_shortage_rate() == 0.5
     assert calculation_service_pla.compute_shortage_rate() == 0.0
     assert calculation_service_sai.compute_shortage_rate() == 0.0
+    assert calculation_service_pis.compute_shortage_rate() == 0.4375
+
+
+def test_compute_shortage_mean_time():
+    assert calculation_service_rep.compute_shortage_mean_time() == 0.0
+    assert calculation_service_mai.compute_shortage_mean_time() == 3600
+    assert calculation_service_pla.compute_shortage_mean_time() == 0.0
+    assert calculation_service_sai.compute_shortage_mean_time() == 0.0
+    assert calculation_service_pis.compute_shortage_mean_time() == 3150.0
+
+
+def test_compute_short_score():
+    assert calculation_service_rep.compute_short_score() == 1.0
+    assert calculation_service_mai.compute_short_score() == 0.43
+    assert calculation_service_pla.compute_short_score() == 1.0
+    assert calculation_service_sai.compute_short_score() == 1.0
+    assert calculation_service_pis.compute_short_score() == 0.48
 
 
 def test_compute_saturation_rate():
@@ -118,35 +135,28 @@ def test_compute_saturation_rate():
     assert calculation_service_mai.compute_saturation_rate() == 0.0
     assert calculation_service_pla.compute_saturation_rate() == 0.0
     assert calculation_service_sai.compute_saturation_rate() == 1.00
-
-
-def test_compute_shortage_mean_time():
-    assert calculation_service_pis.compute_shortage_mean_time() == 3150.0
+    assert calculation_service_pis.compute_saturation_rate() == 0.5
 
 
 def test_compute_saturation_mean_time():
+    assert calculation_service_rep.compute_saturation_mean_time() == 4500.0
+    assert calculation_service_mai.compute_saturation_mean_time() == 0.0
+    assert calculation_service_pla.compute_saturation_mean_time() == 0.0
+    assert calculation_service_sai.compute_saturation_mean_time() == 7200.0
     assert calculation_service_pis.compute_saturation_mean_time() == 2400.0
 
 
 def test_compute_sat_score():
-    assert calculation_service_rep.compute_sat_score() == 1
-    assert calculation_service_mai.compute_sat_score() == 1
-    assert calculation_service_pla.compute_sat_score() == 1
-    assert calculation_service_sai.compute_sat_score() == 1
-    assert calculation_service_pis.compute_sat_score() == 1
-
-
-def test_compute_short_score():
-    assert calculation_service_rep.compute_short_score() == 1
-    assert calculation_service_mai.compute_short_score() == 1
-    assert calculation_service_pla.compute_short_score() == 1
-    assert calculation_service_sai.compute_short_score() == 1
-    assert calculation_service_pis.compute_short_score() == 1
+    assert calculation_service_rep.compute_sat_score() == 0.33
+    assert calculation_service_mai.compute_sat_score() == 1.0
+    assert calculation_service_pla.compute_sat_score() == 1.0
+    assert calculation_service_sai.compute_sat_score() == 0
+    assert calculation_service_pis.compute_sat_score() == 0.51
 
 
 def test_compute_score():
-    assert calculation_service_rep.compute_score() == 1
-    assert calculation_service_rep.compute_score() == 1
-    assert calculation_service_rep.compute_score() == 1
-    assert calculation_service_rep.compute_score() == 1
-    assert calculation_service_rep.compute_score() == 1
+    assert calculation_service_rep.compute_score() == 66
+    assert calculation_service_mai.compute_score() == 72
+    assert calculation_service_pla.compute_score() == 100
+    assert calculation_service_sai.compute_score() == 50
+    assert calculation_service_pis.compute_score() == 50
