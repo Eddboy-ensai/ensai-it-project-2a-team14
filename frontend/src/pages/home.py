@@ -15,7 +15,7 @@ if st.button("Se connecter"):
     if reponse["status_code"] == 200:
         st.session_state["user"] = reponse["data"]
         st.session_state["access_token"] = reponse["data"]["access_token"]
-        st.switch_page("pages/user_menu.py")
+        st.switch_page("pages/station.py")
     else:
         st.error(f"Erreur {response ['status_code']} : {response['data']}")
 
