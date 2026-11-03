@@ -1,11 +1,13 @@
-#menu/accueil/menu
-from utils.log_init import get_page_logger
-logger = get_page_logger("home")
+# Menu/Accueil/Menu
 
 import streamlit as st
-from utils.api_client import api_client
 
-if "message" in st.session_state :
+from utils.api_client import api_client
+from utils.log_init import get_page_logger
+
+logger = get_page_logger("home")
+
+if "message" in st.session_state:
     st.success(st.session_state["message"])
     del st.session_state["message"]
 
@@ -21,7 +23,7 @@ if st.button("Se connecter"):
         st.session_state["access_token"] = reponse["data"]["access_token"]
         st.switch_page("pages/station.py")
     else:
-        st.error(f"Erreur {response ['status_code']} : {response['data']}")
+        st.error(f"Erreur {reponse['status_code']} : {reponse['data']}")
 
 if st.button("Créer un compte"):
     st.switch_page("pages/create_user.py")
