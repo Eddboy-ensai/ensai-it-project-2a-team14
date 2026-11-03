@@ -83,3 +83,17 @@ def test_compute_fill_rate():
     assert round(calculation_service_mai.compute_fill_rate(), 2) == 0.54
     assert round(calculation_service_pla.compute_fill_rate(), 2) == 0.21
     assert calculation_service_sai.compute_fill_rate() == 0.0
+
+
+def test_compute_shortage_rate():
+    assert calculation_service_rep.compute_shortage_rate() == 0.0
+    assert calculation_service_mai.compute_shortage_rate() == 0.5
+    assert calculation_service_pla.compute_shortage_rate() == 0.0
+    assert calculation_service_sai.compute_shortage_rate() == 0.0
+
+
+def test_compute_saturation_rate():
+    assert calculation_service_rep.compute_shortage_rate() == 0.625
+    assert calculation_service_mai.compute_shortage_rate() == 0.0
+    assert calculation_service_pla.compute_shortage_rate() == 0.0
+    assert calculation_service_sai.compute_shortage_rate() == 0.0
