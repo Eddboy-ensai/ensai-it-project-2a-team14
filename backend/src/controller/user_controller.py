@@ -1,6 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 
+<<<<<<< HEAD
 from schema.user_model import UserCreateModel, UserReadModel, UserSelfUpdateModel
+=======
+from schema.user_model import UserCreateModel, UserModel, UserReadModel
+from service.favorite_service import FavoriteService
+>>>>>>> f5e5eaabdb6639ba5900d47c9aa2712fa17ce5f0
 from service.user_service import UserService
 from utils.log_utils import get_logger
 from utils.security import require_admin, verify_token
@@ -63,7 +68,16 @@ async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     user = user_service.find_by_id(id_user)
     if not user:
         raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
-    return user
+    id_favorites = []
+    for fav in FavoriteService().find_by_id(user.id_user):
+        id_favorites.append(fav.id_station)
+    user_read = {
+        "id_user": user.id_user,
+        "username": user.username,
+        "admin": user.admin,
+        "favorites": id_favorites,
+    }
+    return user_read
 
 
 @router.put("/me", response_model=UserReadModel, tags=["Users"])

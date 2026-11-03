@@ -50,3 +50,16 @@ class FavoriteService:
             True if deletion was successful, False otherwise.
         """
         return FavoriteDao().delete(favorite)
+
+    @log
+    def find_by_id(self, id_user: int) -> list[Favorite]:
+        """Finds an user's favorites by its unique id.
+        Parameters
+        ----------
+        id_user: int
+            ID of the user
+        Return
+        ------
+        list of the favorites of the user
+        """
+        return FavoriteDao().find_by_id(id_user)

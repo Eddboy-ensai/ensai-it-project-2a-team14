@@ -17,6 +17,7 @@ class UserReadModel(BaseModel):
     id_user: int
     username: str
     admin: bool
+    favorites: list[int | None]
 
 
 class UserLoginModel(BaseModel):
