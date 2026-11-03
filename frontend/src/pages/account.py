@@ -33,4 +33,4 @@ if st.button("Se déconnecter"):
 
 if st.button("Retour"):
     st.session_state.clear()
-    st.switch_page("pages/menu.py")
+    st.switch_page("pages/station.py")
