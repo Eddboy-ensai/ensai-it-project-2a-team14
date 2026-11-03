@@ -79,12 +79,47 @@ class FavoriteDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "DELETE FROM project.Favorites                               "
-                        " WHERE id_user = %(id_user)s AND id_station = %(id_station)s                ",
+                        " WHERE id_user = %(id_user)s AND id_station = %(id_station)s ",
                         {"id_user": favorite.id_user, "id_station": favorite.id_station},
                     )
                     res = cursor.rowcount
         except Exception as e:
             logger.error(e)
             raise
-
         return res > 0
+
+    @log
+    def find_by_id(self, id_user: int) -> list[Favorite]:
+        """Find the favorite of a user by its id.
+        Parameter
+        ---------
+        id_user : int
+            The ID of the user
+        Return
+        ------
+            User matching the given id
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT *                            "
+                        "  FROM Users                       "
+                        " WHERE id_user = %(id_user)s;   ",
+                        {"id_user": id_user},
+                    )
+                    res = cursor.fetchone()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        user = None
+        if res:
+            user = User(
+                username=res["username"],
+                id_user=res["id_user"],
+                admin=res["admin"],
+                pwdh=res["pwdh"],
+            )
+
+        return user

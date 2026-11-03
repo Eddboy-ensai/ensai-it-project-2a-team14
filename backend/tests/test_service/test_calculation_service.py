@@ -126,3 +126,27 @@ def test_compute_shortage_mean_time():
 
 def test_compute_saturation_mean_time():
     assert calculation_service_pis.compute_saturation_mean_time() == 2400.0
+
+
+def test_compute_sat_score():
+    assert calculation_service_rep.compute_sat_score() == 1
+    assert calculation_service_mai.compute_sat_score() == 1
+    assert calculation_service_pla.compute_sat_score() == 1
+    assert calculation_service_sai.compute_sat_score() == 1
+    assert calculation_service_pis.compute_sat_score() == 1
+
+
+def test_compute_short_score():
+    assert calculation_service_rep.compute_short_score() == 1
+    assert calculation_service_mai.compute_short_score() == 1
+    assert calculation_service_pla.compute_short_score() == 1
+    assert calculation_service_sai.compute_short_score() == 1
+    assert calculation_service_pis.compute_short_score() == 1
+
+
+def test_compute_score():
+    assert calculation_service_rep.compute_score() == 1
+    assert calculation_service_rep.compute_score() == 1
+    assert calculation_service_rep.compute_score() == 1
+    assert calculation_service_rep.compute_score() == 1
+    assert calculation_service_rep.compute_score() == 1
