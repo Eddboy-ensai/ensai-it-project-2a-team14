@@ -70,6 +70,48 @@ class UserService:
         return user if UserDao().update(user) else None
 
     @log
+    def update_own_profile(
+        self,
+        user: User,
+        current_pwd: str,
+        new_username: str | None = None,
+        new_pwd: str | None = None,
+    ) -> User:
+        """Updates the profile of the logged-in user (username and/or password).
+        Parameters
+        ----------
+        user : User
+            the logged-in user (returned by verify_token)
+        current_pwd : str
+            current password, checked before any modification
+        new_username : str | None
+            new username, or None to keep the current one
+        new_pwd : str | None
+            new password, or None to keep the current one
+        Returns
+        -------
+        User : the updated user, or None if the update failed in the database
+        Raises
+        ------
+        PermissionError : if the current password is wrong
+        ValueError : if there is nothing to update or the username is already used
+        """
+        if hash_password(current_pwd, user.username) != user.pwdh:
+            raise PermissionError("Wrong current password.")
+        if not new_username and not new_pwd:
+            raise ValueError("Nothing to update.")
+
+        username = new_username or user.username
+        if username != user.username and self.username_already_used(username):
+            raise ValueError("Username already used.")
+
+        # The hash is salted with the username: it must be recomputed
+        # even if only the username changes.
+        user.username = username
+        user.pwdh = hash_password(new_pwd or current_pwd, username)
+        return self.update(user)
+
+    @log
     def username_already_used(self, username: str) -> bool:
         """Check if a username is already used.
         Parameters

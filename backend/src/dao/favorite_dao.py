@@ -97,29 +97,26 @@ class FavoriteDao(metaclass=Singleton):
             The ID of the user
         Return
         ------
-            User matching the given id
+        list[Favorite]
+            Favorites of the user
         """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                            "
-                        "  FROM Users                       "
+                        "  FROM Favorites                   "
                         " WHERE id_user = %(id_user)s;   ",
                         {"id_user": id_user},
                     )
-                    res = cursor.fetchone()
+                    res = cursor.fetchall()
         except Exception as e:
             logger.error(e)
             raise
 
-        user = None
+        list_favorites = []
         if res:
-            user = User(
-                username=res["username"],
-                id_user=res["id_user"],
-                admin=res["admin"],
-                pwdh=res["pwdh"],
-            )
-
-        return user
+            for row in res:
+                favorite = Favorite(id_user=row["id_user"], id_station=row["id_station"])
+                list_favorites.append(favorite)
+        return list_favorites
