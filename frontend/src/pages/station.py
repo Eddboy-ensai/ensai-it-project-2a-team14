@@ -7,13 +7,12 @@ import requests
 import streamlit as st
 
 from utils.api_client import api_client
+from utils.auth_guard import check_authentification
 from utils.log_init import get_page_logger
 
-if "user" not in st.session_state:
-    st.session_state["message"] = "Veuillez vous connecter pour accéder aux stations"
-    st.switch_page("pages/home.py")
-
 logger = get_page_logger("station")
+
+check_authentification()
 
 id_station = st.query_params.get("id_station")
 
@@ -23,12 +22,12 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
     st.json(station)
     if st.button("Retour"):
         st.query_params.clear()
-        st.rerun() 
+        st.rerun()
 
 else:  # affichage de la page sans query
     col1, col2 = st.columns([6, 1])
     col1.title("Veloscope")
-    
+
     if "message_fav" in st.session_state:
         st.success(st.session_state.pop("message_fav"))
 
@@ -46,13 +45,13 @@ else:  # affichage de la page sans query
         st.info("Aucune information à afficher")
         st.stop()
 
-    df_stations = pd.DataFrame(stations) 
+    df_stations = pd.DataFrame(stations)
 
     user_id = st.session_state["user"]["id_user"]
 
     favoris_ids = []
     res_user = api_client.get(f"/user/{user_id}")
-    if res_user["status_code"]==200:
+    if res_user["status_code"] == 200:
         favoris_ids = [fav["id_station"] for fav in res_user["data"]["favorites"]]
 
     df_stations["Favorite"] = df_stations["id_station"].isin(favoris_ids)
@@ -81,7 +80,5 @@ else:  # affichage de la page sans query
         for s_id in to_delete:
             api_client.delete(f"/favorite/{user_id}", json={"id_station": int(s_id)})
 
-        st.session_state["message_fav"] ="Votre liste de favoris a bien été mise à jour"
+        st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
         st.rerun()
-
-       

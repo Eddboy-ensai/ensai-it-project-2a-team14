@@ -3,6 +3,7 @@
 import streamlit as st
 
 from utils.api_client import api_client
+from utils.auth_guard import check_admin
 from utils.log_init import get_page_logger
 
 id_user = st.query_params.get("id_user")
@@ -12,10 +13,7 @@ if "user" not in st.session_state:
     st.switch_page("pages/home.py")
 
 logger = get_page_logger("admin")
-
-if not st.session_state["user"]["admin"]:
-    st.session_state["message"] = "Page réservée aux administrateurs"
-    st.switch_page("pages/home.py")
+check_admin()
 
 result = api_client.get("/user/")
 if result["status_code"] == 200:
@@ -40,8 +38,12 @@ if id_user:
     username = st.text_input("Nouvel identifiant")
     password = st.text_input("Nouveau mot de passe", type="password")
     if st.button("Modifier"):
-        reponse = api_client.post("/user/", json={"username": username, "pwd": password})
-        if reponse["status_code"] == 200:
-            st.success("Compte créé")
+        response = api_client.put(
+            f"/user/{id_user}",
+            json={"username": username, "pwd": password},
+            headers={"X-Auth-Token": st.session_state["user"]["access_token"]},
+        )
+        if response["status_code"] == 200:
+            st.success("Compte modifié")
         else:
-            st.error(f"Erreur {reponse['status_code']}")
+            st.error(f"Erreur {response['status_code']}")

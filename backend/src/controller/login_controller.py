@@ -34,5 +34,6 @@ def login(credentials: UserLoginModel, service=Depends(get_user_service)):
             "id_user": user.id_user,
             "username": user.username,
             "access_token": user.access_token,
+            "admin": user.admin,
         }
     raise HTTPException(status_code=401, detail="Invalid credentials")
