@@ -9,7 +9,6 @@ from utils.log_utils import log
 
 
 class CollectService:
-
     @log
     def refresh_stations(self) -> int:
         """Fetches the list of stations and inserts or updates them.

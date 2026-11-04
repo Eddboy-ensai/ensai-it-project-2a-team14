@@ -46,7 +46,9 @@ async def create_user(u: UserCreateModel, user_service=Depends(get_user_service)
     return user
 
 
-@router.get("/", response_model=list[UserReadModel], tags=["Users"])
+@router.get(
+    "/", response_model=list[UserReadModel], tags=["Users"], dependencies=[Depends(require_admin)]
+)
 async def list_all_users(user_service=Depends(get_user_service)):
     """List all users.
     Returns:
@@ -57,7 +59,12 @@ async def list_all_users(user_service=Depends(get_user_service)):
     return users_list
 
 
-@router.get("/{id_user}", response_model=UserDisplayModel, tags=["Users"])
+@router.get(
+    "/{id_user}",
+    response_model=UserDisplayModel,
+    tags=["Users"],
+    dependencies=[Depends(require_admin)],
+)
 async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     """Find a user by their unique ID.
     Args:
@@ -74,10 +81,12 @@ async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
         raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
     favorites = []
     for fav in FavoriteService().find_by_id(user.id_user):
-        favorites.append({
-            "id_station": fav.id_station,
-            "name": StationService().find_by_id(fav.id_station).name,
-        })
+        favorites.append(
+            {
+                "id_station": fav.id_station,
+                "name": StationService().find_by_id(fav.id_station).name,
+            }
+        )
     user_read = {
         "id_user": user.id_user,
         "username": user.username,

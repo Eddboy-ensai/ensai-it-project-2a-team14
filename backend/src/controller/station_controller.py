@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
-from schema.station_model import StationDataModel, StationReadModel
+from schema.station_model import StationDataModel, StationHistoryModel, StationReadModel
 from service.station_service import StationService
 from utils.log_utils import get_logger
 
@@ -54,6 +54,42 @@ async def station_by_id(id_station: int, station_service=Depends(get_station_ser
         "capacity": station.capacity,
     }
     return data | stats
+
+
+@router.get("/{id_station}/history", response_model=StationHistoryModel, tags=["Stations"])
+async def station_history(
+    id_station: int,
+    nb_days: int = Query(1, ge=1, le=30, description="Number of days to look back (1, 7 or 30)"),
+    station_service=Depends(get_station_service),
+):
+    """Returns the availability of a station over the last n days.
+    Parameters
+    ----------
+    id_station: int
+        The ID of the station
+    nb_days: int
+        Number of days to look back, between 1 and 30 (default: 1, i.e. the last 24 hours)
+    station_service : StationService
+        The service used to interact with station data
+    Returns
+    -------
+    StationHistoryModel
+        The records of the station over the period, sorted by date
+    Raises:
+        HTTPException: 404 error if the station is not found
+        HTTPException: 422 error if nb_days is not between 1 and 30 (raised by FastAPI)
+    """
+    logger.info("Get the history of a station")
+    station = station_service.find_by_id(id_station)
+    if not station:
+        raise HTTPException(status_code=404, detail=f"Station (id={id_station}) not found.")
+    records = station_service.get_availability_over_time(station, nb_days)
+    return {
+        "id_station": station.id_station,
+        "nb_days": nb_days,
+        "nb_records": len(records),
+        "records": records,
+    }
 
 
 # @router.get("/{id_station}/stats", response_model=Statistics, tags=["Stations"])

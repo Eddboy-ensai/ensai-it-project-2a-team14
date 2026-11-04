@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict
 
 
 class StationDataModel(BaseModel):
@@ -37,3 +39,20 @@ class Statistics(BaseModel):
     saturation_rate: float
     shortage_mean_time: float
     saturation_mean_time: float
+
+
+class StationRecordModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    date: datetime
+    status: str | None
+    nb_available_bikes: int | None
+    nb_available_ebikes: int | None
+    nb_available_spaces: int | None
+
+
+class StationHistoryModel(BaseModel):
+    id_station: int
+    nb_days: int
+    nb_records: int
+    records: list[StationRecordModel]

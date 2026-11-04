@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 from business_object.station_record import StationRecord
 from dao.db_connection import DBConnection
 from utils.log_utils import get_logger, log
@@ -85,3 +87,52 @@ class StationRecordDao(metaclass=Singleton):
                 )
                 stationrecords_list.append(stationrecord)
         return stationrecords_list
+
+    @log
+    def list_last_days_by_id(self, id_station: int, nb_days: int) -> list[StationRecord]:
+        """List the records of the chosen station over the last n days.
+
+        Parameters:
+        -----------
+        id_station: int
+            The id of the chosen station
+        nb_days: int
+            Number of days to look back (e.g. 1, 7 or 30)
+
+        Returns
+        -------
+        list[StationRecord]
+            records of the station since now - nb_days, sorted by date
+        """
+        if nb_days <= 0:
+            raise ValueError("nb_days must be a positive integer.")
+
+        since = datetime.now(UTC) - timedelta(days=nb_days)
+
+        res = None
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * FROM project.StationRecords "
+                        "WHERE id_station = %(id_station)s "
+                        "  AND date >= %(since)s "
+                        "ORDER BY date;",
+                        {"id_station": id_station, "since": since},
+                    )
+                    res = cursor.fetchall()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return [
+            StationRecord(
+                id_station=row["id_station"],
+                date=row["date"],
+                status=row["status"],
+                nb_available_spaces=row["nb_available_spaces"],
+                nb_available_bikes=row["nb_available_bikes"],
+                nb_available_ebikes=row["nb_available_ebikes"],
+            )
+            for row in res or []
+        ]
