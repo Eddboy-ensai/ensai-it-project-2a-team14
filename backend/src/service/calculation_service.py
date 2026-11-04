@@ -32,7 +32,7 @@ class CalculationService:
         if not self.latest_record():
             return 0.0
         filled_spaces = (
-            self.latest_record().nb_available_bikes + self.latest_record().nb_available_ebikes
+            self.latest_record().nb_available_bikes
         )
         filled_rate = filled_spaces / self.station.capacity
         return filled_rate
@@ -223,8 +223,8 @@ class CalculationService:
         sorted_records = sorted(self.station_records, key=lambda r: r.date)
         for records in sorted_records:
             a = []
-            a.append(records[1])  # records[1] est la date du record
-            a.append(records[3])  # records[3] est available space au moment du record
+            a.append(records.date)
+            a.append(records.nb_available_spaces)
             data.append(a)
         df = pd.DataFrame(data, columns=("date", "available spaces"))
         return df
@@ -242,10 +242,8 @@ class CalculationService:
         sorted_records = sorted(self.station_records, key=lambda r: r.date)
         for records in sorted_records:
             a = []
-            a.append(records[1])  # records[1] est la date du record
-            a.append(
-                records[4] + records[5]
-            )  # records[4] est available bikes et records[5] les e-bikes
+            a.append(records.date)
+            a.append(records.nb_available_bikes + records.nb_available_ebikes)
             data.append(a)
         df = pd.DataFrame(data, columns=("date", "available bikes"))
         return df

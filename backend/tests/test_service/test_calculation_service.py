@@ -17,22 +17,22 @@ stations = [
 
 
 def d(heure: str) -> datetime:
-    """Construit un datetime du 2026-10-13 à l'heure donnée (fuseau +02)."""
+    """Constructs a value in datetime format for 2026-10-13 at the specified time (time zone +02)."""
     return datetime.fromisoformat(f"2026-10-13 {heure}:00").replace(tzinfo=TZ)
 
 
 # Table StationRecords
 station_records = [
     # Station 5501
-    StationRecord(5501, d("08:00"), "IN_SERVICE", 25, 10, 10),
-    StationRecord(5501, d("08:15"), "IN_SERVICE", 20, 15, 10),
-    StationRecord(5501, d("08:30"), "IN_SERVICE", 10, 25, 10),
-    StationRecord(5501, d("08:45"), "IN_SERVICE", 0, 35, 10),
-    StationRecord(5501, d("09:00"), "IN_SERVICE", 0, 35, 10),
-    StationRecord(5501, d("09:15"), "IN_SERVICE", 0, 35, 10),
-    StationRecord(5501, d("09:30"), "IN_SERVICE", 0, 35, 10),
-    StationRecord(5501, d("09:45"), "IN_SERVICE", 0, 35, 10),
-    StationRecord(5501, d("10:00"), "IN_SERVICE", 0, 35, 10),
+    StationRecord(5501, d("08:00"), "IN_SERVICE", 25, 20, 10),
+    StationRecord(5501, d("08:15"), "IN_SERVICE", 20, 25, 10),
+    StationRecord(5501, d("08:30"), "IN_SERVICE", 10, 35, 10),
+    StationRecord(5501, d("08:45"), "IN_SERVICE", 0, 45, 10),
+    StationRecord(5501, d("09:00"), "IN_SERVICE", 0, 45, 10),
+    StationRecord(5501, d("09:15"), "IN_SERVICE", 0, 45, 10),
+    StationRecord(5501, d("09:30"), "IN_SERVICE", 0, 45, 10),
+    StationRecord(5501, d("09:45"), "IN_SERVICE", 0, 45, 10),
+    StationRecord(5501, d("10:00"), "IN_SERVICE", 0, 45, 10),
     # Station 5502
     StationRecord(5502, d("08:00"), "IN_SERVICE", 24, 0, 0),
     StationRecord(5502, d("08:15"), "IN_SERVICE", 24, 0, 0),
@@ -44,15 +44,15 @@ station_records = [
     StationRecord(5502, d("09:45"), "IN_SERVICE", 11, 13, 0),
     StationRecord(5502, d("10:00"), "IN_SERVICE", 11, 13, 0),
     # Station 5504
-    StationRecord(5504, d("08:00"), "IN_SERVICE", 13, 13, 13),
-    StationRecord(5504, d("08:15"), "IN_SERVICE", 15, 14, 10),
-    StationRecord(5504, d("08:30"), "IN_SERVICE", 21, 8, 10),
-    StationRecord(5504, d("08:45"), "IN_SERVICE", 32, 0, 7),
-    StationRecord(5504, d("09:00"), "IN_SERVICE", 34, 0, 5),
-    StationRecord(5504, d("09:15"), "IN_SERVICE", 36, 0, 3),
-    StationRecord(5504, d("09:30"), "IN_SERVICE", 33, 3, 3),
-    StationRecord(5504, d("09:45"), "IN_SERVICE", 31, 5, 3),
-    StationRecord(5504, d("10:00"), "IN_SERVICE", 31, 5, 3),
+    StationRecord(5504, d("08:00"), "IN_SERVICE", 13, 26, 13),
+    StationRecord(5504, d("08:15"), "IN_SERVICE", 15, 24, 10),
+    StationRecord(5504, d("08:30"), "IN_SERVICE", 21, 18, 10),
+    StationRecord(5504, d("08:45"), "IN_SERVICE", 32, 7, 7),
+    StationRecord(5504, d("09:00"), "IN_SERVICE", 34, 5, 5),
+    StationRecord(5504, d("09:15"), "IN_SERVICE", 36, 3, 3),
+    StationRecord(5504, d("09:30"), "IN_SERVICE", 33, 6, 3),
+    StationRecord(5504, d("09:45"), "IN_SERVICE", 31, 8, 3),
+    StationRecord(5504, d("10:00"), "IN_SERVICE", 31, 8, 3),
     # Station 5505
     StationRecord(5505, d("08:00"), "NOT_INSTALLED", 0, 0, 0),
     StationRecord(5505, d("08:15"), "NOT_INSTALLED", 0, 0, 0),
@@ -67,20 +67,20 @@ station_records = [
     StationRecord(5509, d("08:00"), "IN_SERVICE", 18, 0, 0),
     StationRecord(5509, d("08:15"), "IN_SERVICE", 18, 0, 0),
     StationRecord(5509, d("08:30"), "IN_SERVICE", 18, 0, 0),
-    StationRecord(5509, d("08:45"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5509, d("09:00"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5509, d("09:15"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("08:45"), "IN_SERVICE", 0, 18, 3),
+    StationRecord(5509, d("09:00"), "IN_SERVICE", 0, 18, 3),
+    StationRecord(5509, d("09:15"), "IN_SERVICE", 0, 18, 3),
     StationRecord(5509, d("09:30"), "IN_SERVICE", 0, 18, 0),
     StationRecord(5509, d("09:45"), "IN_SERVICE", 18, 0, 0),
     StationRecord(5509, d("10:00"), "IN_SERVICE", 18, 0, 0),
     StationRecord(5509, d("10:15"), "IN_SERVICE", 18, 0, 0),
     StationRecord(5509, d("10:30"), "IN_SERVICE", 18, 0, 0),
     StationRecord(5509, d("10:45"), "IN_SERVICE", 0, 18, 0),
-    StationRecord(5509, d("11:00"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5509, d("11:15"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("11:00"), "IN_SERVICE", 0, 18, 3),
+    StationRecord(5509, d("11:15"), "IN_SERVICE", 0, 18, 3),
     StationRecord(5509, d("11:30"), "IN_SERVICE", 12, 3, 3),
-    StationRecord(5509, d("11:45"), "IN_SERVICE", 0, 15, 3),
-    StationRecord(5509, d("12:00"), "IN_SERVICE", 0, 15, 3),
+    StationRecord(5509, d("11:45"), "IN_SERVICE", 0, 18, 3),
+    StationRecord(5509, d("12:00"), "IN_SERVICE", 0, 18, 3),
 ]
 
 calculation_service_rep = CalculationService(station=stations[0])
@@ -150,7 +150,7 @@ def test_compute_sat_score():
     assert calculation_service_rep.compute_sat_score() == 0.33
     assert calculation_service_mai.compute_sat_score() == 1.0
     assert calculation_service_pla.compute_sat_score() == 1.0
-    assert calculation_service_sai.compute_sat_score() == 0
+    assert calculation_service_sai.compute_sat_score() == 0.0
     assert calculation_service_pis.compute_sat_score() == 0.51
 
 
