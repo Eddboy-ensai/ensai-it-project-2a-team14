@@ -18,20 +18,17 @@ st.write(f"Identifiant : {user['username']}")
 
 st.subheader("Stations favorites")
 
-reponse_favs = api_client.get(f"/favorite/{user_id}")
-favoris = reponse_favs.get("data", [])
+res_user = api_client.get(f"/user/{user_id}")
+favoris = res_user["data"]["favorites"] if res_user["status_code"] == 200 else []
 
 if not favoris:
     st.info("Aucune station en favoris")
-else:
-    for fav in favoris:
-        col1, col2 = st.columns([4, 1])
-        col1.write(fav.get("name", f"Station {fav['id_station']}"))
-    if col2.button("Supprimer", key=f"del_{fav['id_station']}"):
-        reponse = api_client.delete(
-            f"/favorite/{user_id}",
-            json={"id_station": fav["id_station"]},
-        )
+
+for fav in favoris:
+    col1, col2 = st.columns([4, 1])
+    col1.write(fav["name"])
+    if col2.button("Supprimer", key= f"{fav['id_station']}"): 
+        api_client.delete(f"/favorite/{user_id}",json={"id_station":fav["id_station"]})
         st.rerun()
 
 st.divider()
