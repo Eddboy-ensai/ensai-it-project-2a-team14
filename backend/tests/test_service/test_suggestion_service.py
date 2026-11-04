@@ -122,8 +122,3 @@ def test_compute_distance():
         48.114219,
         -1.680534
         ) == 274
-
-
-def test_get_sugg_pick():
-    with patch.object(StationService, "list_all", return_value=stations):
-    assert 
