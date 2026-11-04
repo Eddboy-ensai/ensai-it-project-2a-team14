@@ -5,6 +5,7 @@ from business_object.station_record import StationRecord
 from service.suggestion_service import SuggestionService
 from service.calculation_service import CalculationService
 from service.station_service import StationService
+import pytest
 
 TZ = timezone(timedelta(hours=2))  # +02
 

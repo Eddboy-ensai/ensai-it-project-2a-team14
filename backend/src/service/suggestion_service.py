@@ -137,7 +137,7 @@ class SuggestionService:
                 score_pick = CalculationService(stations).compute_short_score()
                 d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_bikes / n0)
-                sugg_score = 100 * round(d**a * Disp**b * score_pick**c, 2)
+                sugg_score = round(100 * d**a * Disp**b * score_pick**c)
                 if (
                     sugg_score >= 50 or sugg_score >= self.station_pick_suggestion_score()
                 ):  # 50 is arbitrary#
@@ -172,7 +172,7 @@ class SuggestionService:
                 score_drop = CalculationService(stations).compute_sat_score()
                 d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_spot / n0)
-                sugg_score = 100 * round(d**a * Disp**b * score_drop**c, 2)
+                sugg_score = round(100 * d**a * Disp**b * score_drop**c)
                 if (
                     sugg_score >= 50 or sugg_score >= self.station_drop_suggestion_score()
                 ):  # 50 is arbitrary#
