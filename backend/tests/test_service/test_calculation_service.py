@@ -8,11 +8,11 @@ TZ = timezone(timedelta(hours=2))  # +02
 
 # Table Stations
 stations = [
-    Station(5501, "République", -1.678037, 48.110026, 45),
-    Station(5502, "Mairie-Opéra", -1.678757, 48.111624, 24),
-    Station(5504, "Place Hoche", -1.677073, 48.115074, 39),
-    Station(5505, "Sainte-Anne", -1.680534, 48.114219, 24),
-    Station(5509, "Saint-Georges Piscine", -1.674417, 48.112385, 18),
+    Station(5501, "République", 48.110026, -1.678037, 45),
+    Station(5502, "Mairie-Opéra", 48.111624, -1.678757, 24),
+    Station(5504, "Place Hoche", 48.115074, -1.677073, 39),
+    Station(5505, "Sainte-Anne", 48.114219, -1.680534, 24),
+    Station(5509, "Saint-Georges Piscine", 48.112385, -1.674417, 18),
 ]
 
 
