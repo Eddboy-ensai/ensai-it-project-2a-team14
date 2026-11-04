@@ -6,7 +6,7 @@ class StationRecord:
 
     def __init__(
         self,
-        id_station: int,
+        id_station: str,
         date: datetime,
         status: str,
         nb_available_spaces: int,

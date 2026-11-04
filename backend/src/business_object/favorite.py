@@ -1,7 +1,7 @@
 class Favorite:
     """Class representing a favorite"""
 
-    def __init__(self, id_user: int, id_station: int):
+    def __init__(self, id_user: int, id_station: str):
         """Constructor"""
         self.id_user = id_user
         self.id_station = id_station

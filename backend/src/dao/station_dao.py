@@ -47,7 +47,7 @@ class StationDao(metaclass=Singleton):
         return nb_rows
 
     @log
-    def find_by_id(self, id_station: int) -> Station:
+    def find_by_id(self, id_station: str) -> Station:
         """Find a station by its id.
         Parameters
         ----------

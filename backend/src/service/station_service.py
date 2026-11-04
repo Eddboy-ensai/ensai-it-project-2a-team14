@@ -10,11 +10,11 @@ from utils.log_utils import log
 
 class StationService:
     @log
-    def find_by_id(self, id_station: int) -> Station | None:
+    def find_by_id(self, id_station: str) -> Station | None:
         """Finds a specific station by its unique id.
         Parameters
         ----------
-        id_station: int
+        id_station: str
             The ID of the station
         Returns
         -------

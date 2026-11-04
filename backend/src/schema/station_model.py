@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class StationDataModel(BaseModel):
-    id_station: int
+    id_station: str
     name: str
     lat: float
     lon: float
@@ -17,7 +17,7 @@ class StationDataModel(BaseModel):
 
 
 class StationReadModel(BaseModel):
-    id_station: int
+    id_station: str
     name: str
     lat: float
     lon: float
@@ -26,11 +26,11 @@ class StationReadModel(BaseModel):
 
 class FavoriteAddModel(BaseModel):
     id_user: int
-    id_station: int
+    id_station: str
 
 
 class FavoriteDeleteModel(BaseModel):
-    id_station: int
+    id_station: str
 
 
 class Statistics(BaseModel):
@@ -52,7 +52,7 @@ class StationRecordModel(BaseModel):
 
 
 class StationHistoryModel(BaseModel):
-    id_station: int
+    id_station: str
     nb_days: int
     nb_records: int
     records: list[StationRecordModel]

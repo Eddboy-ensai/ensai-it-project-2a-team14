@@ -70,10 +70,10 @@ else:  # affichage de la page sans query
         a_supprimer = set(favoris_ids) - set(nouvelles_favorites)
 
         for s_id in a_ajouter:
-            api_client.post(f"/favorite/{user_id}", json={"id_station": int(s_id)})
+            api_client.post(f"/favorite/{user_id}", json={id_station: str(s_id)})
 
         for s_id in a_supprimer:
-            api_client.delete(f"/favorite/{user_id}", json={"id_station": int(s_id)})
+            api_client.delete(f"/favorite/{user_id}", json={id_station: str(s_id)})
 
         st.success("Favoris mis à jour !")
         st.rerun()

@@ -31,9 +31,7 @@ class CalculationService:
             return 0.0
         if not self.latest_record():
             return 0.0
-        filled_spaces = (
-            self.latest_record().nb_available_bikes
-        )
+        filled_spaces = self.latest_record().nb_available_bikes
         filled_rate = filled_spaces / self.station.capacity
         return filled_rate
 

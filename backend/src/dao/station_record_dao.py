@@ -48,12 +48,12 @@ class StationRecordDao(metaclass=Singleton):
         return nb_inserted
 
     @log
-    def list_all_by_id(self, id_station: int) -> list[StationRecord]:
+    def list_all_by_id(self, id_station: str) -> list[StationRecord]:
         """List all records in the database of the choosen station.
 
         Parameters:
         -----------
-        id_station: int
+        id_station: str
             The id of the choosen station
 
         Returns
@@ -89,12 +89,12 @@ class StationRecordDao(metaclass=Singleton):
         return stationrecords_list
 
     @log
-    def list_last_days_by_id(self, id_station: int, nb_days: int) -> list[StationRecord]:
+    def list_last_days_by_id(self, id_station: str, nb_days: int) -> list[StationRecord]:
         """List the records of the chosen station over the last n days.
 
         Parameters:
         -----------
-        id_station: int
+        id_station: str
             The id of the chosen station
         nb_days: int
             Number of days to look back (e.g. 1, 7 or 30)

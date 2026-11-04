@@ -1,0 +1,516 @@
+03/11/2026 13:33:19 root                      INFO    - --------------------------------------------------
+03/11/2026 13:33:19 root                      INFO    - Starting Webservice                           
+03/11/2026 13:33:19 root                      INFO    - --------------------------------------------------
+03/11/2026 13:33:19 root                      INFO    - Load environment variables: SUCCES
+03/11/2026 13:33:19 root                      INFO    - POSTGRES_HOST=postgresql-cnpg-594949-rw.user-eliotchatonnier
+03/11/2026 13:33:19 root                      INFO    - POSTGRES_PORT=5432
+03/11/2026 13:33:19 root                      INFO    - POSTGRES_DATABASE=defaultdb
+03/11/2026 13:33:19 root                      INFO    - POSTGRES_USER=user-eliotchatonnier
+03/11/2026 13:33:19 root                      INFO    - POSTGRES_PASSWORD=*******
+03/11/2026 13:33:19 root                      INFO    - POSTGRES_SCHEMA=project
+03/11/2026 13:33:19 root                      INFO    - UVICORN_HOST=0.0.0.0
+03/11/2026 13:33:19 root                      INFO    - UVICORN_PORT=5000
+03/11/2026 13:33:19 root                      INFO    - BACKEND_URL=http://localhost:5000
+03/11/2026 13:33:19 root                      INFO    - BACKEND_TIMEOUT=5
+03/11/2026 13:33:25 root                      INFO    - GET / - START
+03/11/2026 13:33:25 root                      INFO    - GET / - END [Status: 307]
+03/11/2026 13:33:25 root                      INFO    - GET /docs - START
+03/11/2026 13:33:25 root                      INFO    - GET /docs - END [Status: 200]
+03/11/2026 13:33:25 root                      INFO    - GET /openapi.json - START
+03/11/2026 13:33:25 root                      INFO    - GET /openapi.json - END [Status: 200]
+03/11/2026 13:33:52 root                      INFO    - POST /user/ - START
+03/11/2026 13:33:52 c.user_controller         INFO    - Create a user
+03/11/2026 13:33:52 service.user_service      INFO    -   username_already_used('Toile',) - START
+03/11/2026 13:33:52 dao.user_dao              INFO    -     list_all() - START
+03/11/2026 13:33:52 dao.user_dao              INFO    -     list_all() - END
+03/11/2026 13:33:52 dao.user_dao              INFO    -       └─> Output: [] ... (0 elements)
+03/11/2026 13:33:52 service.user_service      INFO    -   username_already_used('Toile',) - END
+03/11/2026 13:33:52 service.user_service      INFO    -     └─> Output: False
+03/11/2026 13:33:52 service.user_service      INFO    -   create('Toile', '*****') - START
+03/11/2026 13:33:52 dao.user_dao              INFO    -     create('<business_object.user.User object at 0x7f93da28b620>',) - START
+03/11/2026 13:33:52 dao.user_dao              INFO    -     create('<business_object.user.User object at 0x7f93da28b620>',) - END
+03/11/2026 13:33:52 dao.user_dao              INFO    -       └─> Output: True
+03/11/2026 13:33:52 service.user_service      INFO    -   create('Toile', '*****') - END
+03/11/2026 13:33:52 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7f93da28b620>
+03/11/2026 13:33:52 root                      ERROR   - POST /user/ - FAILED [Status: 500] Error: 1 validation error:
+  {'type': 'missing', 'loc': ('response', 'favorites'), 'msg': 'Field required', 'input': <business_object.user.User object at 0x7f93da28b620>}
+
+  File "/home/onyxia/work/ensai-it-project-2a-team14/backend/src/controller/user_controller.py", line 19, in create_user
+    POST /user/
+03/11/2026 13:33:57 root                      INFO    - POST /user/ - START
+03/11/2026 13:33:57 c.user_controller         INFO    - Create a user
+03/11/2026 13:33:57 service.user_service      INFO    -   username_already_used('Toile',) - START
+03/11/2026 13:33:57 dao.user_dao              INFO    -     list_all() - START
+03/11/2026 13:33:57 dao.user_dao              INFO    -     list_all() - END
+03/11/2026 13:33:57 dao.user_dao              INFO    -       └─> Output: ['<business_object.user.User object at 0x7f93da09d090>'] ... (1 elements)
+03/11/2026 13:33:57 service.user_service      INFO    -   username_already_used('Toile',) - END
+03/11/2026 13:33:57 service.user_service      INFO    -     └─> Output: True
+03/11/2026 13:33:57 root                      INFO    - POST /user/ - END [Status: 400]
+03/11/2026 13:35:20 root                      INFO    - POST /login/ - START
+03/11/2026 13:35:20 c.login_controller        INFO    - Login
+03/11/2026 13:35:20 service.user_service      INFO    -   login('Toile', '*****') - START
+03/11/2026 13:35:20 dao.user_dao              INFO    -     login('Toile', '*****') - START
+03/11/2026 13:35:20 dao.user_dao              INFO    -     login('Toile', '*****') - END
+03/11/2026 13:35:20 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7f93da09ce10>
+03/11/2026 13:35:20 service.user_service      INFO    -     update('<business_object.user.User object at 0x7f93da09ce10>',) - START
+03/11/2026 13:35:20 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7f93da09ce10>',) - START
+03/11/2026 13:35:20 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7f93da09ce10>',) - END
+03/11/2026 13:35:20 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 13:35:20 service.user_service      INFO    -     update('<business_object.user.User object at 0x7f93da09ce10>',) - END
+03/11/2026 13:35:20 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7f93da09ce10>
+03/11/2026 13:35:20 service.user_service      INFO    -   login('Toile', '*****') - END
+03/11/2026 13:35:20 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7f93da09ce10>
+03/11/2026 13:35:20 root                      INFO    - POST /login/ - END [Status: 200]
+03/11/2026 13:35:56 root                      INFO    - PUT /user/me - START
+03/11/2026 13:35:56 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 13:35:56 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 13:35:56 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7f93da00e190>
+03/11/2026 13:35:56 root                      INFO    - PUT /user/me - END [Status: 422]
+03/11/2026 13:36:20 root                      INFO    - PUT /user/me - START
+03/11/2026 13:36:20 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 13:36:20 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 13:36:20 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7f93da00e780>
+03/11/2026 13:36:20 c.user_controller         INFO    - Update own profile
+03/11/2026 13:36:20 service.user_service      INFO    -   update_own_profile('<business_object.user.User object at 0x7f93da00e780>', '*****', 'Toile', '*****') - START
+03/11/2026 13:36:20 service.user_service      INFO    -     update('<business_object.user.User object at 0x7f93da00e780>',) - START
+03/11/2026 13:36:20 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7f93da00e780>',) - START
+03/11/2026 13:36:20 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7f93da00e780>',) - END
+03/11/2026 13:36:20 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 13:36:20 service.user_service      INFO    -     update('<business_object.user.User object at 0x7f93da00e780>',) - END
+03/11/2026 13:36:20 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7f93da00e780>
+03/11/2026 13:36:20 service.user_service      INFO    -   update_own_profile('<business_object.user.User object at 0x7f93da00e780>', '*****', 'Toile', '*****') - END
+03/11/2026 13:36:20 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7f93da00e780>
+03/11/2026 13:36:20 root                      ERROR   - PUT /user/me - FAILED [Status: 500] Error: 1 validation error:
+  {'type': 'missing', 'loc': ('response', 'favorites'), 'msg': 'Field required', 'input': <business_object.user.User object at 0x7f93da00e780>}
+
+  File "/home/onyxia/work/ensai-it-project-2a-team14/backend/src/controller/user_controller.py", line 79, in update_my_profile
+    PUT /user/me
+03/11/2026 13:36:47 root                      INFO    - PUT /user/me - START
+03/11/2026 13:36:47 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 13:36:47 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 13:36:47 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7f93da05b770>
+03/11/2026 13:36:47 c.user_controller         INFO    - Update own profile
+03/11/2026 13:36:47 service.user_service      INFO    -   update_own_profile('<business_object.user.User object at 0x7f93da05b770>', '*****', 'Toile', '*****') - START
+03/11/2026 13:36:47 root                      INFO    - PUT /user/me - END [Status: 401]
+03/11/2026 13:39:39 root                      INFO    - PUT /user/me - START
+03/11/2026 13:39:39 dao.user_dao              INFO    -     find_by_token('*****',) - START
+03/11/2026 13:39:39 dao.user_dao              INFO    -     find_by_token('*****',) - END
+03/11/2026 13:39:39 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7f93da02ef10>
+03/11/2026 13:39:39 root                      INFO    - PUT /user/me - END [Status: 422]
+03/11/2026 13:43:40 root                      INFO    - POST /login/ - START
+03/11/2026 13:43:40 c.login_controller        INFO    - Login
+03/11/2026 13:43:40 service.user_service      INFO    -     login('Toile', '*****') - START
+03/11/2026 13:43:40 dao.user_dao              INFO    -       login('Toile', '*****') - START
+03/11/2026 13:43:40 dao.user_dao              INFO    -       login('Toile', '*****') - END
+03/11/2026 13:43:40 dao.user_dao              INFO    -         └─> Output: None
+03/11/2026 13:43:40 service.user_service      INFO    -     login('Toile', '*****') - END
+03/11/2026 13:43:40 service.user_service      INFO    -       └─> Output: None
+03/11/2026 13:43:40 root                      INFO    - POST /login/ - END [Status: 401]
+03/11/2026 13:43:48 root                      INFO    - POST /login/ - START
+03/11/2026 13:43:48 c.login_controller        INFO    - Login
+03/11/2026 13:43:48 service.user_service      INFO    -     login('Toile', '*****') - START
+03/11/2026 13:43:48 dao.user_dao              INFO    -       login('Toile', '*****') - START
+03/11/2026 13:43:48 dao.user_dao              INFO    -       login('Toile', '*****') - END
+03/11/2026 13:43:48 dao.user_dao              INFO    -         └─> Output: <business_object.user.User object at 0x7f93da02e470>
+03/11/2026 13:43:48 service.user_service      INFO    -       update('<business_object.user.User object at 0x7f93da02e470>',) - START
+03/11/2026 13:43:48 dao.user_dao              INFO    -         update('<business_object.user.User object at 0x7f93da02e470>',) - START
+03/11/2026 13:43:48 dao.user_dao              INFO    -         update('<business_object.user.User object at 0x7f93da02e470>',) - END
+03/11/2026 13:43:48 dao.user_dao              INFO    -           └─> Output: True
+03/11/2026 13:43:48 service.user_service      INFO    -       update('<business_object.user.User object at 0x7f93da02e470>',) - END
+03/11/2026 13:43:48 service.user_service      INFO    -         └─> Output: <business_object.user.User object at 0x7f93da02e470>
+03/11/2026 13:43:48 service.user_service      INFO    -     login('Toile', '*****') - END
+03/11/2026 13:43:48 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7f93da02e470>
+03/11/2026 13:43:48 root                      INFO    - POST /login/ - END [Status: 200]
+03/11/2026 13:44:28 root                      INFO    - PUT /user/me - START
+03/11/2026 13:44:28 dao.user_dao              INFO    -     find_by_token('*****',) - START
+03/11/2026 13:44:28 dao.user_dao              INFO    -     find_by_token('*****',) - END
+03/11/2026 13:44:28 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7f93da14e750>
+03/11/2026 13:44:28 root                      INFO    - PUT /user/me - END [Status: 422]
+03/11/2026 14:00:08 root                      INFO    - --------------------------------------------------
+03/11/2026 14:00:08 root                      INFO    - Starting Webservice                           
+03/11/2026 14:00:08 root                      INFO    - --------------------------------------------------
+03/11/2026 14:00:08 root                      INFO    - Load environment variables: SUCCES
+03/11/2026 14:00:08 root                      INFO    - POSTGRES_HOST=postgresql-cnpg-594949-rw.user-eliotchatonnier
+03/11/2026 14:00:08 root                      INFO    - POSTGRES_PORT=5432
+03/11/2026 14:00:08 root                      INFO    - POSTGRES_DATABASE=defaultdb
+03/11/2026 14:00:08 root                      INFO    - POSTGRES_USER=user-eliotchatonnier
+03/11/2026 14:00:08 root                      INFO    - POSTGRES_PASSWORD=*******
+03/11/2026 14:00:08 root                      INFO    - POSTGRES_SCHEMA=project
+03/11/2026 14:00:08 root                      INFO    - UVICORN_HOST=0.0.0.0
+03/11/2026 14:00:08 root                      INFO    - UVICORN_PORT=5000
+03/11/2026 14:00:08 root                      INFO    - BACKEND_URL=http://localhost:5000
+03/11/2026 14:00:08 root                      INFO    - BACKEND_TIMEOUT=5
+03/11/2026 14:00:10 root                      INFO    - GET /docs - START
+03/11/2026 14:00:10 root                      INFO    - GET /docs - END [Status: 200]
+03/11/2026 14:00:10 root                      INFO    - GET /openapi.json - START
+03/11/2026 14:00:10 root                      INFO    - GET /openapi.json - END [Status: 200]
+03/11/2026 14:00:41 root                      INFO    - POST /login/ - START
+03/11/2026 14:00:41 c.login_controller        INFO    - Login
+03/11/2026 14:00:41 service.user_service      INFO    -   login('Toile', '*****') - START
+03/11/2026 14:00:41 dao.user_dao              INFO    -     login('Toile', '*****') - START
+03/11/2026 14:00:41 dao.user_dao              INFO    -     login('Toile', '*****') - END
+03/11/2026 14:00:41 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fa358b72660>
+03/11/2026 14:00:41 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fa358b72660>',) - START
+03/11/2026 14:00:41 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fa358b72660>',) - START
+03/11/2026 14:00:41 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fa358b72660>',) - END
+03/11/2026 14:00:41 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 14:00:41 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fa358b72660>',) - END
+03/11/2026 14:00:41 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fa358b72660>
+03/11/2026 14:00:41 service.user_service      INFO    -   login('Toile', '*****') - END
+03/11/2026 14:00:41 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fa358b72660>
+03/11/2026 14:00:41 root                      INFO    - POST /login/ - END [Status: 200]
+03/11/2026 14:01:29 root                      INFO    - PUT /user/me - START
+03/11/2026 14:01:29 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 14:01:29 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 14:01:29 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7fa358a71310>
+03/11/2026 14:01:29 c.user_controller         INFO    - Update own profile
+03/11/2026 14:01:29 service.user_service      INFO    -   update_own_profile('<business_object.user.User object at 0x7fa358a71310>', '*****', 'None', '*****') - START
+03/11/2026 14:01:29 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fa358a71310>',) - START
+03/11/2026 14:01:29 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fa358a71310>',) - START
+03/11/2026 14:01:29 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fa358a71310>',) - END
+03/11/2026 14:01:29 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 14:01:29 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fa358a71310>',) - END
+03/11/2026 14:01:29 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fa358a71310>
+03/11/2026 14:01:29 service.user_service      INFO    -   update_own_profile('<business_object.user.User object at 0x7fa358a71310>', '*****', 'None', '*****') - END
+03/11/2026 14:01:29 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fa358a71310>
+03/11/2026 14:01:29 root                      ERROR   - PUT /user/me - FAILED [Status: 500] Error: 1 validation error:
+  {'type': 'missing', 'loc': ('response', 'favorites'), 'msg': 'Field required', 'input': <business_object.user.User object at 0x7fa358a71310>}
+
+  File "/home/onyxia/work/ensai-it-project-2a-team14/backend/src/controller/user_controller.py", line 83, in update_my_profile
+    PUT /user/me
+03/11/2026 14:01:34 root                      INFO    - PUT /user/me - START
+03/11/2026 14:01:34 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 14:01:34 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 14:01:34 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7fa358a71a90>
+03/11/2026 14:01:34 c.user_controller         INFO    - Update own profile
+03/11/2026 14:01:34 service.user_service      INFO    -   update_own_profile('<business_object.user.User object at 0x7fa358a71a90>', '*****', 'None', '*****') - START
+03/11/2026 14:01:34 root                      INFO    - PUT /user/me - END [Status: 401]
+03/11/2026 14:01:45 root                      INFO    - POST /login/ - START
+03/11/2026 14:01:45 c.login_controller        INFO    - Login
+03/11/2026 14:01:45 service.user_service      INFO    -     login('Toile', '*****') - START
+03/11/2026 14:01:45 dao.user_dao              INFO    -       login('Toile', '*****') - START
+03/11/2026 14:01:45 dao.user_dao              INFO    -       login('Toile', '*****') - END
+03/11/2026 14:01:45 dao.user_dao              INFO    -         └─> Output: None
+03/11/2026 14:01:45 service.user_service      INFO    -     login('Toile', '*****') - END
+03/11/2026 14:01:45 service.user_service      INFO    -       └─> Output: None
+03/11/2026 14:01:45 root                      INFO    - POST /login/ - END [Status: 401]
+03/11/2026 14:01:53 root                      INFO    - POST /login/ - START
+03/11/2026 14:01:53 c.login_controller        INFO    - Login
+03/11/2026 14:01:53 service.user_service      INFO    -     login('Toile', '*****') - START
+03/11/2026 14:01:53 dao.user_dao              INFO    -       login('Toile', '*****') - START
+03/11/2026 14:01:53 dao.user_dao              INFO    -       login('Toile', '*****') - END
+03/11/2026 14:01:53 dao.user_dao              INFO    -         └─> Output: <business_object.user.User object at 0x7fa358a7a650>
+03/11/2026 14:01:53 service.user_service      INFO    -       update('<business_object.user.User object at 0x7fa358a7a650>',) - START
+03/11/2026 14:01:53 dao.user_dao              INFO    -         update('<business_object.user.User object at 0x7fa358a7a650>',) - START
+03/11/2026 14:01:53 dao.user_dao              INFO    -         update('<business_object.user.User object at 0x7fa358a7a650>',) - END
+03/11/2026 14:01:53 dao.user_dao              INFO    -           └─> Output: True
+03/11/2026 14:01:53 service.user_service      INFO    -       update('<business_object.user.User object at 0x7fa358a7a650>',) - END
+03/11/2026 14:01:53 service.user_service      INFO    -         └─> Output: <business_object.user.User object at 0x7fa358a7a650>
+03/11/2026 14:01:53 service.user_service      INFO    -     login('Toile', '*****') - END
+03/11/2026 14:01:53 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fa358a7a650>
+03/11/2026 14:01:53 root                      INFO    - POST /login/ - END [Status: 200]
+03/11/2026 14:02:07 root                      INFO    - PUT /user/me - START
+03/11/2026 14:02:07 dao.user_dao              INFO    -     find_by_token('*****',) - START
+03/11/2026 14:02:07 dao.user_dao              INFO    -     find_by_token('*****',) - END
+03/11/2026 14:02:07 dao.user_dao              INFO    -       └─> Output: None
+03/11/2026 14:02:07 root                      INFO    - PUT /user/me - END [Status: 401]
+03/11/2026 14:02:27 root                      INFO    - PUT /user/me - START
+03/11/2026 14:02:27 dao.user_dao              INFO    -     find_by_token('*****',) - START
+03/11/2026 14:02:27 dao.user_dao              INFO    -     find_by_token('*****',) - END
+03/11/2026 14:02:27 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fa358a7a520>
+03/11/2026 14:02:27 c.user_controller         INFO    - Update own profile
+03/11/2026 14:02:27 service.user_service      INFO    -     update_own_profile('<business_object.user.User object at 0x7fa358a7a520>', '*****', 'None', '*****') - START
+03/11/2026 14:02:27 service.user_service      INFO    -       update('<business_object.user.User object at 0x7fa358a7a520>',) - START
+03/11/2026 14:02:27 dao.user_dao              INFO    -         update('<business_object.user.User object at 0x7fa358a7a520>',) - START
+03/11/2026 14:02:27 dao.user_dao              INFO    -         update('<business_object.user.User object at 0x7fa358a7a520>',) - END
+03/11/2026 14:02:27 dao.user_dao              INFO    -           └─> Output: True
+03/11/2026 14:02:27 service.user_service      INFO    -       update('<business_object.user.User object at 0x7fa358a7a520>',) - END
+03/11/2026 14:02:27 service.user_service      INFO    -         └─> Output: <business_object.user.User object at 0x7fa358a7a520>
+03/11/2026 14:02:27 service.user_service      INFO    -     update_own_profile('<business_object.user.User object at 0x7fa358a7a520>', '*****', 'None', '*****') - END
+03/11/2026 14:02:27 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fa358a7a520>
+03/11/2026 14:02:27 root                      ERROR   - PUT /user/me - FAILED [Status: 500] Error: 1 validation error:
+  {'type': 'missing', 'loc': ('response', 'favorites'), 'msg': 'Field required', 'input': <business_object.user.User object at 0x7fa358a7a520>}
+
+  File "/home/onyxia/work/ensai-it-project-2a-team14/backend/src/controller/user_controller.py", line 83, in update_my_profile
+    PUT /user/me
+03/11/2026 14:03:13 root                      INFO    - --------------------------------------------------
+03/11/2026 14:03:13 root                      INFO    - Starting Webservice                           
+03/11/2026 14:03:13 root                      INFO    - --------------------------------------------------
+03/11/2026 14:03:13 root                      INFO    - Load environment variables: SUCCES
+03/11/2026 14:03:13 root                      INFO    - POSTGRES_HOST=postgresql-cnpg-594949-rw.user-eliotchatonnier
+03/11/2026 14:03:13 root                      INFO    - POSTGRES_PORT=5432
+03/11/2026 14:03:13 root                      INFO    - POSTGRES_DATABASE=defaultdb
+03/11/2026 14:03:13 root                      INFO    - POSTGRES_USER=user-eliotchatonnier
+03/11/2026 14:03:13 root                      INFO    - POSTGRES_PASSWORD=*******
+03/11/2026 14:03:13 root                      INFO    - POSTGRES_SCHEMA=project
+03/11/2026 14:03:13 root                      INFO    - UVICORN_HOST=0.0.0.0
+03/11/2026 14:03:13 root                      INFO    - UVICORN_PORT=5000
+03/11/2026 14:03:13 root                      INFO    - BACKEND_URL=http://localhost:5000
+03/11/2026 14:03:13 root                      INFO    - BACKEND_TIMEOUT=5
+03/11/2026 14:03:15 root                      INFO    - GET /docs - START
+03/11/2026 14:03:15 root                      INFO    - GET /docs - END [Status: 200]
+03/11/2026 14:03:15 root                      INFO    - GET /openapi.json - START
+03/11/2026 14:03:15 root                      INFO    - GET /openapi.json - END [Status: 200]
+03/11/2026 14:03:39 root                      INFO    - POST /login/ - START
+03/11/2026 14:03:39 c.login_controller        INFO    - Login
+03/11/2026 14:03:39 service.user_service      INFO    -   login('Toile', '*****') - START
+03/11/2026 14:03:39 dao.user_dao              INFO    -     login('Toile', '*****') - START
+03/11/2026 14:03:39 dao.user_dao              INFO    -     login('Toile', '*****') - END
+03/11/2026 14:03:39 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7f05c4006660>
+03/11/2026 14:03:39 service.user_service      INFO    -     update('<business_object.user.User object at 0x7f05c4006660>',) - START
+03/11/2026 14:03:39 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7f05c4006660>',) - START
+03/11/2026 14:03:39 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7f05c4006660>',) - END
+03/11/2026 14:03:39 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 14:03:39 service.user_service      INFO    -     update('<business_object.user.User object at 0x7f05c4006660>',) - END
+03/11/2026 14:03:39 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7f05c4006660>
+03/11/2026 14:03:39 service.user_service      INFO    -   login('Toile', '*****') - END
+03/11/2026 14:03:39 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7f05c4006660>
+03/11/2026 14:03:39 root                      INFO    - POST /login/ - END [Status: 200]
+03/11/2026 14:04:09 root                      INFO    - PUT /user/me - START
+03/11/2026 14:04:09 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 14:04:09 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 14:04:09 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7f05c3ed5310>
+03/11/2026 14:04:09 c.user_controller         INFO    - Update own profile
+03/11/2026 14:04:09 service.user_service      INFO    -   update_own_profile('<business_object.user.User object at 0x7f05c3ed5310>', '*****', 'None', '*****') - START
+03/11/2026 14:04:09 service.user_service      INFO    -     update('<business_object.user.User object at 0x7f05c3ed5310>',) - START
+03/11/2026 14:04:09 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7f05c3ed5310>',) - START
+03/11/2026 14:04:09 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7f05c3ed5310>',) - END
+03/11/2026 14:04:09 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 14:04:09 service.user_service      INFO    -     update('<business_object.user.User object at 0x7f05c3ed5310>',) - END
+03/11/2026 14:04:09 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7f05c3ed5310>
+03/11/2026 14:04:09 service.user_service      INFO    -   update_own_profile('<business_object.user.User object at 0x7f05c3ed5310>', '*****', 'None', '*****') - END
+03/11/2026 14:04:09 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7f05c3ed5310>
+03/11/2026 14:04:09 root                      INFO    - PUT /user/me - END [Status: 200]
+03/11/2026 15:03:53 root                      INFO    - --------------------------------------------------
+03/11/2026 15:03:53 root                      INFO    - Starting Webservice                           
+03/11/2026 15:03:53 root                      INFO    - --------------------------------------------------
+03/11/2026 15:03:53 root                      INFO    - Load environment variables: SUCCES
+03/11/2026 15:03:53 root                      INFO    - POSTGRES_HOST=postgresql-cnpg-594949-rw.user-eliotchatonnier
+03/11/2026 15:03:53 root                      INFO    - POSTGRES_PORT=5432
+03/11/2026 15:03:53 root                      INFO    - POSTGRES_DATABASE=defaultdb
+03/11/2026 15:03:53 root                      INFO    - POSTGRES_USER=user-eliotchatonnier
+03/11/2026 15:03:53 root                      INFO    - POSTGRES_PASSWORD=*******
+03/11/2026 15:03:53 root                      INFO    - POSTGRES_SCHEMA=project
+03/11/2026 15:03:53 root                      INFO    - UVICORN_HOST=0.0.0.0
+03/11/2026 15:03:53 root                      INFO    - UVICORN_PORT=5000
+03/11/2026 15:03:53 root                      INFO    - BACKEND_URL=http://localhost:5000
+03/11/2026 15:03:53 root                      INFO    - BACKEND_TIMEOUT=5
+03/11/2026 15:04:16 root                      INFO    - POST /user/ - START
+03/11/2026 15:04:16 c.user_controller         INFO    - Create a user
+03/11/2026 15:04:16 service.user_service      INFO    -   username_already_used('Test',) - START
+03/11/2026 15:04:16 dao.user_dao              INFO    -     list_all() - START
+03/11/2026 15:04:16 dao.user_dao              INFO    -     list_all() - END
+03/11/2026 15:04:16 dao.user_dao              INFO    -       └─> Output: ['<business_object.user.User object at 0x7fc2f37aecf0>'] ... (1 elements)
+03/11/2026 15:04:16 service.user_service      INFO    -   username_already_used('Test',) - END
+03/11/2026 15:04:16 service.user_service      INFO    -     └─> Output: False
+03/11/2026 15:04:16 service.user_service      INFO    -   create('Test', '*****') - START
+03/11/2026 15:04:16 dao.user_dao              INFO    -     create('<business_object.user.User object at 0x7fc2f378fc50>',) - START
+03/11/2026 15:04:16 dao.user_dao              INFO    -     create('<business_object.user.User object at 0x7fc2f378fc50>',) - END
+03/11/2026 15:04:16 dao.user_dao              INFO    -       └─> Output: True
+03/11/2026 15:04:16 service.user_service      INFO    -   create('Test', '*****') - END
+03/11/2026 15:04:16 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f378fc50>
+03/11/2026 15:04:16 root                      INFO    - POST /user/ - END [Status: 200]
+03/11/2026 15:04:26 root                      INFO    - POST /user/ - START
+03/11/2026 15:04:26 c.user_controller         INFO    - Create a user
+03/11/2026 15:04:26 service.user_service      INFO    -   username_already_used('Test2',) - START
+03/11/2026 15:04:26 dao.user_dao              INFO    -     list_all() - START
+03/11/2026 15:04:26 dao.user_dao              INFO    -     list_all() - END
+03/11/2026 15:04:26 dao.user_dao              INFO    -       └─> Output: ['<business_object.user.User object at 0x7fc2f3655090>', '<business_object.user.User object at 0x7fc2f3773bb0>'] ... (2 elements)
+03/11/2026 15:04:26 service.user_service      INFO    -   username_already_used('Test2',) - END
+03/11/2026 15:04:26 service.user_service      INFO    -     └─> Output: False
+03/11/2026 15:04:26 service.user_service      INFO    -   create('Test2', '*****') - START
+03/11/2026 15:04:26 dao.user_dao              INFO    -     create('<business_object.user.User object at 0x7fc2f3773bb0>',) - START
+03/11/2026 15:04:26 dao.user_dao              INFO    -     create('<business_object.user.User object at 0x7fc2f3773bb0>',) - END
+03/11/2026 15:04:26 dao.user_dao              INFO    -       └─> Output: True
+03/11/2026 15:04:26 service.user_service      INFO    -   create('Test2', '*****') - END
+03/11/2026 15:04:26 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f3773bb0>
+03/11/2026 15:04:26 root                      INFO    - POST /user/ - END [Status: 200]
+03/11/2026 15:05:09 root                      INFO    - GET /docs - START
+03/11/2026 15:05:09 root                      INFO    - GET /docs - END [Status: 200]
+03/11/2026 15:05:09 root                      INFO    - GET /openapi.json - START
+03/11/2026 15:05:09 root                      INFO    - GET /openapi.json - END [Status: 200]
+03/11/2026 15:05:47 root                      INFO    - PUT /user/2 - START
+03/11/2026 15:05:47 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 15:05:47 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 15:05:47 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f3674710>
+03/11/2026 15:05:47 root                      INFO    - PUT /user/2 - END [Status: 403]
+03/11/2026 15:08:47 root                      INFO    - POST /login/ - START
+03/11/2026 15:08:47 c.login_controller        INFO    - Login
+03/11/2026 15:08:47 service.user_service      INFO    -   login('Toile', '*****') - START
+03/11/2026 15:08:47 dao.user_dao              INFO    -     login('Toile', '*****') - START
+03/11/2026 15:08:47 dao.user_dao              INFO    -     login('Toile', '*****') - END
+03/11/2026 15:08:47 dao.user_dao              INFO    -       └─> Output: None
+03/11/2026 15:08:47 service.user_service      INFO    -   login('Toile', '*****') - END
+03/11/2026 15:08:47 service.user_service      INFO    -     └─> Output: None
+03/11/2026 15:08:47 root                      INFO    - POST /login/ - END [Status: 401]
+03/11/2026 15:08:55 root                      INFO    - POST /login/ - START
+03/11/2026 15:08:55 c.login_controller        INFO    - Login
+03/11/2026 15:08:55 service.user_service      INFO    -   login('Toile', '*****') - START
+03/11/2026 15:08:55 dao.user_dao              INFO    -     login('Toile', '*****') - START
+03/11/2026 15:08:55 dao.user_dao              INFO    -     login('Toile', '*****') - END
+03/11/2026 15:08:55 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36867a0>
+03/11/2026 15:08:55 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f36867a0>',) - START
+03/11/2026 15:08:55 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f36867a0>',) - START
+03/11/2026 15:08:55 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f36867a0>',) - END
+03/11/2026 15:08:55 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 15:08:55 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f36867a0>',) - END
+03/11/2026 15:08:55 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36867a0>
+03/11/2026 15:08:55 service.user_service      INFO    -   login('Toile', '*****') - END
+03/11/2026 15:08:55 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f36867a0>
+03/11/2026 15:08:55 root                      INFO    - POST /login/ - END [Status: 200]
+03/11/2026 15:09:11 root                      INFO    - PUT /user/2 - START
+03/11/2026 15:09:11 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 15:09:11 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 15:09:11 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f3687240>
+03/11/2026 15:09:11 root                      INFO    - PUT /user/2 - END [Status: 403]
+03/11/2026 15:09:47 root                      INFO    - PUT /user/2 - START
+03/11/2026 15:09:47 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 15:09:47 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 15:09:47 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f37fe550>
+03/11/2026 15:09:47 root                      INFO    - PUT /user/2 - END [Status: 403]
+03/11/2026 15:09:51 root                      INFO    - GET /docs - START
+03/11/2026 15:09:51 root                      INFO    - GET /docs - END [Status: 200]
+03/11/2026 15:09:52 root                      INFO    - GET /openapi.json - START
+03/11/2026 15:09:52 root                      INFO    - GET /openapi.json - END [Status: 200]
+03/11/2026 15:10:38 root                      INFO    - PUT /user/2 - START
+03/11/2026 15:10:38 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 15:10:38 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 15:10:38 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f37ff450>
+03/11/2026 15:10:38 c.user_controller         INFO    - Update a user as admin
+03/11/2026 15:10:38 service.user_service      INFO    -   find_by_id(2,) - START
+03/11/2026 15:10:38 dao.user_dao              INFO    -     find_by_id(2,) - START
+03/11/2026 15:10:38 dao.user_dao              INFO    -     find_by_id(2,) - END
+03/11/2026 15:10:38 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36d8f50>
+03/11/2026 15:10:38 service.user_service      INFO    -   find_by_id(2,) - END
+03/11/2026 15:10:38 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f36d8f50>
+03/11/2026 15:10:38 service.user_service      INFO    -   is_first_admin('<business_object.user.User object at 0x7fc2f36d8f50>',) - START
+03/11/2026 15:10:38 service.user_service      INFO    -     first_admin() - START
+03/11/2026 15:10:38 dao.user_dao              INFO    -       list_all() - START
+03/11/2026 15:10:38 dao.user_dao              INFO    -       list_all() - END
+03/11/2026 15:10:38 dao.user_dao              INFO    -         └─> Output: ['<business_object.user.User object at 0x7fc2f36d9040>', '<business_object.user.User object at 0x7fc2f36d5550>', '<business_object.user.User object at 0x7fc2f36d50f0>'] ... (3 elements)
+03/11/2026 15:10:38 service.user_service      INFO    -     first_admin() - END
+03/11/2026 15:10:38 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36d5550>
+03/11/2026 15:10:38 service.user_service      INFO    -   is_first_admin('<business_object.user.User object at 0x7fc2f36d8f50>',) - END
+03/11/2026 15:10:38 service.user_service      INFO    -     └─> Output: False
+03/11/2026 15:10:38 service.user_service      INFO    -   update_profile_as_admin('<business_object.user.User object at 0x7fc2f36d8f50>', 'None', '*****') - START
+03/11/2026 15:10:38 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f36d8f50>',) - START
+03/11/2026 15:10:38 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f36d8f50>',) - START
+03/11/2026 15:10:38 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f36d8f50>',) - END
+03/11/2026 15:10:38 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 15:10:38 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f36d8f50>',) - END
+03/11/2026 15:10:38 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36d8f50>
+03/11/2026 15:10:38 service.user_service      INFO    -   update_profile_as_admin('<business_object.user.User object at 0x7fc2f36d8f50>', 'None', '*****') - END
+03/11/2026 15:10:38 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f36d8f50>
+03/11/2026 15:10:38 root                      INFO    - PUT /user/2 - END [Status: 200]
+03/11/2026 15:11:42 root                      INFO    - PUT /user/3/admin - START
+03/11/2026 15:11:42 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 15:11:42 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 15:11:42 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f3636680>
+03/11/2026 15:11:42 c.user_controller         INFO    - Set admin rights
+03/11/2026 15:11:42 service.user_service      INFO    -   find_by_id(3,) - START
+03/11/2026 15:11:42 dao.user_dao              INFO    -     find_by_id(3,) - START
+03/11/2026 15:11:42 dao.user_dao              INFO    -     find_by_id(3,) - END
+03/11/2026 15:11:42 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f3669310>
+03/11/2026 15:11:42 service.user_service      INFO    -   find_by_id(3,) - END
+03/11/2026 15:11:42 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f3669310>
+03/11/2026 15:11:42 service.user_service      INFO    -   set_admin_rights('<business_object.user.User object at 0x7fc2f3636680>', '<business_object.user.User object at 0x7fc2f3669310>', True) - START
+03/11/2026 15:11:42 service.user_service      INFO    -     is_first_admin('<business_object.user.User object at 0x7fc2f3636680>',) - START
+03/11/2026 15:11:42 service.user_service      INFO    -       first_admin() - START
+03/11/2026 15:11:42 dao.user_dao              INFO    -         list_all() - START
+03/11/2026 15:11:42 dao.user_dao              INFO    -         list_all() - END
+03/11/2026 15:11:42 dao.user_dao              INFO    -           └─> Output: ['<business_object.user.User object at 0x7fc2f3669550>', '<business_object.user.User object at 0x7fc2f36b43c0>', '<business_object.user.User object at 0x7fc2f36b4310>'] ... (3 elements)
+03/11/2026 15:11:42 service.user_service      INFO    -       first_admin() - END
+03/11/2026 15:11:42 service.user_service      INFO    -         └─> Output: <business_object.user.User object at 0x7fc2f36b43c0>
+03/11/2026 15:11:42 service.user_service      INFO    -     is_first_admin('<business_object.user.User object at 0x7fc2f3636680>',) - END
+03/11/2026 15:11:42 service.user_service      INFO    -       └─> Output: True
+03/11/2026 15:11:42 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f3669310>',) - START
+03/11/2026 15:11:42 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f3669310>',) - START
+03/11/2026 15:11:42 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f3669310>',) - END
+03/11/2026 15:11:42 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 15:11:42 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f3669310>',) - END
+03/11/2026 15:11:42 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f3669310>
+03/11/2026 15:11:42 service.user_service      INFO    -   set_admin_rights('<business_object.user.User object at 0x7fc2f3636680>', '<business_object.user.User object at 0x7fc2f3669310>', True) - END
+03/11/2026 15:11:42 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f3669310>
+03/11/2026 15:11:42 root                      INFO    - PUT /user/3/admin - END [Status: 200]
+03/11/2026 15:12:21 root                      INFO    - POST /login/ - START
+03/11/2026 15:12:21 c.login_controller        INFO    - Login
+03/11/2026 15:12:21 service.user_service      INFO    -   login('Test2', '*****') - START
+03/11/2026 15:12:21 dao.user_dao              INFO    -     login('Test2', '*****') - START
+03/11/2026 15:12:21 dao.user_dao              INFO    -     login('Test2', '*****') - END
+03/11/2026 15:12:21 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36dca50>
+03/11/2026 15:12:21 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f36dca50>',) - START
+03/11/2026 15:12:21 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f36dca50>',) - START
+03/11/2026 15:12:21 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f36dca50>',) - END
+03/11/2026 15:12:21 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 15:12:21 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f36dca50>',) - END
+03/11/2026 15:12:21 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36dca50>
+03/11/2026 15:12:21 service.user_service      INFO    -   login('Test2', '*****') - END
+03/11/2026 15:12:21 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f36dca50>
+03/11/2026 15:12:21 root                      INFO    - POST /login/ - END [Status: 200]
+03/11/2026 15:12:21 root                      INFO    - POST /login/ - START
+03/11/2026 15:12:21 c.login_controller        INFO    - Login
+03/11/2026 15:12:21 service.user_service      INFO    -   login('Test2', '*****') - START
+03/11/2026 15:12:21 dao.user_dao              INFO    -     login('Test2', '*****') - START
+03/11/2026 15:12:21 dao.user_dao              INFO    -     login('Test2', '*****') - END
+03/11/2026 15:12:21 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36dcf50>
+03/11/2026 15:12:21 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f36dcf50>',) - START
+03/11/2026 15:12:21 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f36dcf50>',) - START
+03/11/2026 15:12:21 dao.user_dao              INFO    -       update('<business_object.user.User object at 0x7fc2f36dcf50>',) - END
+03/11/2026 15:12:21 dao.user_dao              INFO    -         └─> Output: True
+03/11/2026 15:12:21 service.user_service      INFO    -     update('<business_object.user.User object at 0x7fc2f36dcf50>',) - END
+03/11/2026 15:12:21 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36dcf50>
+03/11/2026 15:12:21 service.user_service      INFO    -   login('Test2', '*****') - END
+03/11/2026 15:12:21 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f36dcf50>
+03/11/2026 15:12:21 root                      INFO    - POST /login/ - END [Status: 200]
+03/11/2026 15:12:44 root                      INFO    - PUT /user/2/admin - START
+03/11/2026 15:12:44 dao.user_dao              INFO    -   find_by_token('*****',) - START
+03/11/2026 15:12:44 dao.user_dao              INFO    -   find_by_token('*****',) - END
+03/11/2026 15:12:44 dao.user_dao              INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f36e0290>
+03/11/2026 15:12:44 c.user_controller         INFO    - Set admin rights
+03/11/2026 15:12:44 service.user_service      INFO    -   find_by_id(2,) - START
+03/11/2026 15:12:44 dao.user_dao              INFO    -     find_by_id(2,) - START
+03/11/2026 15:12:44 dao.user_dao              INFO    -     find_by_id(2,) - END
+03/11/2026 15:12:44 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f36a4550>
+03/11/2026 15:12:44 service.user_service      INFO    -   find_by_id(2,) - END
+03/11/2026 15:12:44 service.user_service      INFO    -     └─> Output: <business_object.user.User object at 0x7fc2f36a4550>
+03/11/2026 15:12:44 service.user_service      INFO    -   set_admin_rights('<business_object.user.User object at 0x7fc2f36e0290>', '<business_object.user.User object at 0x7fc2f36a4550>', True) - START
+03/11/2026 15:12:44 service.user_service      INFO    -     is_first_admin('<business_object.user.User object at 0x7fc2f36e0290>',) - START
+03/11/2026 15:12:44 service.user_service      INFO    -       first_admin() - START
+03/11/2026 15:12:44 dao.user_dao              INFO    -         list_all() - START
+03/11/2026 15:12:44 dao.user_dao              INFO    -         list_all() - END
+03/11/2026 15:12:44 dao.user_dao              INFO    -           └─> Output: ['<business_object.user.User object at 0x7fc2f36a44d0>', '<business_object.user.User object at 0x7fc2f364f1c0>', '<business_object.user.User object at 0x7fc2f364f230>'] ... (3 elements)
+03/11/2026 15:12:44 service.user_service      INFO    -       first_admin() - END
+03/11/2026 15:12:44 service.user_service      INFO    -         └─> Output: <business_object.user.User object at 0x7fc2f36a44d0>
+03/11/2026 15:12:44 service.user_service      INFO    -     is_first_admin('<business_object.user.User object at 0x7fc2f36e0290>',) - END
+03/11/2026 15:12:44 service.user_service      INFO    -       └─> Output: False
+03/11/2026 15:12:44 root                      INFO    - PUT /user/2/admin - END [Status: 403]
+03/11/2026 15:13:01 root                      INFO    - PUT /user/2 - START
+03/11/2026 15:13:01 dao.user_dao              INFO    -     find_by_token('*****',) - START
+03/11/2026 15:13:01 dao.user_dao              INFO    -     find_by_token('*****',) - END
+03/11/2026 15:13:01 dao.user_dao              INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f364f310>
+03/11/2026 15:13:01 c.user_controller         INFO    - Update a user as admin
+03/11/2026 15:13:01 service.user_service      INFO    -     find_by_id(2,) - START
+03/11/2026 15:13:01 dao.user_dao              INFO    -       find_by_id(2,) - START
+03/11/2026 15:13:01 dao.user_dao              INFO    -       find_by_id(2,) - END
+03/11/2026 15:13:01 dao.user_dao              INFO    -         └─> Output: <business_object.user.User object at 0x7fc2f364f070>
+03/11/2026 15:13:01 service.user_service      INFO    -     find_by_id(2,) - END
+03/11/2026 15:13:01 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f364f070>
+03/11/2026 15:13:01 service.user_service      INFO    -     is_first_admin('<business_object.user.User object at 0x7fc2f364f070>',) - START
+03/11/2026 15:13:01 service.user_service      INFO    -       first_admin() - START
+03/11/2026 15:13:01 dao.user_dao              INFO    -         list_all() - START
+03/11/2026 15:13:01 dao.user_dao              INFO    -         list_all() - END
+03/11/2026 15:13:01 dao.user_dao              INFO    -           └─> Output: ['<business_object.user.User object at 0x7fc2f364f4d0>', '<business_object.user.User object at 0x7fc2f364f540>', '<business_object.user.User object at 0x7fc2f364f5b0>'] ... (3 elements)
+03/11/2026 15:13:01 service.user_service      INFO    -       first_admin() - END
+03/11/2026 15:13:01 service.user_service      INFO    -         └─> Output: <business_object.user.User object at 0x7fc2f364f4d0>
+03/11/2026 15:13:01 service.user_service      INFO    -     is_first_admin('<business_object.user.User object at 0x7fc2f364f070>',) - END
+03/11/2026 15:13:01 service.user_service      INFO    -       └─> Output: False
+03/11/2026 15:13:01 service.user_service      INFO    -     update_profile_as_admin('<business_object.user.User object at 0x7fc2f364f070>', 'None', '*****') - START
+03/11/2026 15:13:01 service.user_service      INFO    -       update('<business_object.user.User object at 0x7fc2f364f070>',) - START
+03/11/2026 15:13:01 dao.user_dao              INFO    -         update('<business_object.user.User object at 0x7fc2f364f070>',) - START
+03/11/2026 15:13:01 dao.user_dao              INFO    -         update('<business_object.user.User object at 0x7fc2f364f070>',) - END
+03/11/2026 15:13:01 dao.user_dao              INFO    -           └─> Output: True
+03/11/2026 15:13:01 service.user_service      INFO    -       update('<business_object.user.User object at 0x7fc2f364f070>',) - END
+03/11/2026 15:13:01 service.user_service      INFO    -         └─> Output: <business_object.user.User object at 0x7fc2f364f070>
+03/11/2026 15:13:01 service.user_service      INFO    -     update_profile_as_admin('<business_object.user.User object at 0x7fc2f364f070>', 'None', '*****') - END
+03/11/2026 15:13:01 service.user_service      INFO    -       └─> Output: <business_object.user.User object at 0x7fc2f364f070>
+03/11/2026 15:13:01 root                      INFO    - PUT /user/2 - END [Status: 200]

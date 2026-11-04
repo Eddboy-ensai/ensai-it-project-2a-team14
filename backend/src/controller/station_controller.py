@@ -26,11 +26,11 @@ async def list_all_stations(station_service=Depends(get_station_service)):
 
 
 @router.get("/{id_station}", response_model=StationDataModel, tags=["Stations"])
-async def station_by_id(id_station: int, station_service=Depends(get_station_service)):
+async def station_by_id(id_station: str, station_service=Depends(get_station_service)):
     """Find a station by its unique ID.
     Parameters
     ----------
-    id_station: int
+    id_station: str
         The ID of the station
     station_service : StationService
         The service used to interact with station data
@@ -58,14 +58,14 @@ async def station_by_id(id_station: int, station_service=Depends(get_station_ser
 
 @router.get("/{id_station}/history", response_model=StationHistoryModel, tags=["Stations"])
 async def station_history(
-    id_station: int,
+    id_station: str,
     nb_days: int = Query(1, ge=1, le=30, description="Number of days to look back (1, 7 or 30)"),
     station_service=Depends(get_station_service),
 ):
     """Returns the availability of a station over the last n days.
     Parameters
     ----------
-    id_station: int
+    id_station: str
         The ID of the station
     nb_days: int
         Number of days to look back, between 1 and 30 (default: 1, i.e. the last 24 hours)
@@ -93,11 +93,11 @@ async def station_history(
 
 
 # @router.get("/{id_station}/stats", response_model=Statistics, tags=["Stations"])
-# async def get_stats(id_station: int, station_service=Depends(get_station_service)):
+# async def get_stats(id_station: str, station_service=Depends(get_station_service)):
 #    """Returns the statistics of a station
 #    Parameters
 #    ----------
-#    id_station: int
+#    id_station: str
 #        The ID of the station
 #    station_service : StationService
 #        The service used to interact with station data
