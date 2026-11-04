@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta, timezone
-from unittest.mock import MagicMock
-
+from unittest.mock import MagicMock, patch
 from business_object.station import Station
 from business_object.station_record import StationRecord
 from service.suggestion_service import SuggestionService
 from service.calculation_service import CalculationService
+from service.station_service import StationService
 
 TZ = timezone(timedelta(hours=2))  # +02
 
@@ -16,11 +16,11 @@ def d(heure: str) -> datetime:
 
 # Table Stations
 stations = [
-    Station(5501, "République", -1.678037, 48.110026, 45),
-    Station(5502, "Mairie-Opéra", -1.678757, 48.111624, 24),
-    Station(5504, "Place Hoche", -1.677073, 48.115074, 39),
-    Station(5505, "Sainte-Anne", -1.680534, 48.114219, 24),
-    Station(5509, "Saint-Georges Piscine", -1.674417, 48.112385, 18),
+    Station(5501, "République", 48.110026, -1.678037, 45),
+    Station(5502, "Mairie-Opéra", 48.111624, -1.678757, 24),
+    Station(5504, "Place Hoche", 48.115074, -1.677073, 39),
+    Station(5505, "Sainte-Anne", 48.114219, -1.680534, 24),
+    Station(5509, "Saint-Georges Piscine", 48.112385, -1.674417, 18),
 ]
 
 
@@ -54,21 +54,76 @@ calculation_service_sai = CalculationService(station=stations[3])
 calculation_service_pis = CalculationService(station=stations[4])
 
 
-calculation_service_rep.compute_sat_score = MagicMock(return_value=0.33)
-calculation_service_rep.compute_short_score = MagicMock(return_value=1.0)
-calculation_service_mai.compute_sat_score = MagicMock(return_value=1.0)
-calculation_service_mai.compute_short_score = MagicMock(return_value=0.43)
-calculation_service_pla.compute_sat_score = MagicMock(return_value=1.0)
-calculation_service_pla.compute_short_score = MagicMock(return_value=1.0)
-calculation_service_sai.compute_sat_score = MagicMock(return_value=0.0)
-calculation_service_sai.compute_short_score = MagicMock(return_value=1.0)
-calculation_service_pis.compute_sat_score = MagicMock(return_value=0.51)
-calculation_service_pis.compute_short_score = MagicMock(return_value=0.48)
-
-
 def test_station_pick_suggestion_score():
-    assert suggestion_service_rep.station_pick_suggestion_score == 100
-    assert suggestion_service_mai.station_pick_suggestion_score == 81
-    assert suggestion_service_pla.station_pick_suggestion_score == 80
-    assert suggestion_service_sai.station_pick_suggestion_score == 0
-    assert suggestion_service_pis.station_pick_suggestion_score == 0
+    with patch.object(CalculationService, "compute_short_score", return_value=1.0):
+        assert suggestion_service_rep.station_pick_suggestion_score() == 100
+    with patch.object(CalculationService, "compute_short_score", return_value=0.43):
+        assert suggestion_service_mai.station_pick_suggestion_score() == 81
+    with patch.object(CalculationService, "compute_short_score", return_value=1.0):
+        assert suggestion_service_pla.station_pick_suggestion_score() == 80
+    with patch.object(CalculationService, "compute_short_score", return_value=1.0):
+        assert suggestion_service_sai.station_pick_suggestion_score() == 0
+    with patch.object(CalculationService, "compute_short_score", return_value=0.48):
+        assert suggestion_service_pis.station_pick_suggestion_score() == 0
+
+
+def test_station_drop_suggestion_score():
+    with patch.object(CalculationService, "compute_sat_score", return_value=0.33):
+        assert suggestion_service_rep.station_drop_suggestion_score() == 0
+    with patch.object(CalculationService, "compute_sat_score", return_value=1.0):
+        assert suggestion_service_mai.station_drop_suggestion_score() == 94
+    with patch.object(CalculationService, "compute_sat_score", return_value=1.0):
+        assert suggestion_service_pla.station_drop_suggestion_score() == 100
+    with patch.object(CalculationService, "compute_sat_score", return_value=0.0):
+        assert suggestion_service_sai.station_drop_suggestion_score() == 0
+    with patch.object(CalculationService, "compute_sat_score", return_value=0.51):
+        assert suggestion_service_pis.station_drop_suggestion_score() == 86
+
+
+suggestion_service_rep.station_pick_suggestion_score = MagicMock(return_value=100)
+suggestion_service_mai.station_pick_suggestion_score = MagicMock(return_value=81)
+suggestion_service_pla.station_pick_suggestion_score = MagicMock(return_value=80)
+suggestion_service_sai.station_pick_suggestion_score = MagicMock(return_value=0)
+suggestion_service_pis.station_pick_suggestion_score = MagicMock(return_value=0)
+
+suggestion_service_rep.station_drop_suggestion_score = MagicMock(return_value=0)
+suggestion_service_mai.station_drop_suggestion_score = MagicMock(return_value=94)
+suggestion_service_pla.station_drop_suggestion_score = MagicMock(return_value=100)
+suggestion_service_sai.station_drop_suggestion_score = MagicMock(return_value=0)
+suggestion_service_pis.station_drop_suggestion_score = MagicMock(return_value=86)
+
+
+def test_is_recommended_pick():
+    assert suggestion_service_rep.is_recommended_pick() is True
+    assert suggestion_service_mai.is_recommended_pick() is True
+    assert suggestion_service_pla.is_recommended_pick() is True
+    assert suggestion_service_sai.is_recommended_pick() is False
+    assert suggestion_service_pis.is_recommended_pick() is False
+
+
+def test_is_recommended_drop():
+    assert suggestion_service_rep.is_recommended_drop() is False
+    assert suggestion_service_mai.is_recommended_drop() is True
+    assert suggestion_service_pla.is_recommended_drop() is True
+    assert suggestion_service_sai.is_recommended_drop() is False
+    assert suggestion_service_pis.is_recommended_drop() is True
+
+
+def test_compute_distance():
+    assert suggestion_service_mai.compute_distance(
+        48.110026,
+        -1.678037,
+        48.111624,
+        -1.678757
+        ) == 186
+    assert suggestion_service_mai.compute_distance(
+        48.115074,
+        -1.677073,
+        48.114219,
+        -1.680534
+        ) == 274
+
+
+def test_get_sugg_pick():
+    with patch.object(StationService, "list_all", return_value=stations):
+    assert 
