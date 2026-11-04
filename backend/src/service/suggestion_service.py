@@ -127,20 +127,22 @@ class SuggestionService:
         n0 = 3
         station_sugg = {}
         for stations in StationService.list_all():
+            if stations.id_station == self.station.id_station:
+                continue
             dist = self.compute_distance(
                 self.station.lat, self.station.lon, stations.lat, stations.lon
             )
             nb_bikes = self.latest_record(stations).nb_available_bikes
             if dist <= 1000 and nb_bikes >= 2:  # 1000 is arbitrary#
-                score_pick = CalculationService.compute_short_score()
-                d = 1 - math.exp(-dist / 800)  # 800 is arbitrary#
+                score_pick = CalculationService(stations).compute_short_score()
+                d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_bikes / n0)
-                sugg_score = d**a * Disp**b * score_pick**c
+                sugg_score = 100 * round(d**a * Disp**b * score_pick**c, 2)
                 if (
-                    sugg_score >= 50 or sugg_score >= self.station_pick_suggestion_score
+                    sugg_score >= 50 or sugg_score >= self.station_pick_suggestion_score()
                 ):  # 50 is arbitrary#
                     station_sugg[stations] = sugg_score
-        sugg = sorted(sugg_score.items(), key=lambda x: x[1], reverse=True)
+        sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
         return sugg
 
     @log
@@ -160,18 +162,20 @@ class SuggestionService:
         n0 = 3
         station_sugg = {}
         for stations in StationService.list_all():
+            if stations.id_station == self.station.id_station:
+                continue
             dist = self.compute_distance(
                 self.station.lat, self.station.lon, stations.lat, stations.lon
             )
             nb_spot = self.latest_record(stations).nb_available_spaces
             if dist <= 1000 and nb_spot >= 2:  # 1000 is arbitrary#
-                score_drop = CalculationService.compute_sat_score()
-                d = 1 - math.exp(-dist / 800)  # 800 is arbitrary#
+                score_drop = CalculationService(stations).compute_sat_score()
+                d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_spot / n0)
-                sugg_score = d**a * Disp**b * score_drop**c
+                sugg_score = 100 * round(d**a * Disp**b * score_drop**c, 2)
                 if (
-                    sugg_score >= 50 or sugg_score >= self.station_drop_suggestion_score
+                    sugg_score >= 50 or sugg_score >= self.station_drop_suggestion_score()
                 ):  # 50 is arbitrary#
                     station_sugg[stations] = sugg_score
-        sugg = sorted(sugg_score.items(), key=lambda x: x[1], reverse=True)
+        sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
         return sugg
