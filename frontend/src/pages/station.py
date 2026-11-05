@@ -51,6 +51,13 @@ else:  # affichage de la page sans query
         st.stop()
 
     user_id = st.session_state["user"]["id_user"]
+
+    # infos de la carte 
+    df_stations = pd.DataFrame(stations)
+
+    df_stations["lat"] = pd.to_numeric(df_stations["lat"])
+    df_stations["lon"] = pd.to_numeric(df_stations["lon"])
+
     #infos du df des favoris
     favoris_ids = []
     res_fav = api_client.get("/favorite")
@@ -59,12 +66,6 @@ else:  # affichage de la page sans query
         favoris_ids = [fav["id_station"] for fav in res_fav["data"]["favorites"]]
 
     df_stations["Favorite"] = df_stations["id_station"].isin(favoris_ids)
-
-    # infos de la carte 
-    df_stations = pd.DataFrame(stations)
-
-    df_stations["lat"] = pd.to_numeric(df_stations["lat"])
-    df_stations["lon"] = pd.to_numeric(df_stations["lon"])
 
     col_carte, col_tableau = st.columns(2) 
 
