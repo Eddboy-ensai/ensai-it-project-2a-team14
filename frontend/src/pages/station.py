@@ -10,6 +10,8 @@ from utils.api_client import api_client
 from utils.auth_guard import check_authentification
 from utils.log_init import get_page_logger
 
+st.set_page_config(layout="wide")
+
 logger = get_page_logger("station")
 
 check_authentification()
@@ -48,33 +50,8 @@ else:  # affichage de la page sans query
         st.info("Aucune information à afficher")
         st.stop()
 
-    df_stations = pd.DataFrame(stations)
-
-    df_stations["lat"] = pd.to_numeric(df_stations["lat"])
-    df_stations["lon"] = pd.to_numeric(df_stations["lon"])
-
-    st.subheader("Carte des stations")
-
-    liste_noms = ["Toutes les stations"] + df_stations["name"].tolist()
-    station_recherchee = st.selectbox("Rechercher une station :", liste_noms)
-
-    if station_recherchee == "Toutes les stations":
-        df_stations["marker_color"] = "#1f77b4"
-    else:
-        df_stations["marker_color"] = df_stations["name"].apply(
-            lambda x: "#ff4b4b" if x == station_recherchee else "#1f77b4"
-        )
-
-    st.map(
-        df_stations,
-        latitude="lat",
-        longitude="lon",
-        size="capacity",
-        color="marker_color",
-    )
-
     user_id = st.session_state["user"]["id_user"]
-
+    #infos du df des favoris
     favoris_ids = []
     res_fav = api_client.get("/favorite")
 
@@ -83,45 +60,75 @@ else:  # affichage de la page sans query
 
     df_stations["Favorite"] = df_stations["id_station"].isin(favoris_ids)
 
-    edited_df = st.data_editor(
-        df_stations,
-        hide_index=True,
-        column_config={
-            "Favorite": st.column_config.CheckboxColumn(
-                "Favori", help="Cocher pour ajouter à vos favoris", default=False
+    # infos de la carte 
+    df_stations = pd.DataFrame(stations)
+
+    df_stations["lat"] = pd.to_numeric(df_stations["lat"])
+    df_stations["lon"] = pd.to_numeric(df_stations["lon"])
+
+    col_carte, col_tableau = st.columns(2) 
+
+    with col_carte: 
+        st.subheader("Carte des stations")
+
+        liste_noms = ["Toutes les stations"] + df_stations["name"].tolist()
+        station_recherchee = st.selectbox("Rechercher une station :", liste_noms)
+
+        if station_recherchee == "Toutes les stations":
+            df_stations["marker_color"] = "#1f77b4"
+        else:
+            df_stations["marker_color"] = df_stations["name"].apply(
+                lambda x: "#ff4b4b" if x == station_recherchee else "#1f77b4"
             )
-        },
-        disabled=["id_station", "name", "lat", "lon", "capacity"],
-        key="station_editor",
-    )
 
-    if st.button("Enregister mes favoris"):
-        nouvelles_favorites = edited_df[edited_df["Favorite"]]["id_station"].tolist()
+        st.map(
+            df_stations,
+            latitude="lat",
+            longitude="lon",
+            size="capacity",
+            color="marker_color",
+        )
 
-        to_add = set(nouvelles_favorites) - set(favoris_ids)
-        to_delete = set(favoris_ids) - set(nouvelles_favorites)
+    with col_tableau:
+        edited_df = st.data_editor(
+            df_stations,
+            hide_index=True,
+            column_config={
+                "Favorite": st.column_config.CheckboxColumn(
+                    "Favori", help="Cocher pour ajouter à vos favoris", default=False
+                )
+            },
+            disabled=["id_station", "name", "lat", "lon", "capacity"],
+            key="station_editor",
+        )
 
-        for s_id in to_add:
-            api_client.post("/favorite/", json={"id_user": user_id, "id_station": s_id})
+        if st.button("Enregister mes favoris"):
+            nouvelles_favorites = edited_df[edited_df["Favorite"]]["id_station"].tolist()
 
-        for s_id in to_delete:
-            api_client.delete(f"/favorite/{user_id}", json={"id_station": s_id})
+            to_add = set(nouvelles_favorites) - set(favoris_ids)
+            to_delete = set(favoris_ids) - set(nouvelles_favorites)
 
-        st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
-        st.rerun()
+            for s_id in to_add:
+                api_client.post("/favorite/", json={"id_user": user_id, "id_station": s_id})
 
-    stations_names = [station["name"] for station in stations]
-    selected_station = st.selectbox(
-        "Choisissez une station pour plus d'informations",
-        stations_names,
-        index=None,
-        placeholder="Choisir votre station",
-    )
-    if selected_station:
-        for station in stations:
-            if station["name"] == selected_station:
-                id_station_selected = str(station["id_station"])
-                break
-        if id_station != id_station_selected:
-            st.query_params["id_station"] = id_station_selected
+            for s_id in to_delete:
+                api_client.delete(f"/favorite/{user_id}", json={"id_station": s_id})
+
+            st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
             st.rerun()
+
+        stations_names = [station["name"] for station in stations]
+        selected_station = st.selectbox(
+            "Choisissez une station pour plus d'informations",
+            stations_names,
+            index=None,
+            placeholder="Choisir votre station",
+        )
+        if selected_station:
+            for station in stations:
+                if station["name"] == selected_station:
+                    id_station_selected = str(station["id_station"])
+                    break
+            if id_station != id_station_selected:
+                st.query_params["id_station"] = id_station_selected
+                st.rerun()
