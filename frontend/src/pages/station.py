@@ -106,3 +106,19 @@ else:  # affichage de la page sans query
 
         st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
         st.rerun()
+
+    stations_names = [station["name"] for station in stations]
+    selected_station = st.selectbox(
+        "Choisissez une station pour plus d'informations",
+        stations_names,
+        index=None,
+        placeholder="Choisir votre station",
+    )
+    if selected_station:
+        for station in stations:
+            if station["name"] == selected_station:
+                id_station_selected = str(station["id_station"])
+                break
+        if id_station != id_station_selected:
+            st.query_params["id_station"] = id_station_selected
+            st.rerun()
