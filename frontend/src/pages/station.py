@@ -54,7 +54,7 @@ else:  # affichage de la page sans query
     res_fav = api_client.get("/favorite")
 
     if res_fav["status_code"] == 200:
-        favoris_ids = [fav["id_station"] for fav in res_fav["data"]]
+        favoris_ids = [fav["id_station"] for fav in res_fav["data"]["favorites"]]
 
     df_stations["Favorite"] = df_stations["id_station"].isin(favoris_ids)
 
