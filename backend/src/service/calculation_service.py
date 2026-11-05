@@ -223,12 +223,10 @@ class CalculationService:
         seuil = now - timedelta(days=d)
         sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
         for records in sorted_records:
-            a = []
-            a.append(records.date)
-            a.append(records.nb_available_bikes)
+            a = {}
+            a[records.date] = records.nb_available_bikes
             data.append(a)
-        df = pd.DataFrame(data, columns=("date", "available bikes"))
-        return df
+        return data
 
     @log
     def get_availability_spaces_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
@@ -244,9 +242,7 @@ class CalculationService:
         seuil = now - timedelta(days=d)
         sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
         for records in sorted_records:
-            a = []
-            a.append(records.date)
-            a.append(records.nb_available_spaces)
+            a = {}
+            a[records.date] = records.nb_available_spaces
             data.append(a)
-        df = pd.DataFrame(data, columns=("date", "available spaces"))
-        return df
+        return data
