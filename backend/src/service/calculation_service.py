@@ -1,4 +1,5 @@
 import math
+from datetime import UTC, datetime, timedelta
 
 import pandas as pd
 
@@ -209,7 +210,7 @@ class CalculationService:
         return score
 
     @log
-    def get_availability_spaces_over_time(self) -> pd.DataFrame:
+    def get_availability_spaces_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
         """Returns a dataframe which gives the availabilty of the station's spaces over time.
 
         Return :
@@ -218,7 +219,9 @@ class CalculationService:
             the dataframe of availability of the station's spaces over time
         """
         data = []
-        sorted_records = sorted(self.station_records, key=lambda r: r.date)
+        now = now or datetime.now(UTC)
+        seuil = now - timedelta(days=d)
+        sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
         for records in sorted_records:
             a = []
             a.append(records.date)
@@ -228,7 +231,7 @@ class CalculationService:
         return df
 
     @log
-    def get_availability_bikes_over_time(self) -> pd.DataFrame:
+    def get_availability_bikes_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
         """Returns a dataframe which gives the availabilty of the station's bikes over time.
 
         Return :
@@ -237,11 +240,13 @@ class CalculationService:
             the dataframe of availability of the station's bikes over time
         """
         data = []
-        sorted_records = sorted(self.station_records, key=lambda r: r.date)
+        now = now or datetime.now(UTC)
+        seuil = now - timedelta(days=d)
+        sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
         for records in sorted_records:
             a = []
             a.append(records.date)
-            a.append(records.nb_available_bikes + records.nb_available_ebikes)
+            a.append(records.nb_available_bikes)
             data.append(a)
         df = pd.DataFrame(data, columns=("date", "available bikes"))
         return df
