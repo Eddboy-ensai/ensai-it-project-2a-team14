@@ -19,9 +19,10 @@ id_station = st.query_params.get("id_station")
 if id_station:  # si on a précisé une id_station en query, par ex adresse station?id_station=5501
     API_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
     station = requests.get(f"{API_URL}/station/{id_station}").json()
-    availability = station["availability"]
-    df = pd.DataFrame(availability)
-    st.line_chart(df)
+    st.json(station)
+    # availability = station["availability"]
+    # df = pd.DataFrame(availability)
+    # st.line_chart(df)
     if st.button("Retour"):
         st.query_params.clear()
         st.rerun()
