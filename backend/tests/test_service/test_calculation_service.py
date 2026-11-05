@@ -175,20 +175,18 @@ def test_compute_score():
 def test_get_availability_bikes_over_time():
     now = d("13:00")
     df = calculation_service_pis_bis.get_availability_bikes_over_time(60, now)
-    assert list(df.columns) == ["date", "available bikes"]
-    assert len(df) == 17  # vaudrait 18 si prenait en compte le records du d1(12:00)
-    assert df["date"].is_monotonic_increasing
-    assert df["available bikes"].iloc[0] == 0
-    assert df["available bikes"].iloc[6] == 18
+    df2 = calculation_service_pis_bis.get_availability_spaces_over_time(150, now)
+    assert len(df) == 17
+    assert len(df2) == 18
+    assert df[0] == {d("08:00"): 0}
+    assert df[6] == {d("09:30"): 18}
 
 
 def test_get_availability_spaces_over_time():
     now = d("13:00")
     df = calculation_service_pis_bis.get_availability_spaces_over_time(60, now)
     df2 = calculation_service_pis_bis.get_availability_spaces_over_time(150, now)
-    assert list(df.columns) == ["date", "available spaces"]
     assert len(df) == 17
     assert len(df2) == 18
-    assert df["date"].is_monotonic_increasing
-    assert df["available spaces"].iloc[0] == 18
-    assert df["available spaces"].iloc[6] == 0
+    assert df[0] == {d("08:00"): 18}
+    assert df[6] == {d("09:30"): 0}
