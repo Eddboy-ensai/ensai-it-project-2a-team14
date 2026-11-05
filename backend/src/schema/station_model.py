@@ -49,10 +49,3 @@ class StationRecordModel(BaseModel):
     nb_available_bikes: int | None
     nb_available_ebikes: int | None
     nb_available_spaces: int | None
-
-
-class StationHistoryModel(BaseModel):
-    id_station: str
-    nb_days: int
-    nb_records: int
-    records: list[StationRecordModel]

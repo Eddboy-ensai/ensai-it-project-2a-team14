@@ -1,9 +1,7 @@
 from business_object.favorite import Favorite
 from business_object.station import Station
-from business_object.station_record import StationRecord
 from dao.favorite_dao import FavoriteDao
 from dao.station_dao import StationDao
-from dao.station_record_dao import StationRecordDao
 from service.calculation_service import CalculationService
 from utils.log_utils import log
 
@@ -57,22 +55,6 @@ class StationService:
             "shortage_mean_time": shortage_mean_time,
             "saturation_mean_time": saturation_mean_time,
         }
-
-    @log
-    def get_availability_over_time(self, station: Station, nb_days: int) -> list[StationRecord]:
-        """Returns the records of a station over the last n days, sorted by date.
-        Parameters
-        ----------
-        station: Station
-            Station from which we want the availability
-        nb_days : int
-            Number of days to look back (e.g. 1, 7 or 30)
-        Returns
-        -------
-        list[StationRecord]
-            the records of the station since now - nb_days
-        """
-        return StationRecordDao().list_last_days_by_id(station.id_station, nb_days)
 
     @log
     def favorite_already_exists(self, favorite: Favorite) -> bool:
