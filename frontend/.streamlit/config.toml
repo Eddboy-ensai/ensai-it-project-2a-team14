@@ -18,5 +18,5 @@ yellowTextColor="#bd7f0c"
 yellowBackgroundColor="#f7bd53"
 
 
-dataframeBorderColor="hsl(302, 100%, 6%)"
-dataframeHeaderBackgroundColor="#d3ced0"
+dataframeBorderColor="rgb(31, 0, 30)"
+dataframeHeaderBackgroundColor="rgb(236, 226, 230)"

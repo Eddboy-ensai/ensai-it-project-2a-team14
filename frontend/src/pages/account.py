@@ -18,8 +18,8 @@ st.write(f"Identifiant : {user['username']}")
 
 st.subheader("Stations favorites")
 
-res_user = api_client.get(f"/user/{user_id}")
-favoris = res_user["data"]["favorites"] if res_user["status_code"] == 200 else []
+res_fav = api_client.get(f"/favorite/")
+favoris = res_fav["data"]["favorites"] if res_fav["status_code"] == 200 else []
 
 if not favoris:
     st.info("Aucune station en favoris")

@@ -50,7 +50,6 @@ else:  # affichage de la page sans query
     user_id = st.session_state["user"]["id_user"]
 
     favoris_ids = []
-    #res_user = api_client.get(f"/user/{user_id}")
     res_fav = api_client.get("/favorite")
 
     if res_fav["status_code"] == 200:
