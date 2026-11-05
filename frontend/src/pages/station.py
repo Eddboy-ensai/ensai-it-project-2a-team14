@@ -47,6 +47,29 @@ else:  # affichage de la page sans query
 
     df_stations = pd.DataFrame(stations)
 
+    df_stations["lat"] = pd.to_numeric(df_stations["lat"])
+    df_stations["lon"] = pd.to_numeric(df_stations["lon"])
+
+    st.subheader("Carte des stations")
+
+    liste_noms = ["Toutes les stations"] + df_stations["name"].tolist()
+    station_recherchee = st.selectbox("Rechercher une station :", liste_noms)
+
+    if station_recherchee == "Toutes les stations":
+        df_stations["marker_color"] = "#1f77b4"
+    else:
+        df_stations["marker_color"] = df_stations["name"].apply(
+            lambda x: "#ff4b4b" if x == station_recherchee else "#1f77b4"
+        )
+
+    st.map(
+        df_stations,
+        latitude="lat",
+        longitude="lon",
+        size="capacity",
+        color="marker_color",
+    )
+
     user_id = st.session_state["user"]["id_user"]
 
     favoris_ids = []
