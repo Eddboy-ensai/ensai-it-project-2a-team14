@@ -8,43 +8,62 @@ logger = get_logger(__name__)
 
 class StationDao(metaclass=Singleton):
     @log
-    def upsert_all(self, stations: list[Station]) -> int:
-        """Insert new stations or update existing ones.
+    def create(self, station: Station) -> bool:
+        """Insert a new station in the database.
         Parameters
         ----------
-        stations: list[Station]
-            stations to insert or update
+        station: Station
+            station to insert
         Returns
         -------
-        int
-            number of rows inserted or updated
+        bool
+            True if the station is created, False otherwise
         """
-        if not stations:
-            return 0
-
-        nb_rows = 0
+        nb_affected_rows = 0
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    for station in stations:
-                        cursor.execute(
-                            "INSERT INTO Stations"
-                            "(id_station, name, lat, lon, capacity) "
-                            "VALUES (%(id_station)s, %(name)s, %(lat)s, "
-                            "        %(lon)s, %(capacity)s) "
-                            "ON CONFLICT (id_station) DO UPDATE SET "
-                            "    name     = EXCLUDED.name, "
-                            "    lat      = EXCLUDED.lat, "
-                            "    lon      = EXCLUDED.lon, "
-                            "    capacity = EXCLUDED.capacity;",
-                            vars(station),
-                        )
-                        nb_rows += cursor.rowcount
+                    cursor.execute(
+                        "INSERT INTO Stations(id_station, name, lat, lon, capacity) "
+                        "VALUES (%(id_station)s, %(name)s, %(lat)s, %(lon)s, %(capacity)s);",
+                        vars(station),
+                    )
+                    nb_affected_rows = cursor.rowcount
         except Exception as e:
             logger.error(e)
             raise
+        return nb_affected_rows == 1
 
-        return nb_rows
+    @log
+    def update(self, station: Station) -> bool:
+        """Update an existing station in the database.
+        Parameters
+        ----------
+        station: Station
+            station to update, identified by its id_station
+        Returns
+        -------
+        bool
+            True if the station is updated, False otherwise
+        """
+        nb_affected_rows = 0
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "UPDATE Stations "
+                        "   SET name = %(name)s, "
+                        "       lat = %(lat)s, "
+                        "       lon = %(lon)s, "
+                        "       capacity = %(capacity)s "
+                        " WHERE id_station = %(id_station)s;",
+                        vars(station),
+                    )
+                    nb_affected_rows = cursor.rowcount
+        except Exception as e:
+            logger.error(e)
+            raise
+        return nb_affected_rows == 1
 
     @log
     def find_by_id(self, id_station: str) -> Station:
