@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta, timezone
 
-import pandas as pd
-
 from business_object.station import Station
 from business_object.station_record import StationRecord
 from service.calculation_service import CalculationService
@@ -187,8 +185,10 @@ def test_get_availability_bikes_over_time():
 def test_get_availability_spaces_over_time():
     now = d("13:00")
     df = calculation_service_pis_bis.get_availability_spaces_over_time(60, now)
+    df2 = calculation_service_pis_bis.get_availability_spaces_over_time(150, now)
     assert list(df.columns) == ["date", "available spaces"]
-    assert len(df) == 17  # vaudrait 18 si prenait en compte le records du d1(12:00)
+    assert len(df) == 17
+    assert len(df2) == 18
     assert df["date"].is_monotonic_increasing
     assert df["available spaces"].iloc[0] == 18
     assert df["available spaces"].iloc[6] == 0
