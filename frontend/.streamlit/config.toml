@@ -4,9 +4,10 @@ port = 8000
 [theme]
 textColor="#1a1a1a"
 font="Calibri"
+headingFont= "serif"
 
 primaryColor="#1963a0"
-backgroundColor="#90C090"
+backgroundColor="hsl(201, 44%, 79%)"
 secondaryBackgroundColor="#ffffff"
 
 redTextColor="#8b0303"
@@ -17,5 +18,5 @@ yellowTextColor="#bd7f0c"
 yellowBackgroundColor="#f7bd53"
 
 
-dataframeBorderColor="#976a09"
-dataframeHeaderBackgroundColor="#eea73d"
+dataframeBorderColor="rgb(31, 0, 30)"
+dataframeHeaderBackgroundColor="rgb(236, 226, 230)"

@@ -21,6 +21,11 @@ def d(heure: str) -> datetime:
     return datetime.fromisoformat(f"2026-10-13 {heure}:00").replace(tzinfo=TZ)
 
 
+def d1(heure: str) -> datetime:
+    """Constructs a value in datetime format for 2026-08-02 at the specified time (time zone +02)."""
+    return datetime.fromisoformat(f"2026-08-02 {heure}:00").replace(tzinfo=TZ)
+
+
 # Table StationRecords
 station_records = [
     # Station 5501
@@ -81,6 +86,8 @@ station_records = [
     StationRecord(5509, d("11:30"), "IN_SERVICE", 12, 3, 3),
     StationRecord(5509, d("11:45"), "IN_SERVICE", 0, 18, 3),
     StationRecord(5509, d("12:00"), "IN_SERVICE", 0, 18, 3),
+    # Pour le test de get_availability over time
+    StationRecord(5509, d1("08:00"), "IN_SERVICE", 0, 18, 3)
 ]
 
 calculation_service_rep = CalculationService(station=stations[0])
@@ -93,6 +100,9 @@ calculation_service_sai = CalculationService(station=stations[3])
 calculation_service_sai.station_records = station_records[27:36]
 calculation_service_pis = CalculationService(station=stations[4])
 calculation_service_pis.station_records = station_records[36:53]
+# pour le test de get availability over time
+calculation_service_pis_bis = CalculationService(station=stations[4])
+calculation_service_pis_bis.station_records = station_records[36:54]
 
 
 def test_latest_record():
@@ -160,3 +170,25 @@ def test_compute_score():
     assert calculation_service_pla.compute_score() == 100
     assert calculation_service_sai.compute_score() == 50
     assert calculation_service_pis.compute_score() == 50
+
+
+def test_get_availability_bikes_over_time():
+    now = d("13:00")
+    df = calculation_service_pis_bis.get_availability_bikes_over_time(60, now)
+    assert list(df.columns) == ["date", "available bikes"]
+    assert len(df) == 17  # vaudrait 18 si prenait en compte le records du d1(12:00)
+    assert df["date"].is_monotonic_increasing
+    assert df["available bikes"].iloc[0] == 0
+    assert df["available bikes"].iloc[6] == 18
+
+
+def test_get_availability_spaces_over_time():
+    now = d("13:00")
+    df = calculation_service_pis_bis.get_availability_spaces_over_time(60, now)
+    df2 = calculation_service_pis_bis.get_availability_spaces_over_time(150, now)
+    assert list(df.columns) == ["date", "available spaces"]
+    assert len(df) == 17
+    assert len(df2) == 18
+    assert df["date"].is_monotonic_increasing
+    assert df["available spaces"].iloc[0] == 18
+    assert df["available spaces"].iloc[6] == 0

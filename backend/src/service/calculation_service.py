@@ -1,4 +1,5 @@
 import math
+from datetime import UTC, datetime, timedelta
 
 import pandas as pd
 
@@ -156,24 +157,6 @@ class CalculationService:
         return saturation_mean_time
 
     @log
-    def compute_sat_score(self) -> float:
-        """Calculate the saturation score of the station based on saturation mean time,
-        and saturation rate
-
-        Returns :
-        ---------
-        float
-            the saturation score of the station
-        """
-        a = 0.5
-        t = 3600
-        Tsat = 1 - self.compute_saturation_rate()
-        Dsat = self.compute_saturation_mean_time()
-        dsat = math.exp(-Dsat / t)
-        sat_score = round(Tsat ** (1 - a) * dsat**a, 2)
-        return sat_score
-
-    @log
     def compute_short_score(self) -> float:
         """Calculate the shortage score of the station based on shortage mean time,
         and shortage rate
@@ -190,6 +173,24 @@ class CalculationService:
         dshort = math.exp(-Dshort / t)
         short_score = round(Tshort ** (1 - b) * dshort**b, 2)
         return short_score
+
+    @log
+    def compute_sat_score(self) -> float:
+        """Calculate the saturation score of the station based on saturation mean time,
+        and saturation rate
+
+        Returns :
+        ---------
+        float
+            the saturation score of the station
+        """
+        a = 0.5
+        t = 3600
+        Tsat = 1 - self.compute_saturation_rate()
+        Dsat = self.compute_saturation_mean_time()
+        dsat = math.exp(-Dsat / t)
+        sat_score = round(Tsat ** (1 - a) * dsat**a, 2)
+        return sat_score
 
     @log
     def compute_score(self) -> int:
@@ -209,26 +210,7 @@ class CalculationService:
         return score
 
     @log
-    def get_availability_spaces_over_time(self) -> pd.DataFrame:
-        """Returns a dataframe which gives the availabilty of the station's spaces over time.
-
-        Return :
-        --------
-        pd.DataFrame
-            the dataframe of availability of the station's spaces over time
-        """
-        data = []
-        sorted_records = sorted(self.station_records, key=lambda r: r.date)
-        for records in sorted_records:
-            a = []
-            a.append(records.date)
-            a.append(records.nb_available_spaces)
-            data.append(a)
-        df = pd.DataFrame(data, columns=("date", "available spaces"))
-        return df
-
-    @log
-    def get_availability_bikes_over_time(self) -> pd.DataFrame:
+    def get_availability_bikes_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
         """Returns a dataframe which gives the availabilty of the station's bikes over time.
 
         Return :
@@ -237,11 +219,34 @@ class CalculationService:
             the dataframe of availability of the station's bikes over time
         """
         data = []
-        sorted_records = sorted(self.station_records, key=lambda r: r.date)
+        now = now or datetime.now(UTC)
+        seuil = now - timedelta(days=d)
+        sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
         for records in sorted_records:
             a = []
             a.append(records.date)
-            a.append(records.nb_available_bikes + records.nb_available_ebikes)
+            a.append(records.nb_available_bikes)
             data.append(a)
         df = pd.DataFrame(data, columns=("date", "available bikes"))
+        return df
+
+    @log
+    def get_availability_spaces_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
+        """Returns a dataframe which gives the availabilty of the station's spaces over time.
+
+        Return :
+        --------
+        pd.DataFrame
+            the dataframe of availability of the station's spaces over time
+        """
+        data = []
+        now = now or datetime.now(UTC)
+        seuil = now - timedelta(days=d)
+        sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
+        for records in sorted_records:
+            a = []
+            a.append(records.date)
+            a.append(records.nb_available_spaces)
+            data.append(a)
+        df = pd.DataFrame(data, columns=("date", "available spaces"))
         return df

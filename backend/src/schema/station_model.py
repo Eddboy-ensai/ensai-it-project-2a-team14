@@ -14,6 +14,7 @@ class StationDataModel(BaseModel):
     saturation_rate: float | None
     shortage_mean_time: float | None
     saturation_mean_time: float | None
+    # availability: list[dict]
 
 
 class StationReadModel(BaseModel):
@@ -22,15 +23,6 @@ class StationReadModel(BaseModel):
     lat: float
     lon: float
     capacity: int | None
-
-
-class FavoriteAddModel(BaseModel):
-    id_user: int
-    id_station: str
-
-
-class FavoriteDeleteModel(BaseModel):
-    id_station: str
 
 
 class Statistics(BaseModel):
