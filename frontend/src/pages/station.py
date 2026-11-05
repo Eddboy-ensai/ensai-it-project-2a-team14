@@ -73,7 +73,7 @@ else:  # affichage de la page sans query
         st.subheader("Carte des stations")
 
         liste_noms = ["Toutes les stations"] + df_stations["name"].tolist()
-        station_recherchee = st.selectbox("Rechercher une station :", liste_noms)
+        station_recherchee = st.selectbox("Trouver une station :", liste_noms)
 
         if station_recherchee == "Toutes les stations":
             df_stations["marker_color"] = "#1f77b4"
@@ -91,6 +91,24 @@ else:  # affichage de la page sans query
         )
 
     with col_tableau:
+        st.subheader("Informations sur les stations")
+
+        stations_names = [station["name"] for station in stations]
+        selected_station = st.selectbox(
+            "Choisissez une station pour plus d'informations",
+            stations_names,
+            index=None,
+            placeholder="Choisir votre station",
+        )
+        if selected_station:
+            for station in stations:
+                if station["name"] == selected_station:
+                    id_station_selected = str(station["id_station"])
+                    break
+            if id_station != id_station_selected:
+                st.query_params["id_station"] = id_station_selected
+                st.rerun()
+
         edited_df = st.data_editor(
             df_stations,
             hide_index=True,
@@ -118,18 +136,4 @@ else:  # affichage de la page sans query
             st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
             st.rerun()
 
-        stations_names = [station["name"] for station in stations]
-        selected_station = st.selectbox(
-            "Choisissez une station pour plus d'informations",
-            stations_names,
-            index=None,
-            placeholder="Choisir votre station",
-        )
-        if selected_station:
-            for station in stations:
-                if station["name"] == selected_station:
-                    id_station_selected = str(station["id_station"])
-                    break
-            if id_station != id_station_selected:
-                st.query_params["id_station"] = id_station_selected
-                st.rerun()
+  
