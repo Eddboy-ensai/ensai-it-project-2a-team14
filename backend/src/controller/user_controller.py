@@ -4,12 +4,9 @@ from schema.user_model import (
     AdminRightsModel,
     UserAdminUpdateModel,
     UserCreateModel,
-    UserDisplayModel,
     UserReadModel,
     UserSelfUpdateModel,
 )
-from service.favorite_service import FavoriteService
-from service.station_service import StationService
 from service.user_service import UserService
 from utils.log_utils import get_logger
 from utils.security import require_admin, verify_token
@@ -61,9 +58,9 @@ async def list_all_users(user_service=Depends(get_user_service)):
 
 @router.get(
     "/{id_user}",
-    response_model=UserDisplayModel,
+    response_model=UserReadModel,
     tags=["Users"],
-    dependencies=[Depends(require_admin)],
+    # dependencies=[Depends(require_admin)],
 )
 async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     """Find a user by their unique ID.
@@ -79,21 +76,7 @@ async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     user = user_service.find_by_id(id_user)
     if not user:
         raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
-    favorites = []
-    for fav in FavoriteService().find_by_id(user.id_user):
-        favorites.append(
-            {
-                "id_station": fav.id_station,
-                "name": StationService().find_by_id(fav.id_station).name,
-            }
-        )
-    user_read = {
-        "id_user": user.id_user,
-        "username": user.username,
-        "admin": user.admin,
-        "favorites": favorites,
-    }
-    return user_read
+    return user
 
 
 @router.put("/me", response_model=UserReadModel, tags=["Users"])

@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from business_object.favorite import Favorite
-from schema.station_model import FavoriteAddModel, FavoriteDeleteModel
-from schema.user_model import UserDisplayModel
+from schema.favorite_model import FavoriteAddModel, FavoriteDeleteModel, ListFavoritesModel
 from service.favorite_service import FavoriteService
 from service.station_service import StationService
 from utils.log_utils import get_logger
@@ -56,7 +55,7 @@ async def delete_favorite(
     return "Favori supprimé"
 
 
-@router.get("/", response_model=UserDisplayModel, tags=["Users"])
+@router.get("/", response_model=ListFavoritesModel, tags=["Favorites"])
 async def favorite_by_token(current_user=Depends(verify_token)):
     """Find a user's favorite station by their unique token."""
     logger.info("Find a user by his Token")
@@ -66,10 +65,4 @@ async def favorite_by_token(current_user=Depends(verify_token)):
             "id_station": fav.id_station,
             "name": StationService().find_by_id(fav.id_station).name,
         })
-    user_read = {
-        "id_user": current_user.id_user,
-        "username": current_user.username,
-        "admin": current_user.admin,
-        "favorites": favorites,
-    }
-    return user_read
+    return {"favorites": favorites}

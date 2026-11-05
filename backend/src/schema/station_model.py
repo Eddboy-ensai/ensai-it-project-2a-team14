@@ -24,15 +24,6 @@ class StationReadModel(BaseModel):
     capacity: int | None
 
 
-class FavoriteAddModel(BaseModel):
-    id_user: int
-    id_station: str
-
-
-class FavoriteDeleteModel(BaseModel):
-    id_station: str
-
-
 class Statistics(BaseModel):
     fill_rate: float
     shortage_rate: float
