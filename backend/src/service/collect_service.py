@@ -9,17 +9,50 @@ from utils.log_utils import log
 
 
 class CollectService:
+    @staticmethod
+    def has_changed(old: Station, new: Station) -> bool:
+        """Checks if the information of a station has changed.
+        Parameters
+        ----------
+        old: Station
+            the station as stored in the database
+        new: Station
+            the station as given by the GBFS feed
+        Returns
+        -------
+        bool
+            True if at least one attribute is different
+        """
+        return (
+            old.name != new.name
+            or old.lat != new.lat
+            or old.lon != new.lon
+            or old.capacity != new.capacity
+        )
+
     @log
     def refresh_stations(self) -> int:
-        """Fetches the list of stations and inserts or updates them.
+        """Fetches the list of stations, creates the new ones and updates the modified ones.
         Returns
         -------
         int
-            number of stations inserted or updated
+            number of stations created or updated
         """
         raw = GbfsDao().get_station_information()
-        stations = self.extract_stations(raw)
-        return StationDao().upsert_all(stations)
+        new_stations = self.extract_stations(raw)
+
+        # Stations already in the database, indexed by id for a fast lookup
+        existing = {s.id_station: s for s in StationDao().list_all()}
+
+        nb_changes = 0
+        for station in new_stations:
+            if station.id_station not in existing:
+                if StationDao().create(station):
+                    nb_changes += 1
+            elif self.has_changed(existing[station.id_station], station):
+                if StationDao().update(station):
+                    nb_changes += 1
+        return nb_changes
 
     @staticmethod
     def extract_stations(raw: dict) -> list[Station]:
