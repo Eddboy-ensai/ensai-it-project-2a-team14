@@ -50,38 +50,37 @@ else:  # affichage de la page sans query
     user_id = st.session_state["user"]["id_user"]
 
     favoris_ids = []
-    res_user = api_client.get(f"/user/{user_id}")
-    st.write(res_user)
-    res_favorites = api_client.get("/favorite")
-    st.write(res_favorites)
-    # if res_user["status_code"] == 200:
-    #     favoris_ids = [fav["id_station"] for fav in res_user["data"]["favorites"]]
+    #res_user = api_client.get(f"/user/{user_id}")
+    res_fav = api_client.get("/favorite")
 
-    # df_stations["Favorite"] = df_stations["id_station"].isin(favoris_ids)
+    if res_fav["status_code"] == 200:
+        favoris_ids = [fav["id_station"] for fav in res_fav["data"]]
 
-    # edited_df = st.data_editor(
-    #     df_stations,
-    #     hide_index=True,
-    #     column_config={
-    #         "Favorite": st.column_config.CheckboxColumn(
-    #             "Favori", help="Cocher pour ajouter à vos favoris", default=False
-    #         )
-    #     },
-    #     disabled=["id_station", "name", "lat", "lon", "capacity"],
-    #     key="station_editor",
-    # )
+    df_stations["Favorite"] = df_stations["id_station"].isin(favoris_ids)
 
-    # if st.button("Enregister mes favoris"):
-    #     nouvelles_favorites = edited_df[edited_df["Favorite"]]["id_station"].tolist()
+    edited_df = st.data_editor(
+        df_stations,
+        hide_index=True,
+        column_config={
+            "Favorite": st.column_config.CheckboxColumn(
+                "Favori", help="Cocher pour ajouter à vos favoris", default=False
+            )
+        },
+        disabled=["id_station", "name", "lat", "lon", "capacity"],
+        key="station_editor",
+    )
 
-    #     to_add = set(nouvelles_favorites) - set(favoris_ids)
-    #     to_delete = set(favoris_ids) - set(nouvelles_favorites)
+    if st.button("Enregister mes favoris"):
+        nouvelles_favorites = edited_df[edited_df["Favorite"]]["id_station"].tolist()
 
-    #     for s_id in to_add:
-    #         api_client.post("/favorite/", json={"id_user": user_id, "id_station": int(s_id)})
+        to_add = set(nouvelles_favorites) - set(favoris_ids)
+        to_delete = set(favoris_ids) - set(nouvelles_favorites)
 
-    #     for s_id in to_delete:
-    #         api_client.delete(f"/favorite/{user_id}", json={"id_station": int(s_id)})
+        for s_id in to_add:
+            api_client.post("/favorite/", json={"id_user": user_id, "id_station": s_id})
 
-    #     st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
-    #     st.rerun()
+        for s_id in to_delete:
+            api_client.delete(f"/favorite/{user_id}", json={"id_station": s_id})
+
+        st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
+        st.rerun()
