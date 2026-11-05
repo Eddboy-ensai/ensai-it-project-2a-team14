@@ -30,13 +30,6 @@ class UserReadModel(BaseModel):
     admin: bool
 
 
-class UserDisplayModel(BaseModel):
-    id_user: int
-    username: str
-    admin: bool
-    favorites: list[dict]
-
-
 class UserLoginModel(BaseModel):
     username: str
     pwd: str
