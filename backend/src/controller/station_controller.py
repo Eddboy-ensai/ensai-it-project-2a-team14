@@ -62,9 +62,14 @@ async def station_by_id(id_station: str, station_service=Depends(get_station_ser
 @router.get(
     "/suggestions/{id_station}", response_model=list[StationSuggestionModel], tags=["Stations"]
 )
-async def suggestions(id_station: str, station_service=Depends(get_station_service)):
+async def suggestions(
+    id_station: str, choice_bool: bool, station_service=Depends(get_station_service)
+):
     station = station_service.find_by_id(id_station)
-    suggestions_pick = SuggestionService(station).get_suggestion_pick()
+    if choice_bool is True:
+        suggestions = SuggestionService(station).get_suggestion_pick()
+    else:
+        suggestions = SuggestionService(station).get_suggestion_drop()
     return [
         {
             "station": {
@@ -76,7 +81,7 @@ async def suggestions(id_station: str, station_service=Depends(get_station_servi
             },
             "score": score,
         }
-        for station_sugg, score in suggestions_pick
+        for station_sugg, score in suggestions
     ]
 
 
