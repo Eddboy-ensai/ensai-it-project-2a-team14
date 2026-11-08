@@ -47,3 +47,17 @@ if id_user:
             st.success("Compte modifié")
         else:
             st.error(f"Erreur {response['status_code']}")
+
+    if st.button("Supprimer"):
+        response = api_client.delete(f"/user/{id_user}", json={"id_user": id_user})
+        if response["status_code"] == 200:
+            st.success("Compte supprimé")
+        else:
+            st.error(f"Erreur {response['status_code']}")
+
+    if st.button("Élever au rang d'administrateur"):
+        response = api_client.put(f"/user/{id_user}", json={"id_user": id_user})
+        if response["status_code"] == 200:
+            st.success("Utilisateur élevé au rang d'administrateur")
+        else:
+            st.error(f"Erreur {response['status_code']}")
