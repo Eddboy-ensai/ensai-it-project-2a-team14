@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.station_model import StationDataModel, StationReadModel
+from schema.station_model import StationDataModel, StationReadModel, StationSuggestionModel
 from service.calculation_service import CalculationService
 from service.station_service import StationService
+from service.suggestion_service import SuggestionService
 from utils.log_utils import get_logger
 
 router = APIRouter()
@@ -56,6 +57,15 @@ async def station_by_id(id_station: str, station_service=Depends(get_station_ser
         "capacity": station.capacity,
     }
     return data | stats | {"availability": availability}
+
+
+@router.get(
+    "/suggestions/{id_station}", response_model=list[StationSuggestionModel], tags=["Stations"]
+)
+async def suggestions(id_station: str, station_service=Depends(get_station_service)):
+    station = station_service.find_by_id(id_station)
+    suggestion_pick = SuggestionService(station).get_suggestion_pick()
+    return suggestion_pick
 
 
 # @router.get("/{id_station}/stats", response_model=Statistics, tags=["Stations"])

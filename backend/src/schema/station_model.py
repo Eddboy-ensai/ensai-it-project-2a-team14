@@ -41,3 +41,8 @@ class StationRecordModel(BaseModel):
     nb_available_bikes: int | None
     nb_available_ebikes: int | None
     nb_available_spaces: int | None
+
+
+class StationSuggestionModel(BaseModel):
+    station: StationReadModel
+    score: int
