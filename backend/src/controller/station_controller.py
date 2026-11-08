@@ -64,8 +64,20 @@ async def station_by_id(id_station: str, station_service=Depends(get_station_ser
 )
 async def suggestions(id_station: str, station_service=Depends(get_station_service)):
     station = station_service.find_by_id(id_station)
-    suggestion_pick = SuggestionService(station).get_suggestion_pick()
-    return suggestion_pick
+    suggestions_pick = SuggestionService(station).get_suggestion_pick()
+    return [
+        {
+            "station": {
+                "id_station": station_sugg.id_station,
+                "name": station_sugg.name,
+                "lat": station_sugg.lat,
+                "lon": station_sugg.lon,
+                "capacity": station_sugg.capacity,
+            },
+            "score": score,
+        }
+        for station_sugg, score in suggestions_pick
+    ]
 
 
 # @router.get("/{id_station}/stats", response_model=Statistics, tags=["Stations"])

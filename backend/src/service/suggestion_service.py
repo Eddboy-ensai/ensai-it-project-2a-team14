@@ -111,7 +111,7 @@ class SuggestionService:
         return round(2 * R * math.asin(math.sqrt(alpha)))
 
     @log
-    def get_suggestion_pick(self) -> list[Station, int]:
+    def get_suggestion_pick(self) -> list[tuple[Station, int]]:
         """Select the suggested stations around
 
         Select all the stations in a close area around the choosen station and with at least 2 available bikes which  have a  pick suggestion score over 50 or at least better than the pick suggestion score than the one of the station choosen by the user (station_pick_suggestion_score)
@@ -126,22 +126,22 @@ class SuggestionService:
         c = 0.2
         n0 = 3
         station_sugg = {}
-        for stations in StationService.list_all():
-            if stations.id_station == self.station.id_station:
+        for station in StationService().list_all():
+            if station.id_station == self.station.id_station:
                 continue
             dist = self.compute_distance(
-                self.station.lat, self.station.lon, stations.lat, stations.lon
+                self.station.lat, self.station.lon, station.lat, station.lon
             )
-            nb_bikes = self.latest_record(stations).nb_available_bikes
+            nb_bikes = CalculationService(station).latest_record().nb_available_bikes
             if dist <= 1000 and nb_bikes >= 2:  # 1000 is arbitrary#
-                score_pick = CalculationService(stations).compute_short_score()
+                score_pick = CalculationService(station).compute_short_score()
                 d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_bikes / n0)
                 sugg_score = round(100 * d**a * Disp**b * score_pick**c)
                 if (
                     sugg_score >= 50 or sugg_score >= self.station_pick_suggestion_score()
                 ):  # 50 is arbitrary#
-                    station_sugg[stations] = sugg_score
+                    station_sugg[station] = sugg_score
         sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
         return sugg
 
