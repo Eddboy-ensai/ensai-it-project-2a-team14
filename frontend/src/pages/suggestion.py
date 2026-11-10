@@ -44,7 +44,7 @@ df_stations["lat"] = pd.to_numeric(df_stations["lat"])
 df_stations["lon"] = pd.to_numeric(df_stations["lon"])
 
 
-col_choice, col_map = st.columns(2)
+col_map, col_choice = st.columns(2)
 with col_choice:
     choice = st.segmented_control(
         "Que souhaitez-vous faire ?",
@@ -96,6 +96,7 @@ with col_map:
         selection_mode="single-object",
     )
 
+with col_choice:
     if event.selection and event.selection["objects"].get("stations"):
         station = event.selection["objects"]["stations"][0]
         id_station = station["id_station"]
