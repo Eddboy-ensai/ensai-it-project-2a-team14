@@ -103,4 +103,11 @@ with col_map:
         response = api_client.get(
             f"/station/suggestions/{id_station}", params={"choice_bool": choice_bool}
         )
-        st.write(response)
+        if response["status_code"] == 200:
+            col = []
+            for station in response["data"]:
+                col.append(
+                {"Station": station["station"]["name"], "Capacité": station["station"]["capacity"], "Score": station["score"]})
+            st.dataframe(pd.DataFrame(col), hide_index=True)
+        else:
+            st.error(f"Erreur {response['status_code']} : {response['data']}")
