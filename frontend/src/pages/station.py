@@ -126,7 +126,10 @@ else:  # affichage de la page sans query
         edited_df = st.data_editor(
             df_stations,
             hide_index=True,
+            column_order=["name","capacity","Favorite"],
             column_config={
+                "name": "Nom",
+                "capacity": "Capacité",
                 "Favorite": st.column_config.CheckboxColumn(
                     "Favori", help="Cocher pour ajouter à vos favoris", default=False
                 )
