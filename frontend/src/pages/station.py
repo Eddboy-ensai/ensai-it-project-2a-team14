@@ -21,10 +21,24 @@ id_station = st.query_params.get("id_station")
 if id_station:  # si on a précisé une id_station en query, par ex adresse station?id_station=5501
     API_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
     station = requests.get(f"{API_URL}/station/{id_station}").json()
-    st.json(station)
-    # availability = station["availability"]
-    # df = pd.DataFrame(availability)
-    # st.line_chart(df)
+
+    info = [ 
+        #{"date": "2026-11-10T00:49:01Z", "places disponibles": 0},
+        #{"date": "2026-11-10T01:49:01Z", "places disponibles": 5},
+        #{"date": "2026-11-10T02:49:01Z", "places disponibles": 12}
+        {"date": date, "places disponibles": nb}
+        for element in station.get("availability")
+        for date, nb in element.items()
+    ]
+
+    if info:
+        df = pd.DataFrame(info)
+        df["date"] = pd.to_datetime(df["date"]) 
+        df = df.sort_values("date")
+        st.line_chart(df, x = "date", y = "places disponibles")
+    else:
+        st.info("Pas d'informations disponible")
+
     if st.button("Retour"):
         st.query_params.clear()
         st.rerun()
