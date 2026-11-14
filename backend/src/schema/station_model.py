@@ -14,7 +14,8 @@ class StationDataModel(BaseModel):
     saturation_rate: float | None
     shortage_mean_time: float | None
     saturation_mean_time: float | None
-    availability: list[dict]
+    availability_spaces: list[dict]
+    availability_bikes: list[dict]
 
 
 class StationReadModel(BaseModel):

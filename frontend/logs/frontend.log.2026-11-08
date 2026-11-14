@@ -1,0 +1,80 @@
+08/11/2026 10:18:28 root                 INFO   - --------------------------------------------------
+08/11/2026 10:18:28 root                 INFO   - Launch FRONTEND : Streamlit App
+08/11/2026 10:18:28 root                 INFO   - --------------------------------------------------
+08/11/2026 10:18:28 root                 INFO   - Load environment variables: SUCCES
+08/11/2026 10:18:28 root                 INFO   - BACKEND_URL=http://localhost:5000
+08/11/2026 10:18:28 root                 INFO   - BACKEND_TIMEOUT=5
+08/11/2026 10:18:28 home                 INFO   - None -> home
+08/11/2026 10:18:31 create_user          INFO   - home -> create_user
+08/11/2026 10:18:36 create_user          INFO   -   POST http://localhost:5000/user/
+08/11/2026 10:18:36 create_user          INFO   -   200 OK
+08/11/2026 10:18:37 home                 INFO   - create_user -> home
+08/11/2026 10:18:42 home                 INFO   -   POST http://localhost:5000/login
+08/11/2026 10:18:42 home                 INFO   -   200 OK
+08/11/2026 10:18:45 station              INFO   - home -> station
+08/11/2026 10:18:45 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 10:18:45 station              INFO   -   200 OK
+08/11/2026 10:18:45 station              INFO   -   GET http://localhost:5000/favorite
+08/11/2026 10:18:45 station              INFO   -   200 OK
+08/11/2026 10:18:51 create_user          INFO   - station -> create_user
+08/11/2026 10:18:53 admin                INFO   - create_user -> admin
+08/11/2026 10:18:53 root                 INFO   - Not logged in, return to the home page
+08/11/2026 10:18:56 home                 INFO   - admin -> home
+08/11/2026 10:19:51 station              INFO   - home -> station
+08/11/2026 10:19:51 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 10:19:51 station              INFO   -   200 OK
+08/11/2026 10:19:51 station              INFO   -   GET http://localhost:5000/favorite
+08/11/2026 10:19:51 station              INFO   -   200 OK
+08/11/2026 10:19:53 admin                INFO   - station -> admin
+08/11/2026 10:19:53 root                 INFO   - Not logged in, return to the home page
+08/11/2026 10:19:56 home                 INFO   - admin -> home
+08/11/2026 12:35:20 root                 INFO   - --------------------------------------------------
+08/11/2026 12:35:20 root                 INFO   - Launch FRONTEND : Streamlit App
+08/11/2026 12:35:20 root                 INFO   - --------------------------------------------------
+08/11/2026 12:35:20 root                 INFO   - Load environment variables: SUCCES
+08/11/2026 12:35:20 root                 INFO   - BACKEND_URL=http://localhost:5000
+08/11/2026 12:35:20 root                 INFO   - BACKEND_TIMEOUT=5
+08/11/2026 12:35:20 home                 INFO   - None -> home
+08/11/2026 12:35:26 home                 INFO   -   POST http://localhost:5000/login
+08/11/2026 12:35:26 home                 INFO   -   200 OK
+08/11/2026 12:35:27 station              INFO   - home -> station
+08/11/2026 12:35:27 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:35:27 station              INFO   -   200 OK
+08/11/2026 12:35:27 station              INFO   -   GET http://localhost:5000/favorite
+08/11/2026 12:35:27 station              INFO   -   200 OK
+08/11/2026 12:35:28 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:35:28 station              INFO   -   200 OK
+08/11/2026 12:35:30 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:35:30 station              INFO   -   200 OK
+08/11/2026 12:35:30 station              INFO   -   GET http://localhost:5000/station/suggestions/5501
+08/11/2026 12:35:30 station              INFO   -   200 OK
+08/11/2026 12:35:58 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:35:58 station              INFO   -   200 OK
+08/11/2026 12:36:03 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:36:03 station              INFO   -   200 OK
+08/11/2026 12:37:12 station              INFO   - None -> station
+08/11/2026 12:37:12 root                 INFO   - Not logged in, return to the home page
+08/11/2026 12:37:13 home                 INFO   - station -> home
+08/11/2026 12:37:16 home                 INFO   -   POST http://localhost:5000/login
+08/11/2026 12:37:16 home                 INFO   -   200 OK
+08/11/2026 12:37:16 station              INFO   - home -> station
+08/11/2026 12:37:16 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:37:16 station              INFO   -   200 OK
+08/11/2026 12:37:16 station              INFO   -   GET http://localhost:5000/favorite
+08/11/2026 12:37:16 station              INFO   -   200 OK
+08/11/2026 12:37:16 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:37:16 station              INFO   -   200 OK
+08/11/2026 12:37:20 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:37:20 station              INFO   -   200 OK
+08/11/2026 12:37:22 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:37:22 station              INFO   -   200 OK
+08/11/2026 12:37:22 station              INFO   -   GET http://localhost:5000/station/suggestions/5501
+08/11/2026 12:37:23 station              INFO   -   200 OK
+08/11/2026 12:37:24 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:37:24 station              INFO   -   200 OK
+08/11/2026 12:37:24 station              INFO   -   GET http://localhost:5000/station/suggestions/5501
+08/11/2026 12:37:24 station              INFO   -   200 OK
+08/11/2026 12:37:25 station              INFO   -   GET http://localhost:5000/station/
+08/11/2026 12:37:25 station              INFO   -   200 OK
+08/11/2026 12:37:25 station              INFO   -   GET http://localhost:5000/station/suggestions/5592
+08/11/2026 12:37:26 station              INFO   -   200 OK

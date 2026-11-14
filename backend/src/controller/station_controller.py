@@ -28,7 +28,7 @@ async def list_all_stations(station_service=Depends(get_station_service)):
 
 
 @router.get("/{id_station}", response_model=StationDataModel, tags=["Stations"])
-async def station_by_id(id_station: str, station_service=Depends(get_station_service)):
+async def station_by_id(id_station: str, range: int, station_service=Depends(get_station_service)):
     """Find a station by its unique ID.
     Parameters
     ----------
@@ -48,7 +48,9 @@ async def station_by_id(id_station: str, station_service=Depends(get_station_ser
     if not station:
         raise HTTPException(status_code=404, detail=f"Station (id={id_station}) not found.")
     stats = station_service.get_stats(station)
-    availability = CalculationService(station).get_availability_spaces_over_time(7)
+
+    availability_spaces = CalculationService(station).get_availability_spaces_over_time(range)
+    availability_bikes = CalculationService(station).get_availability_bikes_over_time(range)
     data = {
         "id_station": station.id_station,
         "name": station.name,
@@ -56,7 +58,12 @@ async def station_by_id(id_station: str, station_service=Depends(get_station_ser
         "lon": station.lon,
         "capacity": station.capacity,
     }
-    return data | stats | {"availability": availability}
+    return (
+        data
+        | stats
+        | {"availability_spaces": availability_spaces}
+        | {"availability_bikes": availability_bikes}
+    )
 
 
 @router.get(

@@ -20,22 +20,68 @@ id_station = st.query_params.get("id_station")
 
 if id_station:  # si on a précisé une id_station en query, par ex adresse station?id_station=5501
     API_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
-    station = requests.get(f"{API_URL}/station/{id_station}").json()
+    if st.query_params.get("selected_range"):
+        range = int(st.query_params.get("selected_range"))
+    else:
+        range = 7
+    station = requests.get(f"{API_URL}/station/{id_station}", params={"range": range}).json()
+    st.title(f"Informations concernant la station {station['name']}")
 
-    info = [ 
-        #{"date": "2026-11-10T00:49:01Z", "places disponibles": 0},
-        #{"date": "2026-11-10T01:49:01Z", "places disponibles": 5},
-        #{"date": "2026-11-10T02:49:01Z", "places disponibles": 12}
+    st.subheader("Informations en direct")
+    st.write(f"Nombre de vélos disponibles : {list(station['availability_bikes'][-1].values())[0]}")
+    st.write(
+        f"Nombre d'emplacements libres disponibles : {list(station['availability_spaces'][-1].values())[0]}"
+    )
+
+    st.subheader("Evolutions temporelles des disponibilités")
+    range = None
+    selected_range = st.selectbox(
+        "Veuillez choisir une période",
+        ["1 jour", "7 jours", "30 jours"],
+        index=None,
+        placeholder="Choisir une période",
+    )
+    if selected_range:
+        if selected_range == "1 jour":
+            range = "1"
+        elif selected_range == "7 jours":
+            range = "7"
+        else:
+            range = "30"
+        if st.query_params.get("selected_range") != range:
+            st.query_params["selected_range"] = range
+            st.rerun()
+
+    st.write("Evolution temporelle du nombre d'emplacements libres disponibles dans la station")
+    spaces = [
+        # {"date": "2026-11-10T00:49:01Z", "places disponibles": 0},
+        # {"date": "2026-11-10T01:49:01Z", "places disponibles": 5},
+        # {"date": "2026-11-10T02:49:01Z", "places disponibles": 12}
         {"date": date, "places disponibles": nb}
-        for element in station.get("availability")
+        for element in station.get("availability_spaces")
         for date, nb in element.items()
     ]
 
-    if info:
-        df = pd.DataFrame(info)
-        df["date"] = pd.to_datetime(df["date"]) 
+    if spaces:
+        df = pd.DataFrame(spaces)
+        df["date"] = pd.to_datetime(df["date"])
         df = df.sort_values("date")
-        st.line_chart(df, x = "date", y = "places disponibles")
+        st.line_chart(df, x="date", y="places disponibles")
+    else:
+        st.info("Pas d'informations disponible")
+
+    st.write("Evolution temporelle du nombre de vélos disponibles dans la station")
+    bikes = [
+        {"date": date, "vélos disponibles": nb}
+        for element in station.get("availability_bikes")
+        for date, nb in element.items()
+    ]
+
+    if bikes:
+        df = pd.DataFrame(bikes)
+        df["date"] = pd.to_datetime(df["date"])
+        df = df.sort_values("date")
+        st.line_chart(df, x="date", y="vélos disponibles")
     else:
         st.info("Pas d'informations disponible")
 
@@ -66,13 +112,13 @@ else:  # affichage de la page sans query
 
     user_id = st.session_state["user"]["id_user"]
 
-    # infos de la carte 
+    # infos de la carte
     df_stations = pd.DataFrame(stations)
 
     df_stations["lat"] = pd.to_numeric(df_stations["lat"])
     df_stations["lon"] = pd.to_numeric(df_stations["lon"])
 
-    #infos du df des favoris
+    # infos du df des favoris
     favoris_ids = []
     res_fav = api_client.get("/favorite")
 
@@ -81,9 +127,9 @@ else:  # affichage de la page sans query
 
     df_stations["Favorite"] = df_stations["id_station"].isin(favoris_ids)
 
-    col_carte, col_tableau = st.columns(2) 
+    col_carte, col_tableau = st.columns(2)
 
-    with col_carte: 
+    with col_carte:
         st.subheader("Carte des stations")
 
         liste_noms = ["Toutes les stations"] + df_stations["name"].tolist()
@@ -126,13 +172,13 @@ else:  # affichage de la page sans query
         edited_df = st.data_editor(
             df_stations,
             hide_index=True,
-            column_order=["name","capacity","Favorite"],
+            column_order=["name", "capacity", "Favorite"],
             column_config={
                 "name": "Nom",
                 "capacity": "Capacité",
                 "Favorite": st.column_config.CheckboxColumn(
                     "Favori", help="Cocher pour ajouter à vos favoris", default=False
-                )
+                ),
             },
             disabled=["id_station", "name", "lat", "lon", "capacity"],
             key="station_editor",
@@ -152,5 +198,3 @@ else:  # affichage de la page sans query
 
             st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
             st.rerun()
-
-  

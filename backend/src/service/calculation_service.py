@@ -1,8 +1,6 @@
 import math
 from datetime import UTC, datetime, timedelta
 
-import pandas as pd
-
 from business_object.station import Station
 from business_object.station_record import StationRecord
 from dao.station_record_dao import StationRecordDao
@@ -210,18 +208,20 @@ class CalculationService:
         return score
 
     @log
-    def get_availability_bikes_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
+    def get_availability_bikes_over_time(self, d: int, now: datetime | None = None) -> list[dict]:
         """Returns a dataframe which gives the availabilty of the station's bikes over time.
 
         Return :
         --------
-        pd.DataFrame
+        list[dict]
             the dataframe of availability of the station's bikes over time
         """
         data = []
         now = now or datetime.now(UTC)
         seuil = now - timedelta(days=d)
-        sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
+        sorted_records = sorted(
+            (r for r in self.station_records if r.date >= seuil), key=lambda r: r.date
+        )
         for records in sorted_records:
             a = {}
             a[records.date] = records.nb_available_bikes
@@ -229,18 +229,20 @@ class CalculationService:
         return data
 
     @log
-    def get_availability_spaces_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
+    def get_availability_spaces_over_time(self, d: int, now: datetime | None = None) -> list[dict]:
         """Returns a dataframe which gives the availabilty of the station's spaces over time.
 
         Return :
         --------
-        pd.DataFrame
+        list[dict]
             the dataframe of availability of the station's spaces over time
         """
         data = []
         now = now or datetime.now(UTC)
         seuil = now - timedelta(days=d)
-        sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
+        sorted_records = sorted(
+            (r for r in self.station_records if r.date >= seuil), key=lambda r: r.date
+        )
         for records in sorted_records:
             a = {}
             a[records.date] = records.nb_available_spaces
