@@ -63,15 +63,23 @@ Les utilisateurs pourront consulter diverses informations pour la station de leu
 
 **Fournir un score de fiabilité**  
 
-Pour chaque station, l'API devra calculer et fournir un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers doivent donc pouvoir emprunter un vélo (station non vide) et le rendre (station non saturée). Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'API puisse mettre en avant les stations réellement fiables au quotidien.
+Pour chaque station, l'API permet de calculer et fournir un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers ont 2 types de demandes spécifiques, la première est de pouvoir emprunter un vélo dans la station, elle nécessite donc que la station ne soit pas vide. Un score de pénurie ($Spick$) sera donc crée pour évaluer la capacité de la station à repondre à ce besoin. Le score prendra des valeurs allant de 0 à 1 où le score de 1 sera attribué à une station qui n'a jamais d'épisode de saturation. Le second beosin est de pouvoir déposer un vélo emprunté dans une station, il est alors nécessaire que la station ne soit pas pleine. Un score de saturation ($Sdrop$) est donc crée en suivant la même logique que le score de pénurie. L'API calcule alors un score global en utilsant ($Spick$) et ($Ssat$) afin d'obtenir un score de fiabilité sur 100 de la station.
 
-Pour traduire cette logique mathématiquement, nous prévoyons de construire un score sur 100 points. Cette échelle présente l'avantage d'être intuitive pour l'utilisateur lors de la recommandation de trajets. La formule sera établie par la suite, mais elle tiendra compte des variables suivantes :  
-- les pourcentages de temps passé vide ($Pvide$) et saturé ($Psat$),  
-- les durées moyennes des épisodes de saturation ($Msat$) et de pénurie ($Mvide$).  
+Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'API puisse mettre en avant les stations réellement fiables au quotidien. La division du score de fiabilité général en 2 sous-scores lié aux besoin spécifique de l'utilisateur permet dans un second temps lors de la partie recommandation de station, de pouvoir utiliser uniquement le sous-score adapté au besoin réél de l'utilisateur. En effet, la recommandation d'une station à un utilisateur qui souhaite déposer un vélo ne doit pas pénaliser les épisodes de pénurie de la station, l'utilisation d'un sous-score adapté est donc plus pertinent qu'un score général. Cet utilisation supplémentaire conditionne donc ces sous-scores à être compris entre 0 et 1 et non 100 comme l'est le score de fiabilité général.
 
-La formule prévue est de la forme suivante :  
-$score = max(0, 100 - f(Pvide ; Psat ; Msat ; Mvide))$  
-où $f$ est une fonction croissante en chacune de ses variables que nous construirons ultérieurement durant la phase de développement du projet.  
+La formule de la création des sous-scores tient donc des variables suivantes calculées grâce aux enregistrements de la stations choisie :
+- la proportion du temps passé vide ($Pshort$) et pleine ($Psat$),  
+- les durées moyennes des épisodes de pénurie ($Dshort$) et de saturation ($Dsat$) en secondes.
+
+La formule d'un sous-score est la suivante (ici appliquée à la pénurie mais similaire au cas saturation):  
+$Spick$ = (1 - $Pshort$) ** 0.5 * $dshort$ ** 0.5
+où $dshort$ = exp(-$Dshort$ / 3600) qui permet de transformer $Dshort$ qui est un temps en seconde en un score sans dimensions compris entre 0 et 1 et où 3600 est choisi arbitrairement. 
+La formule est de la forme x ** (1 - a) * y ** a où a = 0.5 choisit pour attribuer la même importance à la proportion du temps d'un épisode à leur durée moyenne. Une formule géométrique à été préférée à une formule arithmétique afin qu'une bonne variable ne puisse pas compenser l'autre si elle est très mauvaise.
+
+Enfin la formule générale du score de fiabilité est la suivante :
+S = 100 * (0.5 * $Spick$ + 0.5 * $Sdrop$) 
+de la forme (1 - a) * x + a * y où a = 0.5 ici pour donner autant d'importance aux épisode de pénurie que ceux de saturation.
+
 
 **Recommander une station**  
 

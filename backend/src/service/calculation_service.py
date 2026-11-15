@@ -166,10 +166,10 @@ class CalculationService:
         """
         b = 0.5
         t = 3600
-        Tshort = 1 - self.compute_shortage_rate()
+        Pshort = 1 - self.compute_shortage_rate()
         Dshort = self.compute_shortage_mean_time()
         dshort = math.exp(-Dshort / t)
-        short_score = round(Tshort ** (1 - b) * dshort**b, 2)
+        short_score = round(Pshort ** (1 - b) * dshort**b, 2)
         return short_score
 
     @log
@@ -184,10 +184,10 @@ class CalculationService:
         """
         a = 0.5
         t = 3600
-        Tsat = 1 - self.compute_saturation_rate()
+        Psat = 1 - self.compute_saturation_rate()
         Dsat = self.compute_saturation_mean_time()
         dsat = math.exp(-Dsat / t)
-        sat_score = round(Tsat ** (1 - a) * dsat**a, 2)
+        sat_score = round(Psat ** (1 - a) * dsat**a, 2)
         return sat_score
 
     @log
@@ -202,9 +202,8 @@ class CalculationService:
         float
             the fiability score of the station
         """
-        c = 0.5
-        d = 0.5  # c + d = 1 (toujours)
-        score = round(100 * (c * self.compute_sat_score() + d * self.compute_short_score()))
+        a = 0.5
+        score = round(100 * (1 - a * self.compute_sat_score() + a * self.compute_short_score()))
         return score
 
     @log
