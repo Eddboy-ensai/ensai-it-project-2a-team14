@@ -1,6 +1,4 @@
-from business_object.favorite import Favorite
 from business_object.station import Station
-from dao.favorite_dao import FavoriteDao
 from dao.station_dao import StationDao
 from service.calculation_service import CalculationService
 from utils.log_utils import log
@@ -56,21 +54,3 @@ class StationService:
             "shortage_mean_time": shortage_mean_time,
             "saturation_mean_time": saturation_mean_time,
         }
-
-    @log
-    def favorite_already_exists(self, favorite: Favorite) -> bool:
-        """Check if a favorite already exists in the databse.
-        Parameters
-        ----------
-        favorite : Favorite
-            favorite to check
-        Returns
-        -------
-        bool
-            True if the favorite already exists in the database.
-        """
-        favorites = FavoriteDao().list_all()
-        for fav in favorites:
-            if fav.id_user == favorite.id_user and fav.id_station == favorite.id_station:
-                return True
-        return False

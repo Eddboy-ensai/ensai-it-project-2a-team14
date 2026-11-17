@@ -49,7 +49,7 @@ class FavoriteService:
         bool
             True if deletion was successful, False otherwise.
         """
-        return FavoriteDao().delete(favorite)
+        return FavoriteDao().delete_favorite(favorite)
 
     @log
     def find_by_id(self, id_user: int) -> list[Favorite]:

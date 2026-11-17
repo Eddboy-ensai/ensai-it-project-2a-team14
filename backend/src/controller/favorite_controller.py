@@ -58,7 +58,7 @@ async def delete_favorite(
 @router.get("/", response_model=ListFavoritesModel, tags=["Favorites"])
 async def favorite_by_token(current_user=Depends(verify_token)):
     """Find a user's favorite station by their unique token."""
-    logger.info("Find a user by his Token")
+    logger.info("Find favorites by user's Token")
     favorites = []
     for fav in FavoriteService().find_by_id(current_user.id_user):
         favorites.append({
