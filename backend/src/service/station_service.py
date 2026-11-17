@@ -26,7 +26,8 @@ class StationService:
         """Retrieves all stations from the database by asking to the dao
         Returns
         --------
-            list[Station]
+        list[Station]:
+            list of all the stations
         """
         return StationDao().list_all()
 
@@ -73,32 +74,3 @@ class StationService:
             if fav.id_user == favorite.id_user and fav.id_station == favorite.id_station:
                 return True
         return False
-
-    @log
-    def add_favorite(self, favorite: Favorite) -> Favorite | None:
-        """Call the DAO method to add a favorite.
-        Parameters
-        ----------
-        favorite: Favorite
-            the favorite (user/station) to add
-        Returns
-        -------
-        Favorite
-            Favorite object created or None if creation failed.
-        """
-        created = FavoriteDao().add_favorite(favorite)
-        if created:
-            return favorite
-        return None
-
-    @log
-    def delete_favorite(self, favorite: Favorite) -> bool:
-        """Delete a favorite.
-        Parameters
-            Favorite object to be deleted.
-        Returns
-        -------
-        bool
-            True if deletion was successful, False otherwise.
-        """
-        return FavoriteDao().delete(favorite)
