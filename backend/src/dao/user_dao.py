@@ -181,7 +181,7 @@ class UserDao(metaclass=Singleton):
         return user
 
     @log
-    def delete(self, user) -> bool:
+    def delete(self, user: User) -> bool:
         """Delete a user from the database.
         Args:
             User to delete from the database
