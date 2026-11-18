@@ -130,6 +130,8 @@ async def delete_user(
     user = user_service.find_by_id(id_user)
     if not user:
         raise HTTPException(status_code=404, detail="User (id={id_user}) not found.")
+    if user_service.is_first_admin(user):
+        raise HTTPException(status_code=403, detail="The first admin's profile cannot be modified.")
 
     user_service.delete(user)
     return f"User {user.username} deleted"
