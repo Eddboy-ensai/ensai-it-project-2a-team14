@@ -247,3 +247,25 @@ class CalculationService:
             a[records.date] = records.nb_available_spaces
             data.append(a)
         return data
+
+    @log
+    def prediction_bikes_in_an_hour(self) -> int:
+        """ Returns the expected number of bikes in an hour based on the 4 last same days of the week at this hour
+
+        Returns:
+        --------
+        int
+            the expected number of bikes in an hour
+        """
+        date_now = self.latest_records().date
+        sum = 0
+        nb_records = 0
+        for k in range(1, 5):
+            date_record = date_now + datetime(hours=1) - datetime(days=7 * k)
+            a = next((
+                r for r in self.station_records if abs(self.station_records.date - date_record) <= timedelta(minutes=2)
+                ), None)
+            if a is not None:
+                nb_records += 1
+                sum += a.nb_available_bikes
+        return round(sum / nb_records)
