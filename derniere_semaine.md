@@ -10,13 +10,11 @@ Bon courage !
 
 Alix et Méline
 Frontend :
-- mettre le nombre de place/vélos dispo pour chaque station favorite dans account
 - rendre l'axe des abscisses des graphiques de disponibilité plus lisible
 - faire tester l'ergonomie de l'application
-- gestion des utilisateurs demandée lors de la visio : un admin peut créer un admin ou supprimer un utilisateur
+- afficher le score de la station (demander dans cahier des charges)
 Rapport :
 - rédiger une synthèse sur le fonctionnement du frontend (section 3.1.a Frontend du rapport)
-- afficher le score de la station
 
 Samuel :
 - implémenter la fonctionnalité optionnelle FO1
@@ -30,7 +28,7 @@ Rapport :
 - rédiger un paragraphe pour la section "Classes liées aux utilisateurs" sur l'implémentation gestion des administrateurs
 - rédiger le paragraphe "Classes liées à la collecte de données liées aux stations" du rapport (+ créer le diagramme de classe en créant un nouveau fichier "diag_classes_collecte.md" et en respectant strictement le même template que ceux déjà créé)
 - rédiger le paragraphe : "Gestion de la sécurité de l'application"
-- 
+- Question : un admin peut supprimer un admin ?
 
 Eddy :
 Rapport

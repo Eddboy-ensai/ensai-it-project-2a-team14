@@ -28,7 +28,10 @@ if not favoris:
 
 for fav in favoris:
     col1, col2 = st.columns([4, 1])
-    col1.write(fav["name"])
+    data_latest_record = api_client.get(f"/station/{fav['id_station']}/latest")["data"]
+    col1.write(
+        f"{fav['name']} : nombres de vélos disponibes : {data_latest_record['nb_available_bikes']}, nombres d'emplacements libres : {data_latest_record['nb_available_spaces']}"
+    )
     if col2.button("Supprimer", key=f"{fav['id_station']}"):
         api_client.delete(f"/favorite/{id_user}", json={"id_station": fav["id_station"]})
         st.rerun()

@@ -1,6 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from schema.station_model import StationDataModel, StationReadModel, StationSuggestionModel
+from schema.station_model import (
+    StationDataModel,
+    StationLatestRecordModel,
+    StationReadModel,
+    StationSuggestionModel,
+)
 from service.calculation_service import CalculationService
 from service.station_service import StationService
 from service.suggestion_service import SuggestionService
@@ -92,3 +97,29 @@ async def suggestions(
         }
         for station_sugg, score in suggestions
     ]
+
+
+@router.get("/{id_station}/latest", response_model=StationLatestRecordModel, tags=["Stations"])
+async def latest_record(id_station: str, station_service=Depends(get_station_service)):
+    """Find the latest record of a station by its unique ID.
+    Parameters
+    ----------
+    id_station: str
+        The ID of the station
+    Returns
+    -------
+    StationReadModel
+        The latest record station data if found
+    Raises:
+        HTTPException: 404 error if the station is not found
+    """
+    logger.info("Find a station by id")
+    station = station_service.find_by_id(id_station)
+    if not station:
+        raise HTTPException(status_code=404, detail=f"Station (id={id_station}) not found.")
+    latest_record = CalculationService(station).latest_record()
+    return {
+        "status": latest_record.status,
+        "nb_available_spaces": latest_record.nb_available_spaces,
+        "nb_available_bikes": latest_record.nb_available_bikes
+    }
