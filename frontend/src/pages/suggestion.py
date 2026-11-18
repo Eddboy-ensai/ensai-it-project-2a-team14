@@ -13,6 +13,8 @@ st.set_page_config(layout="wide")
 
 logger = get_page_logger("station")
 
+st.set_page_config(page_title="Suggestions de stations")
+
 check_authentification()
 
 col1, col2 = st.columns([6, 1])

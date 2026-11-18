@@ -7,18 +7,20 @@ from utils.log_init import get_page_logger
 
 logger = get_page_logger("account")
 
+st.set_page_config(page_title="Mon compte")
+
 if "user" not in st.session_state:
     st.switch_page("pages/home.py")
 
 user = st.session_state["user"]
-user_id = user["id_user"]
+id_user = user["id_user"]
 
 st.title("Mon compte")
 st.write(f"Identifiant : {user['username']}")
 
 st.subheader("Stations favorites")
 
-res_fav = api_client.get(f"/favorite/")
+res_fav = api_client.get("/favorite/")
 favoris = res_fav["data"]["favorites"] if res_fav["status_code"] == 200 else []
 
 if not favoris:
@@ -27,11 +29,28 @@ if not favoris:
 for fav in favoris:
     col1, col2 = st.columns([4, 1])
     col1.write(fav["name"])
-    if col2.button("Supprimer", key= f"{fav['id_station']}"): 
-        api_client.delete(f"/favorite/{user_id}",json={"id_station":fav["id_station"]})
+    if col2.button("Supprimer", key=f"{fav['id_station']}"):
+        api_client.delete(f"/favorite/{id_user}", json={"id_station": fav["id_station"]})
         st.rerun()
 
 st.divider()
+
+st.write("Modifier son profil")
+
+current_password = st.text_input("Mot de passe actuel", type="password")
+username = st.text_input("Nouvel identifiant")
+password = st.text_input("Nouveau mot de passe", type="password")
+
+if st.button("Modifier"):
+    response = api_client.put(
+        "/user/me",
+        json={"current_pwd": current_password, "new_username": username, "new_pwd": password},
+        headers={"X-Auth-Token": st.session_state["user"]["access_token"]},
+    )
+    if response["status_code"] == 200:
+        st.success("Compte modifié")
+    else:
+        st.error(f"Erreur {response['status_code']}")
 
 if st.button("Se déconnecter"):
     st.session_state.clear()

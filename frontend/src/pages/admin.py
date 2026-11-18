@@ -6,6 +6,8 @@ from utils.api_client import api_client
 from utils.auth_guard import check_admin
 from utils.log_init import get_page_logger
 
+st.set_page_config(page_title="Administration")
+
 id_user = st.query_params.get("id_user")
 
 if "user" not in st.session_state:
@@ -34,20 +36,6 @@ if selected_username:
         st.query_params["id_user"] = id_user_selected
         st.rerun()
 
-if id_user:
-    username = st.text_input("Nouvel identifiant")
-    password = st.text_input("Nouveau mot de passe", type="password")
-    if st.button("Modifier"):
-        response = api_client.put(
-            f"/user/{id_user}",
-            json={"username": username, "pwd": password},
-            headers={"X-Auth-Token": st.session_state["user"]["access_token"]},
-        )
-        if response["status_code"] == 200:
-            st.success("Compte modifié")
-        else:
-            st.error(f"Erreur {response['status_code']}")
-
     if st.button("Supprimer"):
         response = api_client.delete(f"/user/{id_user}", json={"id_user": id_user})
         if response["status_code"] == 200:
@@ -56,7 +44,7 @@ if id_user:
             st.error(f"Erreur {response['status_code']}")
 
     if st.button("Élever au rang d'administrateur"):
-        response = api_client.put(f"/user/{id_user}", json={"id_user": id_user})
+        response = api_client.put(f"/user/{id_user}/admin", json={"admin": True})
         if response["status_code"] == 200:
             st.success("Utilisateur élevé au rang d'administrateur")
         else:

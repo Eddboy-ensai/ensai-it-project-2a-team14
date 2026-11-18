@@ -14,6 +14,8 @@ st.set_page_config(layout="wide")
 
 logger = get_page_logger("station")
 
+st.set_page_config(page_title="Informations sur les stations")
+
 check_authentification()
 
 id_station = st.query_params.get("id_station")

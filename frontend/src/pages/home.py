@@ -7,6 +7,8 @@ from utils.log_init import get_page_logger
 
 logger = get_page_logger("home")
 
+st.set_page_config(page_title="Se connecter")
+
 if "message" in st.session_state:
     st.success(st.session_state["message"])
     del st.session_state["message"]

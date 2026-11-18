@@ -7,6 +7,8 @@ from utils.log_init import get_page_logger
 
 logger = get_page_logger("create_user")
 
+st.set_page_config(page_title="Créer un compte")
+
 st.title("Créer un compte")
 
 username = st.text_input("Identifiant")

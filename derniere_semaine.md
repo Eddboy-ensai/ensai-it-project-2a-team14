@@ -11,7 +11,6 @@ Bon courage !
 Alix et Méline
 Frontend :
 - mettre le nombre de place/vélos dispo pour chaque station favorite dans account
-- traduire le nom des pages en français dans le menu à gauche
 - rendre l'axe des abscisses des graphiques de disponibilité plus lisible
 - faire tester l'ergonomie de l'application
 - gestion des utilisateurs demandée lors de la visio : un admin peut créer un admin ou supprimer un utilisateur
@@ -55,6 +54,7 @@ Rapport
 - justifier dans le rapport : pourquoi id_user: int et id_station en str
 - nettoyer le code (supprimer les bouts de code inutile, commenter les parties difficiles en anglais, écrire la documentation de chaque classe, vérifier la documentation des méthodes ainsi que le typage)
 - vérifier si on a mis assez de code erreur HTTP sur les fonctionnalités "basiques"
+- afficher des messages claires lorsqu'on a une error HTTP, sur la page, plutôt que le code
 
 
 Questions en suspens :
