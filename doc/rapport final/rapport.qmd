@@ -20,7 +20,7 @@ format:
 #import "model.typ": project_template
 
 #show: body => project_template(
-  title: [Rapport d'analyse : projet VeloScope],
+  title: [Rapport final : projet VeloScope],
   team: [Équipe 14],
   authors: ([BONAVERO Méline], [BOYCE Eddy], [CHATONNIER Eliot], [LEJARS Samuel], [MOINERAUD--DOUCET Alix]),
   tutor: [RIVIERE André],
@@ -31,21 +31,21 @@ format:
 
 ## Introduction  
 
-Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transport les plus utilisés actuellement figure le vélo. Cependant, l'accès à son propre vélo peut être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, vélos électriques peu abordables, difficulté de stockage d'un vélo personnel par manque de place, etc.). Pour pallier ces problèmes et développer des mobilités respectueuses de l'environnement, de nombreuses villes se dotent de vélos en libre-service, dont la gestion des stations est primordiale. Si de nombreuses applications existent déjà pour connaître l'état des stations de vélos en libre-service, elles sont sujettes à de nombreux points faibles. Par exemple, elles se contentent de fournir les disponibilités en vélos en temps réel et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C'est pourquoi notre client souhaite développer une appli qui irait bien plus loin. Celle-ci permettrait d'étudier les stocks des différentes stations au cours du temps, et ainsi de connaître l'état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d'évolution temporelle et des recommandations adaptées.  
+Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transport les plus utilisés actuellement figure le vélo. Cependant, l'accès à son propre vélo peut être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, vélos électriques peu abordables, difficulté de stockage d'un vélo personnel par manque de place, etc.). Pour pallier ces problèmes et développer des mobilités respectueuses de l'environnement, de nombreuses villes se dotent de vélos en libre-service, dont la gestion des stations est primordiale. Si de nombreuses applications existent déjà pour connaître l'état des stations de vélos en libre-service, elles sont sujettes à de nombreux points faibles. Par exemple, elles se contentent de fournir les disponibilités en vélos en temps réel et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C'est pourquoi notre client souhaite développer une application qui irait bien plus loin. Celle-ci permettrait d'étudier les stocks des différentes stations au cours du temps, et ainsi de connaître l'état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d'évolution temporelle et des recommandations adaptées.  
 
 {{< pagebreak >}}
 
 ## Cahier des charges
 
-L'objectif du projet est de produire une appli donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'appli doit également fournir des indicateurs temporels et un score de qualité.   
+L'objectif du projet est de produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs temporels et un score de qualité.   
 
 ### Utilisateurs  
 
-Deux types d'utilisateurs sont à distinguer. Il y aura tout d'abord les utilisateurs «réguliers» de l'appli, qui devront créer un compte puis se connecter pour accéder à l'appli. Une fois connectés, ils pourront accéder aux données de l'appli et gérer leurs stations favorites. Ensuite, il y a aura des comptes «administrateurs» qui pourront gérer les comptes utilisateurs.
+Deux types d'utilisateurs sont à distinguer. Il y a tout d'abord les utilisateurs «réguliers» de l'application, qui doivent créer un compte puis se connecter pour accéder aux différentes fonctionnalités de l'application. Une fois connectés, ils peuvent accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a des comptes «administrateurs» qui peuvent gérer les comptes des autres utilisateurs. Ils peuvent supprimer un compte utilisateur ou élever un utilisateur en administrateur.
 
-### Fonctionnalités de base attendues  
+### Fonctionnalités de l'applciation  
 
-Le cahier des charges prévoit un minimum de fonctionnalités attendues. La @fig-cas_utilisation résume les actions que pourront effectuer les utilisateurs. Ces actions sont détaillées ci-dessous avec, pour chacune, la solution technique envisagée.  
+Le cahier des charges prévoyait un minimum de fonctionnalités attendues. La @fig-cas_utilisation résume les fonctionnalités implémentées et donc qu'un utilisateur peut effectuer. Ces actions sont détaillées ci-dessous avec, pour chacune, la solution technique envisagée.  
 
 ![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png){#fig-cas_utilisation}   
 
@@ -59,13 +59,13 @@ La collecte des données concernant la disponibilité et l'état des stations de
 
 **Consulter des données**  
 
-Les utilisateurs pourront consulter diverses informations pour la station de leur choix. Ce choix se fera grâce à la liste des stations ou grâce à un système de stations favorites. Les données consultables seront de deux types. Premièrement, les données fournies par l'API (état de fonctionnement, disponibilité, etc.). Deuxièmement, des données calculées grâce à l'accumulation des données collectées (taux de remplissage, évolution de la disponibilité, fréquence et durée moyenne des épisodes de saturation et de pénurie).  
+Les utilisateurs peuvent consulter diverses informations pour la station de leur choix. Ce choix se fait grâce à la liste des stations ou grâce à un système de stations favorites. Les données consultables sont de deux types. Premièrement, les données fournies par l'API externe (état de fonctionnement, disponibilité, etc.). Deuxièmement, des données calculées grâce à l'accumulation des données collectées (taux de remplissage, évolution de la disponibilité, fréquence et durée moyenne des épisodes de saturation et de pénurie).  
 
 **Fournir un score de fiabilité**  
 
-Pour chaque station, l'appli permet de calculer et fournir un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers ont 2 types de demandes spécifiques, la première est de pouvoir emprunter un vélo dans la station, elle nécessite donc que la station ne soit pas vide. Un score de pénurie ($Spick$) sera donc crée pour évaluer la capacité de la station à repondre à ce besoin. Le score prendra des valeurs allant de 0 à 1 où le score de 1 sera attribué à une station qui n'a jamais d'épisode de saturation. Le second beosin est de pouvoir déposer un vélo emprunté dans une station, il est alors nécessaire que la station ne soit pas pleine. Un score de saturation ($Sdrop$) est donc crée en suivant la même logique que le score de pénurie. L'appli calcule alors un score global en utilsant ($Spick$) et ($Ssat$) afin d'obtenir un score de fiabilité sur 100 de la station.
+Pour chaque station, l'appli permet de calculer et fournir un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers ont 2 types de demandes spécifiques, la première est de pouvoir emprunter un vélo dans la station, elle nécessite donc que la station ne soit pas vide. Un score de pénurie ($Spick$) sera donc crée pour évaluer la capacité de la station à repondre à ce besoin. Le score prendra des valeurs allant de 0 à 1 où le score de 1 sera attribué à une station qui n'a jamais d'épisode de saturation. Le second beosin est de pouvoir déposer un vélo emprunté dans une station, il est alors nécessaire que la station ne soit pas pleine. Un score de saturation ($Sdrop$) est donc crée en suivant la même logique que le score de pénurie. L'application calcule alors un score global en utilsant ($Spick$) et ($Ssat$) afin d'obtenir un score de fiabilité sur 100 de la station.
 
-Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'appli puisse mettre en avant les stations réellement fiables au quotidien. La division du score de fiabilité général en 2 sous-scores lié aux besoin spécifique de l'utilisateur permet dans un second temps lors de la partie recommandation de station, de pouvoir utiliser uniquement le sous-score adapté au besoin réél de l'utilisateur. En effet, la recommandation d'une station à un utilisateur qui souhaite déposer un vélo ne doit pas pénaliser les épisodes de pénurie de la station, l'utilisation d'un sous-score adapté est donc plus pertinent qu'un score général. Cet utilisation supplémentaire conditionne donc ces sous-scores à être compris entre 0 et 1 et non 100 comme l'est le score de fiabilité général.
+Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'application puisse mettre en avant les stations réellement fiables au quotidien. La division du score de fiabilité général en 2 sous-scores lié aux besoin spécifique de l'utilisateur permet dans un second temps lors de la partie recommandation de station, de pouvoir utiliser uniquement le sous-score adapté au besoin réél de l'utilisateur. En effet, la recommandation d'une station à un utilisateur qui souhaite déposer un vélo ne doit pas pénaliser les épisodes de pénurie de la station, l'utilisation d'un sous-score adapté est donc plus pertinent qu'un score général. Cet utilisation supplémentaire conditionne donc ces sous-scores à être compris entre 0 et 1 et non 100 comme l'est le score de fiabilité général.
 
 La formule de la création des sous-scores tient donc des variables suivantes calculées grâce aux enregistrements de la stations choisie :
 - la proportion du temps passé vide ($Pshort$) et pleine ($Psat$),  
@@ -83,13 +83,13 @@ de la forme (1 - a) * x + a * y où a = 0.5 ici pour donner autant d'importance 
 
 **Recommander une station**  
 
-L'appli permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de la station (notamment via le score de fiabilité) et sur son état actuel.  
+L'application permettra de recommander des stations à proximité de l'utilisateur. Cette recommandation se basera à la fois sur la distance à l'utilisateur, sur l'historique de la station (notamment via le score de fiabilité) et sur son état actuel.  
 
 {{< pagebreak >}}
 
 ### Déroulé de la navigation  
 
-La @fig-activite présente un diagramme d'activité résumant les étapes de navigation dans l'appli.
+La @fig-activite présente un diagramme d'activité résumant les étapes de navigation dans l'application.
 
 ![Diagramme d'activité](img/diag_activite.png){#fig-activite width="98%"}   
 
@@ -101,7 +101,7 @@ La partie haute de ce diagramme correspond à la phase de connexion de l'utilisa
 
 **Fonctionnalité principales**  
 
-L'accès aux fonctionnalités de l'appli se situe dans la partie basse du diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'appli ou de poursuivre la navigation en retournant à l'étape du choix d'action.  
+L'accès aux fonctionnalités de l'application se situe dans la partie basse du diagramme. L'ensemble des options (recommandations, liste, favoris et recherches) mènent à la consultation des données liées à une seule station. L'utilisateur a ensuite le choix de quitter l'application ou de poursuivre la navigation en retournant à l'étape du choix d'action.  
 
 {{< pagebreak >}}
 
@@ -109,13 +109,13 @@ L'accès aux fonctionnalités de l'appli se situe dans la partie basse du diagra
 
 ### Architecture de l'application  
 
-L'appli sera constituée de plusieurs couches afin de respecter le principe de séparations des responsabilités. L'architecture logicielle envisagée est présentée dans la @fig-archi-log.
+L'application sera constituée de plusieurs couches afin de respecter le principe de séparations des responsabilités. L'architecture logicielle envisagée est présentée dans la @fig-archi-log.
 
 ![Diagramme d'architecture logicielle](img/diag_archi_log.png){#fig-archi-log}  
 
 #### Frontend  
 
-Le *frontend* correspond à l'interface homme-machine. L'interface de l'appli se voudra simple et fonctionnelle : elle se présentera sous la forme d'une page Web. Un menu à gauche permettra à l'utilisateur de sélectionner la fonctionnalité qu'il souhaite. Les différentes fonctionnalités disponibles porteront les noms suivants :  
+Le *frontend* correspond à l'interface homme-machine. L'interface de l'application se voudra simple et fonctionnelle : elle se présentera sous la forme d'une page Web. Un menu à gauche permettra à l'utilisateur de sélectionner la fonctionnalité qu'il souhaite. Les différentes fonctionnalités disponibles porteront les noms suivants :  
 - rechercher une station,  
 - mes stations favorites,  
 - recommandation de station,  
@@ -125,25 +125,27 @@ La gestion des stations favorites se fera de la manière suivante : l'utilisateu
 
 #### Backend  
 
-Le *frontend* enverra des requêtes HTTP au *backend*, qui sera chargé de traiter ces requêtes et de renvoyer la réponse attendue. Ces requêtes concerneront soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d'une station par exemple). Le *backend* sera séparé en plusieurs couches.  
+Le *frontend* envoit des requêtes HTTP au *backend*, qui est chargé de traiter ces requêtes et de renvoyer la réponse attendue. Ces requêtes concernent soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d'une station par exemple). Le *backend* a été séparé en plusieurs couches.  
 
-Tout d'abord, une couche *controller* recevra les requêtes fournies par le *frontend* lors de l'utilisation de l'appli par un usager. Cette couche aura pour but de convertir et transférer ces requêtes à la couche suivante, celle des services.  
+Tout d'abord, une couche *controller* reçoit les requêtes fournies par le *frontend* lors de l'utilisation de l'application par un usager. Cette couche a pour but de convertir et transférer ces requêtes à la couche suivante, celle des services.  
 
-La couche *service* est le cœur de l'application, c'est dans cette couche que seront regroupées les fonctions apportant une valeur ajoutée. Il s'agira par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services feront donc appel à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  
+La couche *service* est le cœur de l'application, c'est dans cette couche que sont regroupées les fonctions apportant une valeur ajoutée. Il s'agit par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services font donc appel à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  
 
-La couche *DAO* recevra les demandes de données de la part de la couche *service*. Elle sera chargée de convertir ces demandes en requêtes SQL. Ces requêtes seront alors traitées par la couche persistante : celle des bases de données. La couche *DAO* aura alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet *User* ou *Station*, voir la section [Classes](#classes) pour plus de détails). Ces objets seront ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus seront transmis à la couche *controller* puis au *frontend* pour affichage à l'utilisateur.  
+La couche *DAO* reçoit les demandes de données de la part de la couche *service*. Elle est chargée de convertir ces demandes en requêtes SQL. Ces requêtes sont alors traitées par la couche persistante : celle des bases de données. La couche *DAO* a alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet *User* ou *Station*, voir la section [Classes](#classes) pour plus de détails). Ces objets sont ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus sont transmis à la couche *controller* puis au *frontend* pour affichage à l'utilisateur.  
 
 #### Couche persistante  
 
-La couche persistante sera constituée de bases de données PostgreSQL qu'utilisera notre appli. Le modèle et les tables de données sont présentés dans la section suivante.  
+La couche persistante est constituée de bases de données PostgreSQL qu'utilise notre application. Le modèle et les tables de données sont présentés dans la section suivante.    
+
+#### Gestion de la sécurité de l'application  
 
 ### Modèle de données  
 
-Afin que le modèle de données soit cohérent et pérenne, nous veillerons à respecter les trois premières formes normales. Le modèle de données retenu est résumé en @fig-modele_donnees. Les raisons ayant amené à ce choix sont expliquées ci-dessous.  
+Afin que le modèle de données soit cohérent et pérenne, nous avons veillé à respecter les trois premières formes normales. Le modèle de données retenu est résumé en @fig-modele_donnees. Les raisons ayant amené à ce choix sont expliquées ci-dessous.  
 
 ![Diagramme UML du modèle de données](img/diag_modele_donnees.png){#fig-modele_donnees}  
 
-Concernant les utilisateurs, une table ```Users``` sera nécessaire. Elle contiendra les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, rôle (utilisateur ou administrateur). 
+Concernant les utilisateurs, une table ```Users``` est nécessaire. Elle contient les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, rôle (utilisateur ou administrateur). 
 
 Pour les stations, les données à stocker sont les suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date (avec heure). Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des relevés dans une seule table nécessiterait une clé composite (```id_station```, ```date```). Cela créerait plusieurs problèmes :  
 - l'attribut ```name_station``` serait en dépendance fonctionnelle avec ```id_station``` et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
@@ -153,11 +155,11 @@ Pour respecter les trois formes normales, le projet nécessite donc deux tables.
 
 Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association ```Favorites``` qui permettra de lier un utilisateur à ses stations favorites.    
 
-### Classes  
+### Classes et implémentations  
 
 #### Généralités  
 
-L'architecture logicielle présentée en @fig-archi-log nécessite l'implémentation de nombreuses classes Python. Tout d'abord, il faudra implémenter les classes modèles ```User```, ```Station```, ```StationRecord``` et ```Favorite``` qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre un utilisateur et ses stations favorites. Chacune de ces classes nécessitera sa propre classe DAO afin de pouvoir faire la liaison entre ces objets et les tables de données correspondantes. Il faudra également implémenter des classes controller permettant de gérer les différents endpoints de l'appli. Enfin, chacune des quatre classes métiers prévues aura une classe de services associée. Elles traiteront les objets Python correspondant.  
+L'architecture logicielle présentée en @fig-archi-log nécessite l'implémentation de nombreuses classes Python. Tout d'abord, il faudra implémenter les classes modèles ```User```, ```Station```, ```StationRecord``` et ```Favorite``` qui modéliseront respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre un utilisateur et ses stations favorites. Chacune de ces classes nécessitera sa propre classe DAO afin de pouvoir faire la liaison entre ces objets et les tables de données correspondantes. Il faudra également implémenter des classes controller permettant de gérer les différents endpoints de l'application. Enfin, chacune des quatre classes métiers prévues aura une classe de services associée. Elles traiteront les objets Python correspondant.  
 
 **Remarque :** Afin de ne pas surcharger les diagrammes ci-dessous inutilement, ne figureront pas :  
 - les classes schémas de type *BaseModel*, utilisées par les controllers et qui permettront de faire la traduction entre les objets Python et les informations au format JSON envoyées ou reçues par le frontend;  
@@ -181,9 +183,17 @@ Le diagramme de classes prévu pour les stations est présenté en @fig-classes-
 
 ![Diagramme de classes lié aux enregistrements](img/diag_classes_record.png){#fig-classes-record width="40%"}   
 
+#### Classes liées à la collecte de données liées aux stations  
+
+#### Classes liées au traitement des données liées aux stations  
+
+#### Schémas  
+
+Afin de gérer facilement l'échange de données entre backend au frontend, nous avons utilisés des schémas avec la librairie *Pydantic*. Ces schémas permettent de gérer le format attendu lors d'une requête ou d'un réponse afin de ne pas compromettre l'intégrité du sytème.  
+
 ### Description des endpoints  
 
-Les tableaux suivants décrivent les différents endpoints prévus de l'appli.  
+Les tableaux suivants décrivent les différents endpoints de l'application.  
 
 #### Comptes et authentification  
 
