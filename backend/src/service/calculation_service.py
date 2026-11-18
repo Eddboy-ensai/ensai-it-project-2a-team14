@@ -1,8 +1,6 @@
 import math
 from datetime import UTC, datetime, timedelta
 
-import pandas as pd
-
 from business_object.station import Station
 from business_object.station_record import StationRecord
 from dao.station_record_dao import StationRecordDao
@@ -168,10 +166,10 @@ class CalculationService:
         """
         b = 0.5
         t = 3600
-        Tshort = 1 - self.compute_shortage_rate()
+        Pshort = 1 - self.compute_shortage_rate()
         Dshort = self.compute_shortage_mean_time()
         dshort = math.exp(-Dshort / t)
-        short_score = round(Tshort ** (1 - b) * dshort**b, 2)
+        short_score = round(Pshort ** (1 - b) * dshort**b, 2)
         return short_score
 
     @log
@@ -186,10 +184,10 @@ class CalculationService:
         """
         a = 0.5
         t = 3600
-        Tsat = 1 - self.compute_saturation_rate()
+        Psat = 1 - self.compute_saturation_rate()
         Dsat = self.compute_saturation_mean_time()
         dsat = math.exp(-Dsat / t)
-        sat_score = round(Tsat ** (1 - a) * dsat**a, 2)
+        sat_score = round(Psat ** (1 - a) * dsat**a, 2)
         return sat_score
 
     @log
@@ -204,24 +202,25 @@ class CalculationService:
         float
             the fiability score of the station
         """
-        c = 0.5
-        d = 0.5  # c + d = 1 (toujours)
-        score = round(100 * (c * self.compute_sat_score() + d * self.compute_short_score()))
+        a = 0.5
+        score = round(100 * (1 - a * self.compute_sat_score() + a * self.compute_short_score()))
         return score
 
     @log
-    def get_availability_bikes_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
+    def get_availability_bikes_over_time(self, d: int, now: datetime | None = None) -> list[dict]:
         """Returns a dataframe which gives the availabilty of the station's bikes over time.
 
         Return :
         --------
-        pd.DataFrame
+        list[dict]
             the dataframe of availability of the station's bikes over time
         """
         data = []
         now = now or datetime.now(UTC)
         seuil = now - timedelta(days=d)
-        sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
+        sorted_records = sorted(
+            (r for r in self.station_records if r.date >= seuil), key=lambda r: r.date
+        )
         for records in sorted_records:
             a = {}
             a[records.date] = records.nb_available_bikes
@@ -229,18 +228,20 @@ class CalculationService:
         return data
 
     @log
-    def get_availability_spaces_over_time(self, d: int, now: datetime | None = None) -> pd.DataFrame:
+    def get_availability_spaces_over_time(self, d: int, now: datetime | None = None) -> list[dict]:
         """Returns a dataframe which gives the availabilty of the station's spaces over time.
 
         Return :
         --------
-        pd.DataFrame
+        list[dict]
             the dataframe of availability of the station's spaces over time
         """
         data = []
         now = now or datetime.now(UTC)
         seuil = now - timedelta(days=d)
-        sorted_records = sorted((r for r in self.station_records if r.date >= seuil), key=lambda r: r.date)
+        sorted_records = sorted(
+            (r for r in self.station_records if r.date >= seuil), key=lambda r: r.date
+        )
         for records in sorted_records:
             a = {}
             a[records.date] = records.nb_available_spaces

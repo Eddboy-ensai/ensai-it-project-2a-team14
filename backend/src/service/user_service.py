@@ -8,7 +8,7 @@ from utils.security import hash_password
 
 class UserService:
     @log
-    def create(self, username: str, pwd: str) -> User:
+    def create(self, username: str, pwd: str) -> User | None:
         """Asks to create a new user in the system
         Parameters
         ----------

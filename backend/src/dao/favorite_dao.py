@@ -65,7 +65,7 @@ class FavoriteDao(metaclass=Singleton):
         return favorites_list
 
     @log
-    def delete(self, favorite) -> bool:
+    def delete_favorite(self, favorite: Favorite) -> bool:
         """Delete a favorite from the database.
         Parameters
         ----------

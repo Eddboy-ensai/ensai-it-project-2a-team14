@@ -14,7 +14,8 @@ class StationDataModel(BaseModel):
     saturation_rate: float | None
     shortage_mean_time: float | None
     saturation_mean_time: float | None
-    availability: list[dict]
+    availability_spaces: list[dict]
+    availability_bikes: list[dict]
 
 
 class StationReadModel(BaseModel):
@@ -25,14 +26,6 @@ class StationReadModel(BaseModel):
     capacity: int | None
 
 
-class Statistics(BaseModel):
-    fill_rate: float
-    shortage_rate: float
-    saturation_rate: float
-    shortage_mean_time: float
-    saturation_mean_time: float
-
-
 class StationRecordModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -41,3 +34,8 @@ class StationRecordModel(BaseModel):
     nb_available_bikes: int | None
     nb_available_ebikes: int | None
     nb_available_spaces: int | None
+
+
+class StationSuggestionModel(BaseModel):
+    station: StationReadModel
+    score: int

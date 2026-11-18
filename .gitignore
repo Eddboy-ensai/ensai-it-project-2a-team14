@@ -219,3 +219,5 @@ __marimo__/
 
 # database
 backup_db.sql
+# Logs
+logs/
