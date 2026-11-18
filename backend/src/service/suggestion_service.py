@@ -25,14 +25,14 @@ class SuggestionService:
         b = 0.5  # coef of dispo in the suggestion score#
         c = 0.2  # coef of the shortage score in the suggestion score#
         n0 = 5  # reference constant set at 3 of availability#
-        score_pick = CalculationService(self.station).compute_short_score()
+        Spick = CalculationService(self.station).compute_short_score()
         nb_bikes = self.latest_record.nb_available_bikes
         Dispo = 1 - math.exp(-nb_bikes / n0)
         if nb_bikes == 0:
             return 0
-        elif nb_bikes == 1 and score_pick <= 0.80:
+        elif nb_bikes == 1 and Spick <= 0.80:
             return 0
-        return round(100 * round(Dispo**b * score_pick**c, 2))
+        return round(100 * round(Dispo**b * Spick**c, 2))
 
     @log
     def station_drop_suggestion_score(self) -> int:
@@ -48,14 +48,14 @@ class SuggestionService:
         b = 0.5  # coef of dispo in the suggestion score#
         c = 0.2  # coef of the saturation score in the suggestion score#
         n0 = 5  # reference constant set at 3 of availability#
-        score_drop = CalculationService(self.station).compute_sat_score()
+        Sdrop = CalculationService(self.station).compute_sat_score()
         nb_spot = self.latest_record.nb_available_spaces
         Dispo = 1 - math.exp(-nb_spot / n0)
         if nb_spot == 0:
             return 0
-        elif nb_spot == 1 and score_drop <= 0.80:
+        elif nb_spot == 1 and Sdrop <= 0.80:
             return 0
-        return round(100 * round(Dispo**b * score_drop**c, 2))
+        return round(100 * round(Dispo**b * Sdrop**c, 2))
 
     @log
     def is_recommended_pick(self) -> bool:
@@ -66,7 +66,7 @@ class SuggestionService:
         bool
             True if the pick suggestion score is high enough, False if not
         """
-        if self.station_pick_suggestion_score() <= 50:
+        if self.station_pick_suggestion_score() <= 70:
             return False
         return True
 
@@ -79,7 +79,7 @@ class SuggestionService:
         bool
             True if the drop suggestion score is high enough, False if not
         """
-        if self.station_drop_suggestion_score() <= 50:
+        if self.station_drop_suggestion_score() <= 70:
             return False
         return True
 
@@ -134,13 +134,11 @@ class SuggestionService:
             )
             nb_bikes = CalculationService(station).latest_record().nb_available_bikes
             if dist <= 1000 and nb_bikes >= 2:  # 1000 is arbitrary#
-                score_pick = CalculationService(station).compute_short_score()
+                Spick = CalculationService(station).compute_short_score()
                 d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_bikes / n0)
-                sugg_score = round(100 * d**a * Disp**b * score_pick**c)
-                if (
-                    sugg_score >= 50 or sugg_score >= self.station_pick_suggestion_score()
-                ):  # 50 is arbitrary#
+                sugg_score = round(100 * d**a * Disp**b * Spick**c)
+                if (sugg_score >= 70):  # 70 is arbitrary#
                     station_sugg[station] = sugg_score
         sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
         return sugg
@@ -169,13 +167,11 @@ class SuggestionService:
             )
             nb_spot = CalculationService(station).latest_record().nb_available_spaces
             if dist <= 1000 and nb_spot >= 2:  # 1000 is arbitrary#
-                score_drop = CalculationService(station).compute_sat_score()
+                Sdrop = CalculationService(station).compute_sat_score()
                 d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_spot / n0)
-                sugg_score = round(100 * d**a * Disp**b * score_drop**c)
-                if (
-                    sugg_score >= 50 or sugg_score >= self.station_drop_suggestion_score()
-                ):  # 50 is arbitrary#
+                sugg_score = round(100 * d**a * Disp**b * Sdrop**c)
+                if (sugg_score >= 70):  # 70 is arbitrary#
                     station_sugg[station] = sugg_score
         sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
         return sugg
