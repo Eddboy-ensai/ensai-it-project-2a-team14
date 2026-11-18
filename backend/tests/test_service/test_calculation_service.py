@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from unittest.mock import MagicMock, patch
 
 from business_object.station import Station
 from business_object.station_record import StationRecord
@@ -21,9 +22,9 @@ def d(heure: str) -> datetime:
     return datetime.fromisoformat(f"2026-10-13 {heure}:00").replace(tzinfo=TZ)
 
 
-def d1(heure: str) -> datetime:
-    """Constructs a value in datetime format for 2026-08-02 at the specified time (time zone +02)."""
-    return datetime.fromisoformat(f"2026-08-02 {heure}:00").replace(tzinfo=TZ)
+def d1(jour: str) -> datetime:
+    """Constructs a value in datetime format at 13:00 for the specified day of 2026"""
+    return datetime.fromisoformat(f"2026-{jour} 13:00").replace(tzinfo=TZ)
 
 
 # Table StationRecords
@@ -87,7 +88,11 @@ station_records = [
     StationRecord(5509, d("11:45"), "IN_SERVICE", 0, 18, 3),
     StationRecord(5509, d("12:00"), "IN_SERVICE", 0, 18, 3),
     # Pour le test de get_availability over time
-    StationRecord(5509, d1("08:00"), "IN_SERVICE", 0, 18, 3)
+    StationRecord(5509, d1("06-13"), "IN_SERVICE", 14, 4, 3),
+    StationRecord(5509, d1("10-06"), "IN_SERVICE", 12, 6, 3),
+    StationRecord(5509, d1("09-29"), "IN_SERVICE", 15, 3, 3),
+    StationRecord(5509, d1("09-22"), "IN_SERVICE", 6, 12, 3),
+    StationRecord(5509, d1("09-15"), "IN_SERVICE", 0, 18, 3),
 ]
 
 calculation_service_rep = CalculationService(station=stations[0])
@@ -100,9 +105,12 @@ calculation_service_sai = CalculationService(station=stations[3])
 calculation_service_sai.station_records = station_records[27:36]
 calculation_service_pis = CalculationService(station=stations[4])
 calculation_service_pis.station_records = station_records[36:53]
-# pour le test de get availability over time
-calculation_service_pis_bis = CalculationService(station=stations[4])
-calculation_service_pis_bis.station_records = station_records[36:54]
+# test get availability over time
+calculation_service_pis_1 = CalculationService(station=stations[4])
+calculation_service_pis_1.station_records = station_records[36:54]
+# test prediction in an hour
+calculation_service_pis_2 = CalculationService(station=stations[4])
+calculation_service_pis_2.station_records = station_records[36:58]
 
 
 def test_latest_record():
@@ -174,8 +182,8 @@ def test_compute_score():
 
 def test_get_availability_bikes_over_time():
     now = d("13:00")
-    df = calculation_service_pis_bis.get_availability_bikes_over_time(60, now)
-    df2 = calculation_service_pis_bis.get_availability_spaces_over_time(150, now)
+    df = calculation_service_pis_1.get_availability_bikes_over_time(60, now)
+    df2 = calculation_service_pis_1.get_availability_spaces_over_time(150, now)
     assert len(df) == 17
     assert len(df2) == 18
     assert df[0] == {d("08:00"): 0}
@@ -184,9 +192,16 @@ def test_get_availability_bikes_over_time():
 
 def test_get_availability_spaces_over_time():
     now = d("13:00")
-    df = calculation_service_pis_bis.get_availability_spaces_over_time(60, now)
-    df2 = calculation_service_pis_bis.get_availability_spaces_over_time(150, now)
+    df = calculation_service_pis_1.get_availability_spaces_over_time(60, now)
+    df2 = calculation_service_pis_1.get_availability_spaces_over_time(150, now)
     assert len(df) == 17
     assert len(df2) == 18
     assert df[0] == {d("08:00"): 18}
     assert df[6] == {d("09:30"): 0}
+
+
+def test_prediction_bikes_in_an_hour():
+    with patch.object(
+        CalculationService, "latest_record", return_value=MagicMock(date=d("12:00"))
+    ):
+        assert calculation_service_pis_2.prediction_bikes_in_an_hour() == 10

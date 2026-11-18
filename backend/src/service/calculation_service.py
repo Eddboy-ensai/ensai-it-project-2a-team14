@@ -203,7 +203,7 @@ class CalculationService:
             the fiability score of the station
         """
         a = 0.5
-        score = round(100 * (1 - a * self.compute_sat_score() + a * self.compute_short_score()))
+        score = round(100 * ((1 - a) * self.compute_sat_score() + a * self.compute_short_score()))
         return score
 
     @log
@@ -257,13 +257,13 @@ class CalculationService:
         int
             the expected number of bikes in an hour
         """
-        date_now = self.latest_records().date
+        date_now = self.latest_record().date
         sum = 0
         nb_records = 0
         for k in range(1, 5):
-            date_record = date_now + datetime(hours=1) - datetime(days=7 * k)
+            date_record = date_now + timedelta(hours=1) - timedelta(days=7 * k)
             a = next((
-                r for r in self.station_records if abs(self.station_records.date - date_record) <= timedelta(minutes=2)
+                r for r in self.station_records if abs(r.date - date_record) <= timedelta(minutes=2)
                 ), None)
             if a is not None:
                 nb_records += 1

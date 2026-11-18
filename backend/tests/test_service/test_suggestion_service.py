@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
+
 from business_object.station import Station
 from business_object.station_record import StationRecord
-from service.suggestion_service import SuggestionService
 from service.calculation_service import CalculationService
-from service.station_service import StationService
-import pytest
+from service.suggestion_service import SuggestionService
 
 TZ = timezone(timedelta(hours=2))  # +02
 
@@ -111,15 +110,9 @@ def test_is_recommended_drop():
 
 
 def test_compute_distance():
-    assert suggestion_service_mai.compute_distance(
-        48.110026,
-        -1.678037,
-        48.111624,
-        -1.678757
-        ) == 186
-    assert suggestion_service_mai.compute_distance(
-        48.115074,
-        -1.677073,
-        48.114219,
-        -1.680534
-        ) == 274
+    assert (
+        suggestion_service_mai.compute_distance(48.110026, -1.678037, 48.111624, -1.678757) == 186
+    )
+    assert (
+        suggestion_service_mai.compute_distance(48.115074, -1.677073, 48.114219, -1.680534) == 274
+    )
