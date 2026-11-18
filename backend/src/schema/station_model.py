@@ -26,14 +26,6 @@ class StationReadModel(BaseModel):
     capacity: int | None
 
 
-class Statistics(BaseModel):
-    fill_rate: float
-    shortage_rate: float
-    saturation_rate: float
-    shortage_mean_time: float
-    saturation_mean_time: float
-
-
 class StationRecordModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
