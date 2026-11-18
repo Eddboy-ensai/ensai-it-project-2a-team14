@@ -205,3 +205,10 @@ def test_prediction_bikes_in_an_hour():
         CalculationService, "latest_record", return_value=MagicMock(date=d("12:00"))
     ):
         assert calculation_service_pis_2.prediction_bikes_in_an_hour() == 10
+
+
+def test_prediction_spaces_in_an_hour():
+    with patch.object(
+        CalculationService, "latest_record", return_value=MagicMock(date=d("12:00"))
+    ):
+        assert calculation_service_pis_2.prediction_spaces_in_an_hour() == 8
