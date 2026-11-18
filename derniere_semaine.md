@@ -28,6 +28,7 @@ Base de données :
 - mettre en place une copie afin de pouvoir la fournir lors du rendu
 - nettoyer le code SQL pour le rentre le plus "simple" possible en utilisant les méthodes du Template
 Rapport :
+- rédiger un paragraphe pour la section "Classes liées aux utilisateurs" sur l'implémentation gestion des administrateurs
 - rédiger le paragraphe "Classes liées à la collecte de données liées aux stations" du rapport (+ créer le diagramme de classe en créant un nouveau fichier "diag_classes_collecte.md" et en respectant strictement le même template que ceux déjà créé)
 - rédiger le paragraphe : "Gestion de la sécurité de l'application"
 - 

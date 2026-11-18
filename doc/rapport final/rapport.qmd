@@ -179,11 +179,11 @@ Les classes liées aux utilisateurs permettront essentiellement de créer les ut
 
 ![Diagramme de classes lié aux utilisateurs](img/diag_classes_user.png){#fig-classes-user}   
 
-#### Classes liées aux stations  
+#### Classes liées aux stations   
 
-Trois classes modèles liées aux stations sont prévues. Tout d'abord, la classe ```Station``` modélisera une station et ses attributs stockeront les informations d'une station. Ensuite, la classe ```Favorite``` modélisera le lien entre un utilisateur et le fait qu'une station figure parmi ses favorites. Enfin, une classe ```StationRecord``` modélisera l'état d'une station à une heure précise, et ses attributs seront les informations fournies par l'API externe de la ville.  
+La classe modèle ```Station``` est la brique pour de nombreuses fonctionnalités. Cette classe modélise une station et ses attributs stockent les informations d'une station (nom et identifiant, localisation géographique, capacité). Le controller associé à cette classe permet de retourner les informations de la station avec toutes les statistiques calculées via la méthode ```station_by_id```. Le modèle utilisé, ```StationDataModel``` regroupe ainsi toutes ces informations.  
 
-Chacune des trois classes métiers prévues possédera une classe DAO, une classe de services et une classe controller (exceptée la classe ```StationRecord```, car l'appel à l'API externe se fera via la méthode ```get_data``` de la classe ```StationRecordService```). De plus, afin de séparer la logique métier et les calculs des indicateurs statistiques, le choix a été fait de créer une autre classe service : la classe ```StationCalculationService```. Une instance de cette classe sera crée dans la méthode ```get_stats``` de la classe ```StationService```. Lors de la construction de cet objet ```StationCalculationService```, un attribut ```station_records``` sera créé et contiendra tous les enregistrements liés à une station qui seront nécessaires aux méthodes de calcul de la classe. Ces méthodes de calcul permettront de retourner les indicateurs souhaités par le cahier des charges. Pour rappel, les indicateurs attendus sont les suivants : taux de remplissage, disponibilité au cours du temps, pourcentage du temps passé vide ou saturé, temps moyen des épisodes de saturation et de pénurie, score de fiabilité. Une méthode ```get_availability_over_time``` est prévue, afin de déterminer l'évolution de la disponibilité de la station au cours du temps. Selon le développement et les possibilités, elle retournera des graphiques (à l'aide de la bibliothèque matplotlib) ou des tableaux de données.  
+La partie DAO de la classe possède quant à elle les méthodes ```create``` et ```update``` qui permettent de créer et mettre à jour la base de données des stations. Cette mis à jour est effectuée à partir des données collectées via l'API externe, ce qui est décrit dans le paragraphe suivant.
 
 Le diagramme de classes prévu pour les stations est présenté en @fig-classes-station et @fig-classes-record.  
 
@@ -195,7 +195,9 @@ Le diagramme de classes prévu pour les stations est présenté en @fig-classes-
 
 #### Classes liées au traitement des données liées aux stations  
 
-#### Classes de gestion des stations favorites
+#### Classes de gestion des stations favorites  
+
+La nécessité d'une table de liaison ```Favorites``` dans la base de données nous a amené à implémenter une classe ```Favorite``` dont les attributs sont un identifiant station et un identifiant utilisateur. Les classes associées (controller, services et DAO) sont essentiellement techniques et permettent à l'utilisateur d'ajouter et de supprimer ses stations favorites dans la base de données.  
 
 #### Schémas  
 
@@ -267,6 +269,13 @@ De plus, afin de garantir une maintenance aisée, nous tenterons de respecter le
 - Ruff pour le formatage du code,  
 - Pytest afin d'effectuer les tests unitaires,  
 - Github pour héberger et versionner notre projet.  
+
+### Limites du projet  
+
+Manque de temps :
+- implémentation de tous les endpoints (update son propre profil, etc.)
+Amélioration :
+- gestion des favoriteStation (dans l'absolument, ça serait mieux)
 
 
 <!--{{< pagebreak >}}
