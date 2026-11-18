@@ -17,6 +17,7 @@ Frontend :
 - gestion des utilisateurs demandée lors de la visio : un admin peut créer un admin ou supprimer un utilisateur
 Rapport :
 - rédiger une synthèse sur le fonctionnement du frontend (section 3.1.a Frontend du rapport)
+- afficher le score de la station
 
 Samuel :
 - implémenter la fonctionnalité optionnelle FO1
@@ -29,6 +30,7 @@ Base de données :
 Rapport :
 - rédiger le paragraphe "Classes liées à la collecte de données liées aux stations" du rapport (+ créer le diagramme de classe en créant un nouveau fichier "diag_classes_collecte.md" et en respectant strictement le même template que ceux déjà créé)
 - rédiger le paragraphe : "Gestion de la sécurité de l'application"
+- 
 
 Eddy :
 Rapport
@@ -50,6 +52,7 @@ Rapport
 - revoir la description des endpoints, vérifier leur cohérence
 - justifier dans le rapport : pourquoi id_user: int et id_station en str
 - nettoyer le code (supprimer les bouts de code inutile, commenter les parties difficiles en anglais, écrire la documentation de chaque classe, vérifier la documentation des méthodes ainsi que le typage)
+- vérifier si on a mis assez de code erreur HTTP sur les fonctionnalités "basiques"
 
 
 Questions en suspens :
