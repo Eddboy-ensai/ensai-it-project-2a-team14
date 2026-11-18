@@ -45,6 +45,7 @@ Rapport
 
 À se répartir :
 - Réécrire deux readME en anglais et proprement
+- commenter toutes les classes et les méthodes, vérifier la cohérence (typage, présentation)
 - revoir l'introduction du rapport
 - écrire une conclusion au rapport
 - faire les modifications demandées au rapport intermédiaire par retour de mail

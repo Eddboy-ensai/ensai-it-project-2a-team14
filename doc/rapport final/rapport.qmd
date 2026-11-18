@@ -167,7 +167,7 @@ Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir 
 
 #### Généralités  
 
-L'architecture logicielle présentée en @fig-archi-log nécessite l'implémentation de nombreuses classes Python. Les classes modèles (*business object*) sont les suivantes : ```User```, ```Station```, ```StationRecord``` et ```Favorite``` qui modélisent respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre un utilisateur et ses stations favorites. Chacune de ces classes nécessite sa propre classe controller, service et DAO afin de pouvoir faire la liaison entre les différentes couches du backend.  
+L'architecture logicielle présentée en @fig-archi-log nécessite l'implémentation de nombreuses classes Python. Les classes modèles (*business object*) sont les suivantes : ```User```, ```Station```, ```StationRecord``` et ```Favorite``` qui modélisent respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre un utilisateur et ses stations favorites. Chacune de ces classes nécessite sa propre classe controller, service et DAO afin de pouvoir faire la liaison entre les différentes couches du backend. Afin de faire le lien avec le frontend, nous avons été amené à implémenter plusieurs schémas de type *BaseModel*, dont nous détaillerons les principaux dans les paragraphes suivants.
 
 **Remarque :** Afin de ne pas surcharger les diagrammes ci-dessous inutilement, ne figureront pas :  
 - les classes schémas de type *BaseModel*, utilisées par les controllers et qui permettent de faire la traduction entre les objets Python et les informations au format JSON envoyées ou reçues par le frontend;  
@@ -181,11 +181,11 @@ Les classes liées aux utilisateurs permettront essentiellement de créer les ut
 
 #### Classes liées aux stations   
 
-La classe modèle ```Station``` est la brique pour de nombreuses fonctionnalités. Cette classe modélise une station et ses attributs stockent les informations d'une station (nom et identifiant, localisation géographique, capacité). Le controller associé à cette classe permet de retourner les informations de la station avec toutes les statistiques calculées via la méthode ```station_by_id```. Le modèle utilisé, ```StationDataModel``` regroupe ainsi toutes ces informations.  
+La classe modèle ```Station``` est la brique pour de nombreuses fonctionnalités de l'application. Cette classe modélise une station et ses attributs stockent les informations d'une station (nom et identifiant, localisation géographique, capacité). Le controller associé à cette classe permet de retourner les informations de la station avec toutes les statistiques calculées via la méthode ```station_by_id```. Comme les informations d'une station ne sont affichées par le frontend qu'après une sélection de la part de l'utilisateur, il a été fait le choix d'utiliser un modèle, nommé ```StationDataModel``` qui regroupe toutes les informations (aussi bien les informations intrinsèques de la station que les statistiques calculées sur les enregistrements.).  
 
-La partie DAO de la classe possède quant à elle les méthodes ```create``` et ```update``` qui permettent de créer et mettre à jour la base de données des stations. Cette mis à jour est effectuée à partir des données collectées via l'API externe, ce qui est décrit dans le paragraphe suivant.
+La partie DAO de la classe possède, quant à elle, les méthodes ```create``` et ```update``` qui permettent de créer et mettre à jour la base de données des stations. Cette mise à jour est effectuée à partir des données collectées via l'API externe. Ces méthodes sont appelées par une autre partie du programme, dont nous détaillons l'implémentation dans le paragraphe suivant.
 
-Le diagramme de classes prévu pour les stations est présenté en @fig-classes-station et @fig-classes-record.  
+Le diagramme de classes pour les stations est présenté en @fig-classes-station et @fig-classes-record.  
 
 ![Diagramme de classes lié aux stations](img/diag_classes_station.png){#fig-classes-station width="97%"}   
 
@@ -250,11 +250,8 @@ Les tableaux suivants décrivent les différents endpoints de l'application.
 
 ## Organisation du projet  
 
-### Calendrier prévisionnel  
+### Organisation du groupe  
 
-Le calendrier prévu est donnée par le diagramme de Gantt en @fig-diag_gantt.  
-
-![Diagramme de Gantt](img/diag_gantt.png){#fig-diag_gantt width="92%"}
 
 ### Outils de développement  
 
@@ -267,15 +264,20 @@ Le projet sera réalisé en Python. Durant la phase de développement, nous util
 
 De plus, afin de garantir une maintenance aisée, nous tenterons de respecter les bonnes pratiques de programmation. Ainsi, le code sera rédigé en anglais. De plus, nous serons amenés à utiliser les outils suivants :  
 - Ruff pour le formatage du code,  
-- Pytest afin d'effectuer les tests unitaires,  
+- Pytest afin d'effectuer les tests unitaires, ainsi que le   
 - Github pour héberger et versionner notre projet.  
 
-### Limites du projet  
+### Stratégie de tests  
 
-Manque de temps :
-- implémentation de tous les endpoints (update son propre profil, etc.)
-Amélioration :
-- gestion des favoriteStation (dans l'absolument, ça serait mieux)
+Afin de tester le bon fonctionnement de notre application, nous avons implémenté des tests à l'aide de Pytest pour les méthodes de classes services lorsque cela était possible. Pour cela, il nous a été nécessaire d'utiliser la classe ```MagicMock``` afin de simuler le comportement de la couche DAO. Concernant cette dernière, nous n'avons pas implémenté de tests. Cependant, durant la phase de codage du backend et avant le début de la mise en place de la collecte de données, nous avons utilisé une fausse base de données afin de vérifier le bon fonctionnement des différents endpoints durant la phase d'implémentation.
+
+### Déroulement du projet et pistes d'améliorations  
+
+Le calendrier prévisionnel est donné ci-dessous par le diagramme de Gantt en @fig-diag_gantt.  
+
+![Diagramme de Gantt](img/diag_gantt.png){#fig-diag_gantt width="92%"}  
+
+Ce calendrier a été respecté durant la majeur partie du développement. Cependant, un léger retard de la rédaction du rapport et une accumulation de contraintes scolaires autour de la semaine des vacances d'Octobre nous a amené à précipiter la fin du projet et à ne pas peaufiner le code autant que nous l'aurions souhaité. Par exemple, les appels aux endpoints Favorite ne vérifient pas le *token* de l'utilisateur. De plus, nous n'avons pas pu mettre en place toutes les sécurités souhaitées. Ainsi, nous avons dû nous contenter, pour certaines parties du code, de la déconnexion lors d'un rafraichissement de la page ou lors de l'entrée d'une nouvelle URL.
 
 
 <!--{{< pagebreak >}}
