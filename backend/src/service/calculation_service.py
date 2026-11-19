@@ -266,17 +266,16 @@ class CalculationService:
                 (
                     r
                     for r in self.station_records
-                    if abs(r.date - date_record) <= timedelta(minutes=2)
+                    if abs(r.date - date_record) <= timedelta(seconds=149)
                 ),
                 None,
             )
             if a is not None:
                 nb_records += 1
                 sum += a.nb_available_bikes
-        prediction = 0
-        if nb_records != 0:
-            prediction = round(sum / nb_records)
-        return prediction
+        if nb_records == 0:
+            return 0
+        return round(sum / nb_records)
 
     @log
     def prediction_spaces_in_an_hour(self) -> int:
@@ -296,14 +295,13 @@ class CalculationService:
                 (
                     r
                     for r in self.station_records
-                    if abs(r.date - date_record) <= timedelta(minutes=2)
+                    if abs(r.date - date_record) <= timedelta(seconds=149)
                 ),
                 None,
             )
             if a is not None:
                 nb_records += 1
                 sum += a.nb_available_spaces
-        prediction = 0
-        if nb_records != 0:
-            prediction = round(sum / nb_records)
-        return prediction
+        if nb_records == 0:
+            return 0
+        return round(sum / nb_records)
