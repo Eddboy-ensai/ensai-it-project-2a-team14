@@ -10,9 +10,9 @@ if "logs_initialized" not in st.session_state:
     st.session_state["logs_initialized"] = True
 
 # if "user" in st.session_state:
-#    st.switch_page("pages/station.py")
+#     st.switch_page("pages/station.py")
 # else:
-#    st.switch_page("pages/home.py")
+#     st.switch_page("pages/home.py")
 
 logged_in = "user" in st.session_state
 

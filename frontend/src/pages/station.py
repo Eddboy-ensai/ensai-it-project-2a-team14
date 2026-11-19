@@ -34,7 +34,10 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
     st.write(
         f"Nombre d'emplacements libres disponibles : {list(station['availability_spaces'][-1].values())[0]}"
     )
-
+    st.write(
+        f"Nombre d'emplacements disponibles estimé dans une heure : {station['prediction_spaces']}"
+    )
+    st.write(f"Nombre de vélos disponibles estimé dans une heure : {station['prediction_bikes']}")
     st.subheader("Evolutions temporelles des disponibilités")
     range = None
     selected_range = st.selectbox(

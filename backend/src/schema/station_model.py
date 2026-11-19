@@ -16,6 +16,8 @@ class StationDataModel(BaseModel):
     saturation_mean_time: float | None
     availability_spaces: list[dict]
     availability_bikes: list[dict]
+    prediction_spaces: int
+    prediction_bikes: int
 
 
 class StationReadModel(BaseModel):

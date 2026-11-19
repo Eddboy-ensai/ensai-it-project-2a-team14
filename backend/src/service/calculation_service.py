@@ -250,7 +250,7 @@ class CalculationService:
 
     @log
     def prediction_bikes_in_an_hour(self) -> int:
-        """ Returns the expected number of bikes in an hour based on the 4 last same days of the week at this hour
+        """Returns the expected number of bikes in an hour based on the 4 last same days of the week at this hour
 
         Returns:
         --------
@@ -262,17 +262,25 @@ class CalculationService:
         nb_records = 0
         for k in range(1, 5):
             date_record = date_now + timedelta(hours=1) - timedelta(days=7 * k)
-            a = next((
-                r for r in self.station_records if abs(r.date - date_record) <= timedelta(minutes=2)
-                ), None)
+            a = next(
+                (
+                    r
+                    for r in self.station_records
+                    if abs(r.date - date_record) <= timedelta(minutes=2)
+                ),
+                None,
+            )
             if a is not None:
                 nb_records += 1
                 sum += a.nb_available_bikes
-        return round(sum / nb_records)
+        prediction = 0
+        if nb_records != 0:
+            prediction = round(sum / nb_records)
+        return prediction
 
     @log
     def prediction_spaces_in_an_hour(self) -> int:
-        """ Returns the expected number of spaces in an hour based on the 4 last same days of the week at this hour
+        """Returns the expected number of spaces in an hour based on the 4 last same days of the week at this hour
 
         Returns:
         --------
@@ -284,10 +292,18 @@ class CalculationService:
         nb_records = 0
         for k in range(1, 5):
             date_record = date_now + timedelta(hours=1) - timedelta(days=7 * k)
-            a = next((
-                r for r in self.station_records if abs(r.date - date_record) <= timedelta(minutes=2)
-                ), None)
+            a = next(
+                (
+                    r
+                    for r in self.station_records
+                    if abs(r.date - date_record) <= timedelta(minutes=2)
+                ),
+                None,
+            )
             if a is not None:
                 nb_records += 1
                 sum += a.nb_available_spaces
-        return round(sum / nb_records)
+        prediction = 0
+        if nb_records != 0:
+            prediction = round(sum / nb_records)
+        return prediction
