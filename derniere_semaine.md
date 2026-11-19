@@ -22,6 +22,7 @@ Correction à apporter et à vérifier dans le frontend
 - les prédictions donnent toujours 0 quelque soit la station (j'ai rajouté une sécurité car c'était nb_records qui était à 0, d'où une division par 0)
 Rapport
 - rédiger le paragraphe "Classes liées au traitement des données liées aux stations"
+- partie now dans get availability à justifier vis à vis des bonnes pratiques de test
 
 Eliot
 Base de données :
@@ -76,5 +77,3 @@ update_own_profile
 
 
 rédiger les fiches personnelles
-
-Samuel : pourquoi "now" dans get availibility ? nous on l'appelle pas : à supprimer ? ou le laisser en disant "prêt à être implémenté"

@@ -83,7 +83,7 @@ de la forme (1 - a) * x + a * y où a = 0.5 ici pour donner autant d'importance 
 
 **Recommander une station**  
 
-L'application permettra de recommander des stations à proximité de l'utilisateur. Elle distingue les deux besions de l'utilisateur. Elle donne donc les stations suggérées dans le cas où l'utilisateur souhaite prendre où déposer un vélo. Les deux méthodes de recommendation sont similaires, calculées et proposées en même temps à l'utilisateur sans qu'il n'ait besoin de spécifier son cas. L'une raisonne sur $Spick$ et le nombre de vélo disponible tandis que l'autre sur $Sdrop$ et le nombre d'emplacement disponibles. On considérera dans cette partie uniquement ```suggestion_pick``` correspondant au premier cas.
+L'application permet de recommander des stations à proximité de l'utilisateur. Elle distingue les deux besions de l'utilisateur. Elle donne donc les stations suggérées dans le cas où l'utilisateur souhaite prendre où déposer un vélo. Les deux méthodes de recommendation sont similaires, calculées et proposées en même temps à l'utilisateur sans qu'il n'ait besoin de spécifier son cas. L'une raisonne sur $Spick$ et le nombre de vélo disponible tandis que l'autre sur $Sdrop$ et le nombre d'emplacement disponibles. On considérera dans cette partie uniquement ```suggestion_pick``` correspondant au premier cas.
 
 Cette recommandation se basera à la fois sur la distance à l'utilisateur ($D$), sur son score de fiabilité ($Spick$) et sur le nombre de vélos disponibles lors du dernier relevé ($N$). La localisation de l'utilisateur n'étant pas possible à prélever directement, on lui demande de choisir la station la plus proche de lui qu'on considérera comme sa localisation. Le choix de recommendation d'une station plutôt qu'une autre est réalisé en comparant leur score de recommendation respectif calculé selon la formule suivante :
 Score = 100 * ($d$ ** 0.3 * $n$ ** 0.5 * $Spick$ ** 0.2)
@@ -91,6 +91,10 @@ où $d$ = exp (- $D$ / 800) et $n$ = 1 - exp (- $N$ / 3) sont des transformation
 
 L'application cherche tout d'abord à déterminer si la station choisie par l'utilisateur est recommendable. Elle vérifie d'abord qu'elle ne soit pas vide et que dans le cas où elle ne compte qu'un seul vélo, $Spick$ soit supérieur à 80. Ce premier filtre cherche à limiter la possibilité de recommender une station vide à l'utilisateur. Ces deux contraintes respectées, si son score de recommendation dépasse 70, elle est alors recommandée. Si la station choisie n'est pas recommandable, on recommande alors les stations à moins de 1km de l'utilisateur, avec au moins 2 vélos lors dernier relevé et un score de recommendation supérieur à 70.
 
+
+**Fournir des predictions**
+
+L'application permet de predire pour une station donnée, le nombre de vélo et d'emplacements disponibles dans une heure. Pour cela, elle se base sur la moyenne des vélos/emplacements disponibles à la même heure le même jour des semaines précédentes (tous les lundi 13h si on est un lundi à 12h).
 
 
 {{< pagebreak >}}
@@ -194,6 +198,8 @@ Le diagramme de classes pour les stations est présenté en @fig-classes-station
 #### Classes liées à la collecte de données liées aux stations  
 
 #### Classes liées au traitement des données liées aux stations  
+
+
 
 #### Classes de gestion des stations favorites  
 

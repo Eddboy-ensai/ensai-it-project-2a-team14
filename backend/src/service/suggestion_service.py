@@ -118,9 +118,11 @@ class SuggestionService:
 
         Return :
         --------
-        list(Station, int)
+        list[Station, int]
             The list of the recommended stations with their score
         """
+        if self.is_recommended_pick():
+            return [self.station, self.station_pick_suggestion_score]
         a = 0.3
         b = 0.5
         c = 0.2
@@ -154,6 +156,8 @@ class SuggestionService:
         list(Station, int)
             The list of the recommended stations and their score
         """
+        if self.is_recommended_drop():
+            return [self.station, self.station_drop_suggestion_score]
         a = 0.3
         b = 0.5
         c = 0.2
