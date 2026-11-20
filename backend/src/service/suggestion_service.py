@@ -131,7 +131,7 @@ class SuggestionService:
             The list of the recommended stations and their score
         """
         if self.station_drop_suggestion_score >= 70:
-            return [self.station, self.station_drop_suggestion_score]
+            return [(self.station, self.station_drop_suggestion_score)]
         a = 0.3
         b = 0.5
         c = 0.2
