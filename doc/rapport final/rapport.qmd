@@ -134,6 +134,8 @@ L'application sera constituée de plusieurs couches afin de respecter le princip
 
 #### Frontend  
 
+Place pour Alix 
+
 Le *frontend* correspond à l'interface homme-machine. L'interface de l'application se voudra simple et fonctionnelle : elle se présentera sous la forme d'une page Web. Un menu à gauche permettra à l'utilisateur de sélectionner la fonctionnalité qu'il souhaite. Les différentes fonctionnalités disponibles porteront les noms suivants :  
 - rechercher une station,  
 - mes stations favorites,  
