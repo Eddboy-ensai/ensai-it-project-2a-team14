@@ -18,8 +18,6 @@ Rapport :
 - rédiger une synthèse sur le fonctionnement du frontend (section 3.1.a Frontend du rapport)
 
 Samuel :
-Correction à apporter et à vérifier dans le frontend
-- la suggestion ne propose pas en première station la station demandée même si elle n'est pas vide
 Rapport
 - rédiger le paragraphe "Classes liées au traitement des données liées aux stations"
 - partie now dans get availability à justifier vis à vis des bonnes pratiques de test
