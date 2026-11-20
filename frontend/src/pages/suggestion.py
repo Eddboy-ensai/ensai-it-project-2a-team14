@@ -109,10 +109,14 @@ with col_choice:
         if response["status_code"] == 200:
             col = []
             for station in response["data"]:
+                latest_record = api_client.get(
+                    f"/station/{station['station']['id_station']}/latest"
+                )
                 col.append({
                     "Station": station["station"]["name"],
-                    "Capacité": station["station"]["capacity"],
-                    "Score": station["score"],
+                    "Score de fiabilité": station["score"],
+                    "Vélos dispo": latest_record["data"]["nb_available_bikes"],
+                    "Emplacements libres": latest_record["data"]["nb_available_spaces"],
                 })
             st.write(
                 "Si seule la station demandée apparait, c'est qu'elle est disponible. Sinon, voici la liste des stations que nous vous recommandons :"

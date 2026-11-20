@@ -11,7 +11,7 @@ Bon courage !
 Alix et Méline
 Frontend :
 - faire tester l'ergonomie de l'application
-- dans la suggestion, afficher le nombre de vélos ou d'emplacement libre au lieu de la capacité et modifier le nom de la colonne "score" en "score de fiabilité"
+- peaufiner le frontend
 Rapport :
 - rédiger une synthèse sur le fonctionnement du frontend (section 3.1.a Frontend du rapport)
 
@@ -42,13 +42,13 @@ Rapport
 
 À se répartir :
 - Réécrire deux readME en anglais et proprement
-- commenter toutes les classes et les méthodes, vérifier la cohérence (typage, présentation)
-- revoir l'introduction du rapport
+- (Samuel) commenter toutes les classes et les méthodes, vérifier la cohérence (typage, présentation)
+- (Méline) revoir l'introduction du rapport
 - écrire une conclusion au rapport
-- faire les modifications demandées au rapport intermédiaire par retour de mail
-- revoir les cas d'utilisation du rapport ainsi que le diagramme d'activité, à mettre à jour
+- (Eddy) faire les modifications demandées au rapport intermédiaire par retour de mail
+- (Eddy) revoir les cas d'utilisation du rapport ainsi que le diagramme d'activité, à mettre à jour
 - incorporer des images de l'appli ? peut-être en annexe ?
-- revoir la description des endpoints, vérifier leur cohérence
+- (Eliot) revoir la description des endpoints, vérifier leur cohérence
 - justifier dans le rapport : pourquoi id_user: int et id_station en str
 - nettoyer le code (supprimer les bouts de code inutile, commenter les parties difficiles en anglais, écrire la documentation de chaque classe, vérifier la documentation des méthodes ainsi que le typage)
 - vérifier si on a mis assez de code erreur HTTP sur les fonctionnalités "basiques"
