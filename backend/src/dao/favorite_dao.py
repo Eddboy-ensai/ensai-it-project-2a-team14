@@ -7,6 +7,7 @@ logger = get_logger(__name__)
 
 
 class FavoriteDao(metaclass=Singleton):
+    """Accesses the Favorites table of the database."""
     @log
     def add_favorite(self, favorite: Favorite) -> bool:
         """Create a favorite in the database

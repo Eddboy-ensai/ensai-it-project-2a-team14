@@ -7,6 +7,7 @@ logger = get_logger(__name__)
 
 
 class StationRecordDao(metaclass=Singleton):
+    """Accesses the StationRecord table of the database."""
     @log
     def insert_all(self, records: list[StationRecord]) -> int:
         """Insert a batch of station records in the database.

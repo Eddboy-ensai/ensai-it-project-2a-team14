@@ -7,6 +7,7 @@ logger = get_logger(__name__)
 
 
 class StationDao(metaclass=Singleton):
+    """Accesses the Stations table of the database."""
     @log
     def create(self, station: Station) -> bool:
         """Insert a new station in the database.

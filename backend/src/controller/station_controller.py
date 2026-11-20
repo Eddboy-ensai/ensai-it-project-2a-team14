@@ -59,7 +59,7 @@ async def station_by_id(id_station: str, range: int, station_service=Depends(get
     availability_spaces = CalculationService(station).get_availability_spaces_over_time(range)
     availability_bikes = CalculationService(station).get_availability_bikes_over_time(range)
     prediction_spaces = CalculationService(station).prediction_spaces_in_an_hour()
-    prediction_bikes = CalculationService(station).prediction_spaces_in_an_hour()
+    prediction_bikes = CalculationService(station).prediction_bikes_in_an_hour()
     data = {
         "id_station": station.id_station,
         "name": station.name,
@@ -67,9 +67,11 @@ async def station_by_id(id_station: str, range: int, station_service=Depends(get
         "lon": station.lon,
         "capacity": station.capacity,
     }
+    score = CalculationService(station).compute_score()
     return (
         data
         | stats
+        | {"score": score}
         | {"availability_spaces": availability_spaces}
         | {"availability_bikes": availability_bikes}
         | {"prediction_spaces": prediction_spaces}
