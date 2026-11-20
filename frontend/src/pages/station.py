@@ -2,6 +2,7 @@
 
 import os
 
+import altair as alt
 import pandas as pd
 import requests
 import streamlit as st
@@ -71,7 +72,21 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
         df = pd.DataFrame(spaces)
         df["date"] = pd.to_datetime(df["date"])
         df = df.sort_values("date")
-        st.line_chart(df, x="date", y="places disponibles")
+
+        chart_spaces = (
+            alt.Chart(df)
+            .mark_line()
+            .encode(
+                x=alt.X(
+                    "date:T",
+                    title="Jour",
+                    axis=alt.Axis(format="%a", labelAngle=0),
+                ),
+                y=alt.Y("places disponibles:Q", title="Places disponibles"),
+                tooltip=["date:T", "places disponibles:Q"],
+            )
+        )
+        st.altair_chart(chart_spaces, use_container_width=True)
     else:
         st.info("Pas d'informations disponible")
 
@@ -86,7 +101,21 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
         df = pd.DataFrame(bikes)
         df["date"] = pd.to_datetime(df["date"])
         df = df.sort_values("date")
-        st.line_chart(df, x="date", y="vélos disponibles")
+
+        chart_bikes = (
+            alt.Chart(df)
+            .mark_line()
+            .encode(
+                x=alt.X(
+                    "date:T",
+                    title="Jour",
+                    axis=alt.Axis(format="%a", labelAngle=0),
+                ),
+                y=alt.Y("vélos disponibles:Q", title="Vélos disponibles"),
+                tooltip=["date:T", "vélos disponibles:Q"],
+            )
+        )
+        st.altair_chart(chart_bikes, use_container_width=True)
     else:
         st.info("Pas d'informations disponible")
 
