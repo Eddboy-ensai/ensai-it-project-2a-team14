@@ -2,7 +2,6 @@
 
 import os
 
-import altair as alt
 import pandas as pd
 import requests
 import streamlit as st
@@ -31,9 +30,9 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
     st.title(f"Informations concernant la station {station['name']}")
 
     st.subheader("Informations en direct")
-    st.write(f"Nombre de vélos actuellement disponibles : {list(station['availability_bikes'][-1].values())[0]}")
+    st.write(f"Nombre de vélos disponibles : {list(station['availability_bikes'][-1].values())[0]}")
     st.write(
-        f"Nombre d'emplacements actuellement libres : {list(station['availability_spaces'][-1].values())[0]}"
+        f"Nombre d'emplacements libres disponibles : {list(station['availability_spaces'][-1].values())[0]}"
     )
     st.write(
         f"Nombre d'emplacements disponibles estimé dans une heure : {station['prediction_spaces']}"
@@ -72,21 +71,7 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
         df = pd.DataFrame(spaces)
         df["date"] = pd.to_datetime(df["date"])
         df = df.sort_values("date")
-
-        chart_spaces = (
-            alt.Chart(df)
-            .mark_line()
-            .encode(
-                x=alt.X(
-                    "date:T",
-                    title="Jour",
-                    axis=alt.Axis(format="%a", labelAngle=0),
-                ),
-                y=alt.Y("places disponibles:Q", title="Places disponibles"),
-                tooltip=["date:T", "places disponibles:Q"],
-            )
-        )
-        st.altair_chart(chart_spaces, use_container_width=True)
+        st.line_chart(df, x="date", y="places disponibles")
     else:
         st.info("Pas d'informations disponible")
 
@@ -101,21 +86,7 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
         df = pd.DataFrame(bikes)
         df["date"] = pd.to_datetime(df["date"])
         df = df.sort_values("date")
-
-        chart_bikes = (
-            alt.Chart(df)
-            .mark_line()
-            .encode(
-                x=alt.X(
-                    "date:T",
-                    title="Jour",
-                    axis=alt.Axis(format="%a", labelAngle=0),
-                ),
-                y=alt.Y("vélos disponibles:Q", title="Vélos disponibles"),
-                tooltip=["date:T", "vélos disponibles:Q"],
-            )
-        )
-        st.altair_chart(chart_bikes, use_container_width=True)
+        st.line_chart(df, x="date", y="vélos disponibles")
     else:
         st.info("Pas d'informations disponible")
 
