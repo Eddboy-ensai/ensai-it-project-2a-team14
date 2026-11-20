@@ -179,7 +179,13 @@ L'architecture logicielle présentée en @fig-archi-log nécessite l'implémenta
 
 #### Classes liées aux utilisateurs  
 
-Les classes liées aux utilisateurs permettront essentiellement de créer les utilisateurs et de gérer leur rôle (utilisateur ou administrateur). La classe modèle est la classe ```User```. Les autres classes seront essentiellement fonctionnelles et permettront de gérer la connexion et la base de données. Les autorisations pour les comptes administrateurs se feront au niveau de la classe ```UserController``` à l'aide de *tokens*. Le diagramme de classes prévu pour les utilisateurs est présenté en @fig-classes-user.   
+Les classes liées aux utilisateurs permettent de créer les comptes, de gérer la connexion et de distinguer deux rôles : utilisateur et administrateur. La classe modèle est `User`. Les autres classes sont fonctionnelles : `UserDao` assure les échanges avec la table `Users`, `UserService` regroupe les règles métier (création de compte, connexion, modification d'un profil, gestion des droits administrateur) et `UserController` expose les *endpoints* correspondants.
+
+L'authentification repose sur des *tokens*. Lors de la connexion, l'application génère un *token* aléatoire, l'enregistre en base avec l'utilisateur et le renvoie au *frontend*, qui le joint ensuite à chacune de ses requêtes. Les *endpoints* protégés n'identifient donc pas l'utilisateur à partir d'un `id_user` fourni dans la requête, mais à partir de ce *token* : un utilisateur malveillant ne peut pas se faire passer pour un autre, notamment pour un administrateur, en modifiant simplement cet identifiant. Ces vérifications sont regroupées dans deux fonctions, `verify_token`, qui exige un utilisateur connecté, et `require_admin`, qui exige en plus un compte administrateur ; chaque *endpoint* de `UserController` fait appel à l'une ou l'autre selon le niveau d'accès requis.
+
+Les droits sont ainsi répartis en trois niveaux. Un utilisateur connecté peut modifier son propre profil, à condition de confirmer son mot de passe actuel. Un administrateur peut en plus consulter la liste des comptes, modifier ou supprimer ceux des autres utilisateurs. Enfin, seul le premier administrateur créé peut attribuer ou retirer les droits administrateur, ce qui empêche un administrateur de promouvoir librement d'autres comptes. Les justifications de ces choix sont détaillées dans la partie *Gestion de la sécurité de l'application*.
+
+Le diagramme de classes des utilisateurs est présenté en @fig-classes-user.
 
 ![Diagramme de classes lié aux utilisateurs](img/diag_classes_user.png){#fig-classes-user}   
 
@@ -196,6 +202,21 @@ Le diagramme de classes pour les stations est présenté en @fig-classes-station
 ![Diagramme de classes lié aux enregistrements](img/diag_classes_record.png){#fig-classes-record width="40%"}   
 
 #### Classes liées à la collecte de données liées aux stations  
+
+Les classes liées à la collecte constituent une pierre angulaire de l'application : ce sont elles qui alimentent la base de données à partir de l'API externe présentée dans le cahier des charges. Il s'agit de ```CollectService```, qui orchestre la collecte, de ```GbfsDao```, qui interroge l'API, et des classes ```StationDao``` et ```StationRecordDao```, qui enregistrent en base les objets ```Station``` et ```StationRecord```. Contrairement aux autres fonctionnalités, la collecte n'est pas déclenchée par une requête du *frontend* : elle est lancée par un script indépendant, ```collector.py```, qui la répète toutes les cinq minutes tant qu'il est en fonctionnement.
+
+**L'accès à l'API externe.** La classe `GbfsDao` récupère les deux fichiers JSON décrits dans le cahier des charges (`station_information.json` et `station_status.json`). Bien qu'elle n'exécute aucune requête SQL, elle appartient à la couche *DAO* : son rôle est le même que celui des autres DAO, à savoir fournir des données à la couche *service*, qui n'a pas à savoir si elles proviennent d'une API ou de la base PostgreSQL.
+
+**La mise à jour des stations.** À chaque passage, la méthode `refresh_stations` de `CollectService` transforme le fichier `station_information.json` en objets `Station` et les compare à ceux déjà enregistrés. Elle appelle alors les méthodes `create` et `update` de `StationDao` évoquées précédemment : les nouvelles stations sont ajoutées, et celles dont le nom, la position ou la capacité a changé sont mises à jour.
+
+**L'enregistrement des relevés.** La méthode `collect_records` transforme ensuite le fichier `station_status.json` en objets `StationRecord`. Chaque relevé reçoit la date de collecte, en UTC et identique pour toutes les stations d'un même passage, ainsi qu'un statut calculé à partir de trois indicateurs du flux (`is_installed`, `is_renting` et `is_returning`) : `IN_SERVICE`, `NOT_INSTALLED`, `NOT_RENTING` ou `NOT_RETURNING`. La méthode `insert_all` de `StationRecordDao` enregistre ensuite l'ensemble des relevés ; un relevé déjà présent (même station, même date) est ignoré, ce qui évite les doublons.
+
+**L'ordre des opérations.** La mise à jour des stations précède toujours l'enregistrement des relevés. En effet, la table `StationRecords` fait référence à la table `Stations` par une clé étrangère (voir @fig-modele_donnees) : un relevé ne peut être enregistré que si sa station existe déjà en base.
+
+**La robustesse de la collecte.** Une erreur lors d'un passage, par exemple une indisponibilité temporaire de l'API, est enregistrée dans les journaux sans interrompre le script : la collecte reprend au passage suivant.
+
+**Une limite identifiée.** Les relevés s'accumulent sans jamais être supprimés, à raison d'un relevé par station toutes les cinq minutes, et les stations retirées du réseau restent en base. Une évolution possible consisterait à supprimer automatiquement les relevés au-delà d'une certaine ancienneté.
+
 
 #### Classes liées au traitement des données liées aux stations  
 
