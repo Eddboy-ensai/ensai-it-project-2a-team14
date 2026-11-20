@@ -7,6 +7,17 @@ from utils.log_utils import log
 
 
 class SuggestionService:
+    """Find suggested stations around the choosen station
+
+    Return the choosen station if possible. If not return all the station around that match the requirements
+
+    Attributes
+    -----------
+    station: Station
+        The station choosen by the user
+    latest_record: StationRecord
+        The last record of the choosen station
+    """
     def __init__(self, station: Station):
         self.station = station
         self.latest_record = CalculationService(station).latest_record()

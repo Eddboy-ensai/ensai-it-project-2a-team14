@@ -9,6 +9,8 @@ from utils.log_utils import log
 
 
 class CollectService:
+    """Collects station data from the GBFS feed and stores it in the database.
+     """
     @staticmethod
     def has_changed(old: Station, new: Station) -> bool:
         """Checks if the information of a station has changed.

@@ -8,12 +8,28 @@ from utils.log_utils import log
 
 
 class CalculationService:
+    """Compute the reliability score and different statistics about the choosen station
+
+    Attributes :
+    ------------
+    station: Station
+        The station from which we want the statistics
+    station_records: list(StationRecord)
+        All the records of the choosen station
+    """
     def __init__(self, station: Station):
         self.station = station
         self.station_records = StationRecordDao().list_all_by_id(station.id_station)
 
     @log
     def latest_record(self) -> StationRecord:
+        """Select only the lastest record out of the list of records of the station
+
+        Returns :
+        ---------
+        lastest_record: StationRecord
+            The most recent record of the list
+        """
         latest_record = max(self.station_records, key=lambda r: r.date, default=None)
         return latest_record
 
