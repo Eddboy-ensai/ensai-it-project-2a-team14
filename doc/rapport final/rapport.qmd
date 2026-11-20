@@ -186,7 +186,7 @@ L'authentification repose sur des *tokens*. Lors de la connexion, l'application 
 
 Les droits sont ainsi répartis en trois niveaux. Un utilisateur connecté peut modifier son propre profil, à condition de confirmer son mot de passe actuel. Un administrateur peut en plus consulter la liste des comptes, modifier ou supprimer ceux des autres utilisateurs. Enfin, seul le premier administrateur créé peut attribuer ou retirer les droits administrateur, ce qui empêche un administrateur de promouvoir librement d'autres comptes. Les justifications de ces choix sont détaillées dans la partie *Gestion de la sécurité de l'application*.
 
-Le diagramme de classes des utilisateurs est présenté en @fig-classes-user.
+Le diagramme de classes des utilisateurs est présenté en @fig-classes-users.
 
 ![Diagramme de classes lié aux utilisateurs](img/diag_classes_users.png){#fig-classes-users}   
 
