@@ -30,9 +30,9 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
     st.title(f"Informations concernant la station {station['name']}")
 
     st.subheader("Informations en direct")
-    st.write(f"Nombre de vélos disponibles : {list(station['availability_bikes'][-1].values())[0]}")
+    st.write(f"Nombre de vélos actuellement disponibles : {list(station['availability_bikes'][-1].values())[0]}")
     st.write(
-        f"Nombre d'emplacements libres disponibles : {list(station['availability_spaces'][-1].values())[0]}"
+        f"Nombre d'emplacements actuellement libres : {list(station['availability_spaces'][-1].values())[0]}"
     )
     st.write(
         f"Nombre d'emplacements disponibles estimé dans une heure : {station['prediction_spaces']}"

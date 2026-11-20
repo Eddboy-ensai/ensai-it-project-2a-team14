@@ -95,8 +95,8 @@ class SuggestionService:
         list[Station, int]
             The list of the recommended stations with their score
         """
-        if self.station_pick_suggestion_score >= 70:
-            return [self.station, self.station_pick_suggestion_score]
+        if self.station_pick_suggestion_score() >= 70:
+            return [(self.station, self.station_pick_suggestion_score())]
         a = 0.3
         b = 0.5
         c = 0.2
@@ -114,7 +114,7 @@ class SuggestionService:
                 d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_bikes / n0)
                 sugg_score = round(100 * d**a * Disp**b * Spick**c)
-                if (sugg_score >= 70):  # 70 is arbitrary#
+                if sugg_score >= 70:  # 70 is arbitrary#
                     station_sugg[station] = sugg_score
         sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
         return sugg
@@ -130,8 +130,8 @@ class SuggestionService:
         list(Station, int)
             The list of the recommended stations and their score
         """
-        if self.station_drop_suggestion_score >= 70:
-            return [self.station, self.station_drop_suggestion_score]
+        if self.station_drop_suggestion_score() >= 70:
+            return [(self.station, self.station_drop_suggestion_score())]
         a = 0.3
         b = 0.5
         c = 0.2
@@ -149,7 +149,7 @@ class SuggestionService:
                 d = math.exp(-dist / 800)  # 800 is arbitrary#
                 Disp = 1 - math.exp(-nb_spot / n0)
                 sugg_score = round(100 * d**a * Disp**b * Sdrop**c)
-                if (sugg_score >= 70):  # 70 is arbitrary#
+                if sugg_score >= 70:  # 70 is arbitrary#
                     station_sugg[station] = sugg_score
         sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
         return sugg
