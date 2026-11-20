@@ -297,6 +297,8 @@ De plus, afin de garantir une maintenance aisée, nous tenterons de respecter le
 
 Afin de tester le bon fonctionnement de notre application, nous avons implémenté des tests à l'aide de Pytest pour les méthodes de classes services lorsque cela était possible. Pour cela, il nous a été nécessaire d'utiliser la classe ```MagicMock``` afin de simuler le comportement de la couche DAO. Concernant cette dernière, nous n'avons pas implémenté de tests. Cependant, durant la phase de codage du backend et avant le début de la mise en place de la collecte de données, nous avons utilisé une fausse base de données afin de vérifier le bon fonctionnement des différents endpoints durant la phase d'implémentation.
 
+Certaines fonctions ont été modifiées afin de permettre d'être testées plus facilement. Par exemple, dans `CaluclationService`, les méthodes `get_availability_bikes/spaces` utilisent un paramètre `now` qui est initialisé à `None` par défaut. L'application en soit n'utilise pas ce paramètre et le laisse en `None`. La méthode utilise alors l'heure actuelle (`datetime.now(UTC)`) comme date à partir de laquelle on souhaite avoir l'enregistrement des jours précédents. Cependant, la base de donnée de tests ne se renouvelant pas et donc étant à heure fixe, il était pas possible d'utiliser la date actuelle comme date de référence. Le paramètre `now` est donc appelé pour choisir une date adaptée à cette base de donnée. 
+
 ### Déroulement du projet et pistes d'améliorations  
 
 Le calendrier prévisionnel est donné ci-dessous par le diagramme de Gantt en @fig-diag_gantt.  
