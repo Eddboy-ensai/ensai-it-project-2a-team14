@@ -67,9 +67,11 @@ async def station_by_id(id_station: str, range: int, station_service=Depends(get
         "lon": station.lon,
         "capacity": station.capacity,
     }
+    score = CalculationService(station).compute_score()
     return (
         data
         | stats
+        | {"score": score}
         | {"availability_spaces": availability_spaces}
         | {"availability_bikes": availability_bikes}
         | {"prediction_spaces": prediction_spaces}
