@@ -60,7 +60,7 @@ async def list_all_users(user_service=Depends(get_user_service)):
     "/{id_user}",
     response_model=UserReadModel,
     tags=["Users"],
-    # dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_admin)],
 )
 async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     """Find a user by their unique ID.
