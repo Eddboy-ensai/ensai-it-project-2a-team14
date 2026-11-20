@@ -58,32 +58,6 @@ class SuggestionService:
         return round(100 * round(Dispo**b * Sdrop**c, 2))
 
     @log
-    def is_recommended_pick(self) -> bool:
-        """Tell based on pick suggestion score of the choosen station if we recommend it or not
-
-        Return :
-        --------
-        bool
-            True if the pick suggestion score is high enough, False if not
-        """
-        if self.station_pick_suggestion_score() <= 70:
-            return False
-        return True
-
-    @log
-    def is_recommended_drop(self) -> bool:
-        """Tell based on drop suggestion score of the choosen station if we recommend it or not
-
-        Return :
-        --------
-        bool
-            True if the drop suggestion score is high enough, False if not
-        """
-        if self.station_drop_suggestion_score() <= 70:
-            return False
-        return True
-
-    @log
     def compute_distance(self, lat1: float, lon1: float, lat2: float, lon2: float) -> int:
         """Compute the distance in meters between two points having their coordonates
 
@@ -121,7 +95,7 @@ class SuggestionService:
         list[Station, int]
             The list of the recommended stations with their score
         """
-        if self.is_recommended_pick():
+        if self.station_pick_suggestion_score >= 70:
             return [self.station, self.station_pick_suggestion_score]
         a = 0.3
         b = 0.5
@@ -156,7 +130,7 @@ class SuggestionService:
         list(Station, int)
             The list of the recommended stations and their score
         """
-        if self.is_recommended_drop():
+        if self.station_drop_suggestion_score >= 70:
             return [self.station, self.station_drop_suggestion_score]
         a = 0.3
         b = 0.5

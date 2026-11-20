@@ -19,7 +19,6 @@ Rapport :
 Samuel :
 Correction à apporter et à vérifier dans le frontend
 - la suggestion ne propose pas en première station la station demandée même si elle n'est pas vide
-- les prédictions donnent toujours 0 quelque soit la station (j'ai rajouté une sécurité car c'était nb_records qui était à 0, d'où une division par 0)
 Rapport
 - rédiger le paragraphe "Classes liées au traitement des données liées aux stations"
 - partie now dans get availability à justifier vis à vis des bonnes pratiques de test

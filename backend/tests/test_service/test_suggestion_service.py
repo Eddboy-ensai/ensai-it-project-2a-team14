@@ -80,35 +80,6 @@ def test_station_drop_suggestion_score():
         assert suggestion_service_pis.station_drop_suggestion_score() == 86
 
 
-suggestion_service_rep.station_pick_suggestion_score = MagicMock(return_value=100)
-suggestion_service_mai.station_pick_suggestion_score = MagicMock(return_value=81)
-suggestion_service_pla.station_pick_suggestion_score = MagicMock(return_value=80)
-suggestion_service_sai.station_pick_suggestion_score = MagicMock(return_value=0)
-suggestion_service_pis.station_pick_suggestion_score = MagicMock(return_value=0)
-
-suggestion_service_rep.station_drop_suggestion_score = MagicMock(return_value=0)
-suggestion_service_mai.station_drop_suggestion_score = MagicMock(return_value=94)
-suggestion_service_pla.station_drop_suggestion_score = MagicMock(return_value=100)
-suggestion_service_sai.station_drop_suggestion_score = MagicMock(return_value=0)
-suggestion_service_pis.station_drop_suggestion_score = MagicMock(return_value=86)
-
-
-def test_is_recommended_pick():
-    assert suggestion_service_rep.is_recommended_pick() is True
-    assert suggestion_service_mai.is_recommended_pick() is True
-    assert suggestion_service_pla.is_recommended_pick() is True
-    assert suggestion_service_sai.is_recommended_pick() is False
-    assert suggestion_service_pis.is_recommended_pick() is False
-
-
-def test_is_recommended_drop():
-    assert suggestion_service_rep.is_recommended_drop() is False
-    assert suggestion_service_mai.is_recommended_drop() is True
-    assert suggestion_service_pla.is_recommended_drop() is True
-    assert suggestion_service_sai.is_recommended_drop() is False
-    assert suggestion_service_pis.is_recommended_drop() is True
-
-
 def test_compute_distance():
     assert (
         suggestion_service_mai.compute_distance(48.110026, -1.678037, 48.111624, -1.678757) == 186

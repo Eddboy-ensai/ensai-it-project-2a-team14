@@ -200,7 +200,7 @@ Le diagramme de classes pour les stations est présenté en @fig-classes-station
 #### Classes liées au traitement des données liées aux stations  
 
 
-Les classes liées aux traitement de données correspondent à la valeur ajouté de l'application par rapport aux données récoltées sur l'API externe. Ces classes sont ```CalculationService``` et ```SuggestionService``` et correspondent à respectivement l'ensemble des méthodes de calculs statistiques et de scores de fiabilités concernant la station demandée et les méthodes de recommendation d'une station. 
+Les classes liées aux traitement de données correspondent à la valeur ajouté de l'application par rapport aux données récoltées sur l'API externe. Ces classes sont ```CalculationService``` et ```SuggestionService``` et correspondent à respectivement l'ensemble des méthodes de calculs statistiques/scores de fiabilités concernant la station demandée et les méthodes de recommendation d'une station. 
 
 La séparation en deux classes plutôt qu'une seule classe regroupant tous les calculs repose sur trois arguments :
 
@@ -211,6 +211,8 @@ La séparation en deux classes plutôt qu'une seule classe regroupant tous les c
 **Une dépendance à sens unique et une meilleure maintenabilité.** `SuggestionService` s'appuie sur `CalculationService` par composition, mais l'inverse n'est pas vrai. Cette séparation respecte le principe de responsabilité unique : chaque classe a une seule raison d'évoluer. Elle facilite aussi les tests, puisqu'on peut isoler `SuggestionService` en simulant `CalculationService`, et évite une classe unique trop volumineuse.
 
 **Une limite identifiée.** Dans l'implémentation actuelle, `SuggestionService` instancie systématiquement `CalculationService`, ce qui charge l'ensemble des `StationRecord` même lorsque seul le dernier enregistrement est utile. Une évolution possible consisterait à n'interroger le DAO que pour le dernier enregistrement (par exemple via `find_latest_by_id`) et à ne construire `CalculationService` que pour les méthodes qui en ont réellement besoin.
+
+
 
 #### Classes de gestion des stations favorites  
 
