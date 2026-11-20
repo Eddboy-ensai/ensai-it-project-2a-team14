@@ -115,7 +115,7 @@ class SuggestionService:
         station_sugg = {}
         for station in StationService().list_all():
             if station.id_station == self.station.id_station:
-                continue
+                continue  # dont include the station choosed by user because already calculated and checked
             dist = self.compute_distance(
                 self.station.lat, self.station.lon, station.lat, station.lon
             )
@@ -126,8 +126,8 @@ class SuggestionService:
                 Disp = 1 - math.exp(-nb_bikes / n0)
                 sugg_score = round(100 * d**a * Disp**b * Spick**c)
                 if sugg_score >= 70:  # 70 is arbitrary#
-                    station_sugg[station] = sugg_score
-        sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
+                    station_sugg[station] = sugg_score  # add the station in the dicionary if his score is enough
+        sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)  # turn the dict into a sorted list by score
         return sugg
 
     @log
@@ -150,7 +150,7 @@ class SuggestionService:
         station_sugg = {}
         for station in StationService().list_all():
             if station.id_station == self.station.id_station:
-                continue
+                continue  # dont include the station choosed by user because already calculated and checked
             dist = self.compute_distance(
                 self.station.lat, self.station.lon, station.lat, station.lon
             )
@@ -161,6 +161,6 @@ class SuggestionService:
                 Disp = 1 - math.exp(-nb_spot / n0)
                 sugg_score = round(100 * d**a * Disp**b * Sdrop**c)
                 if sugg_score >= 70:  # 70 is arbitrary#
-                    station_sugg[station] = sugg_score
-        sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)
+                    station_sugg[station] = sugg_score  # add the station in the dicionary if his score is enough
+        sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)  # turn the dict into a sorted list by score
         return sugg

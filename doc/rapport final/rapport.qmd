@@ -31,7 +31,13 @@ format:
 
 ## Introduction  
 
-Le développement des mobilités douces est un axe majeur face au dérèglement climatique. Parmi les moyens de transport les plus utilisés actuellement figure le vélo. Cependant, l'accès à son propre vélo peut être rendu difficile par différents facteurs socio-économiques (augmentation des prix face à une forte demande, vélos électriques peu abordables, difficulté de stockage d'un vélo personnel par manque de place, etc.). Pour pallier ces problèmes et développer des mobilités respectueuses de l'environnement, de nombreuses villes se dotent de vélos en libre-service, dont la gestion des stations est primordiale. Si de nombreuses applications existent déjà pour connaître l'état des stations de vélos en libre-service, elles sont sujettes à de nombreux points faibles. Par exemple, elles se contentent de fournir les disponibilités en vélos en temps réel et ne permettent pas de prévoir les disponibilités, même dans un futur proche. C'est pourquoi notre client souhaite développer une application qui irait bien plus loin. Celle-ci permettrait d'étudier les stocks des différentes stations au cours du temps, et ainsi de connaître l'état des stations de manière fine. Elle permettrait aux usagers de pouvoir anticiper leur déplacement via des indicateurs d'évolution temporelle et des recommandations adaptées.  
+Face aux enjeux du dérèglement climatique, le développement des mobilités douces s'impose comme un axe majeur de transition, avec le vélo au premier plan. Toutefois, l'accès à un vélo personnel reste freiné par plusieurs contraintes socio-économiques et pratiques, telles que le coût d'achat, particulièrement pour les vélos électriques, ou le manque d'espace de stockage en milieu urbain. Pour pallier ces difficultés, de nombreuses collectivités, à l'image de la ville de Rennes, se sont dotées d'un réseau de vélos en libre-service dont la bonne gestion des stations est essentielle.
+
+Si des applications permettent déjà de consulter l'état des stations en temps réel, elles présentent une limite majeure : elles n'offrent qu'une photographie instantanée du réseau, sans recul historique. Il est ainsi difficile pour un usager d'évaluer la fiabilité d'une station dans la durée ou d'anticiper la disponibilité d'un vélo à court terme. C'est pour répondre à cette problématique qu'a été conçu VeloScope, dans le cadre du projet informatique de deuxième année.
+
+Appliqué au réseau rennais, VeloScope a pour ambition de dépasser la simple consultation en temps réel en s'appuyant sur l'historisation des données des stations. L'objectif est d'offrir aux utilisateurs une vision plus fine de l'évolution des stocks dans le temps afin de les aider à mieux anticiper leurs déplacements.
+
+Ce rapport est structuré en trois grandes parties : il présente tout d'abord le cahier des charges définissant le cadre fonctionnel du projet, détaille ensuite la modélisation retenue (architecture, données, classes et endpoints), puis expose l'organisation du projet ainsi que les outils mis en œuvre par l'équipe.
 
 {{< pagebreak >}}
 
@@ -186,7 +192,7 @@ L'authentification repose sur des *tokens*. Lors de la connexion, l'application 
 
 Les droits sont ainsi répartis en trois niveaux. Un utilisateur connecté peut modifier son propre profil, à condition de confirmer son mot de passe actuel. Un administrateur peut en plus consulter la liste des comptes, modifier ou supprimer ceux des autres utilisateurs. Enfin, seul le premier administrateur créé peut attribuer ou retirer les droits administrateur, ce qui empêche un administrateur de promouvoir librement d'autres comptes. Les justifications de ces choix sont détaillées dans la partie *Gestion de la sécurité de l'application*.
 
-Le diagramme de classes des utilisateurs est présenté en @fig-classes-user.
+Le diagramme de classes des utilisateurs est présenté en @fig-classes-users.
 
 ![Diagramme de classes lié aux utilisateurs](img/diag_classes_users.png){#fig-classes-users}   
 

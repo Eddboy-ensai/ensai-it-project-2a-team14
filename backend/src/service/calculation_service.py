@@ -73,7 +73,7 @@ class CalculationService:
             total_duration += interval_time
 
             if current_record.nb_available_spaces == self.station.capacity:
-                empty_duration += interval_time
+                empty_duration += interval_time  # at the duration only if it was a shortage episode
         if total_duration == 0:
             return 0.0
         shortage_rate = empty_duration / total_duration
@@ -102,7 +102,7 @@ class CalculationService:
             total_duration += interval_time
 
             if current_record.nb_available_spaces == 0:
-                empty_duration += interval_time
+                empty_duration += interval_time  # at the duration only if it was a saturation episode
         if total_duration == 0:
             return 0.0
         saturation_rate = empty_duration / total_duration
@@ -126,12 +126,12 @@ class CalculationService:
         for records in sorted_records:
             if records.nb_available_spaces == self.station.capacity:
                 if shortage_start is None:
-                    shortage_start = records.date
-            elif shortage_start is not None:
+                    shortage_start = records.date  # allows to know when the episode started and save the date
+            elif shortage_start is not None:  # detect when its the end of an episode
                 total_time += (records.date - shortage_start).total_seconds()
                 number_of_shortage += 1
-                shortage_start = None
-        if self.latest_record().nb_available_spaces == self.station.capacity:
+                shortage_start = None  # set the status to none to detect a new episode the next time there is no bikes
+        if self.latest_record().nb_available_spaces == self.station.capacity:  # make us able to count an episode which is still ongoing which can't be counted in the previous loop
             total_time += (records.date - shortage_start).total_seconds()
             number_of_shortage += 1
         if number_of_shortage == 0:
@@ -157,12 +157,12 @@ class CalculationService:
         for records in sorted_records:
             if records.nb_available_spaces == 0:
                 if saturation_start is None:
-                    saturation_start = records.date
-            elif saturation_start is not None:
+                    saturation_start = records.date  # allows to know when the episode started and save the date
+            elif saturation_start is not None:  # detect when its the end of an episode
                 total_time += (records.date - saturation_start).total_seconds()
                 number_of_saturation += 1
-                saturation_start = None
-        if self.latest_record().nb_available_spaces == 0:
+                saturation_start = None  # set the status to none to detect a new episode the next time there is no spaces
+        if self.latest_record().nb_available_spaces == 0:  # make us able to count an episode which is still ongoing which can't be counted in the previous loop
             total_time += (records.date - saturation_start).total_seconds()
             number_of_saturation += 1
         if number_of_saturation == 0:
@@ -232,10 +232,10 @@ class CalculationService:
             the dataframe of availability of the station's bikes over time
         """
         data = []
-        now = now or datetime.now(UTC)
-        seuil = now - timedelta(days=d)
+        now = now or datetime.now(UTC)  # the now attributes allow to choose from when we want to go backwards
+        seuil = now - timedelta(days=d)  # the first date from which we want the records
         sorted_records = sorted(
-            (r for r in self.station_records if r.date >= seuil), key=lambda r: r.date
+            (r for r in self.station_records if now >= r.date >= seuil), key=lambda r: r.date
         )
         for records in sorted_records:
             a = {}
@@ -253,10 +253,10 @@ class CalculationService:
             the dataframe of availability of the station's spaces over time
         """
         data = []
-        now = now or datetime.now(UTC)
-        seuil = now - timedelta(days=d)
+        now = now or datetime.now(UTC)  # the now attributes allow to choose from when we want to go backwards
+        seuil = now - timedelta(days=d)  # the first date from which we want the records
         sorted_records = sorted(
-            (r for r in self.station_records if r.date >= seuil), key=lambda r: r.date
+            (r for r in self.station_records if now >= r.date >= seuil), key=lambda r: r.date
         )
         for records in sorted_records:
             a = {}
@@ -282,7 +282,7 @@ class CalculationService:
                 (
                     r
                     for r in self.station_records
-                    if abs(r.date - date_record) <= timedelta(seconds=149)
+                    if abs(r.date - date_record) <= timedelta(seconds=149)  # gives us an interval in case when the date are not precise. 149 seconds is choosen to be 1 second below the half of the interval between the records. Make sure we select only one record
                 ),
                 None,
             )
@@ -311,7 +311,7 @@ class CalculationService:
                 (
                     r
                     for r in self.station_records
-                    if abs(r.date - date_record) <= timedelta(seconds=149)
+                    if abs(r.date - date_record) <= timedelta(seconds=149)  # gives us an interval in case when the date are not precise. 149 seconds is choosen to be 1 second below the half of the interval between the records. Make sure we select only one record
                 ),
                 None,
             )
