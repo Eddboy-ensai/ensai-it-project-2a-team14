@@ -12,7 +12,8 @@ Alix et Méline
 Frontend :
 - rendre l'axe des abscisses des graphiques de disponibilité plus lisible
 - faire tester l'ergonomie de l'application
-- afficher le score de la station (demander dans cahier des charges)
+- afficher le score de la station lorsqu'on affiche une station (demander dans cahier des charges)
+- dans la suggestion, afficher le nombre de vélos ou d'emplacement libre au lieu de la capacité et modifier le nom de la colonne "score" en "score de fiabilité"
 Rapport :
 - rédiger une synthèse sur le fonctionnement du frontend (section 3.1.a Frontend du rapport)
 

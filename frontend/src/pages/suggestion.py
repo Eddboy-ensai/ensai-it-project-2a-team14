@@ -56,7 +56,7 @@ with col_choice:
     )
 
 with col_map:
-    st.subheader("Cliquez sur la station à laquelle vous souhaitez accéder")
+    st.subheader("Cliquez sur la station à laquelle vous souhaitez vous rendre")
 
     layer = pdk.Layer(
         "ScatterplotLayer",
@@ -109,8 +109,14 @@ with col_choice:
         if response["status_code"] == 200:
             col = []
             for station in response["data"]:
-                col.append(
-                {"Station": station["station"]["name"], "Capacité": station["station"]["capacity"], "Score": station["score"]})
+                col.append({
+                    "Station": station["station"]["name"],
+                    "Capacité": station["station"]["capacity"],
+                    "Score": station["score"],
+                })
+            st.write(
+                "Si seule la station demandée apparait, c'est qu'elle est disponible. Sinon, voici la liste des stations que nous vous recommandons :"
+            )
             st.dataframe(pd.DataFrame(col), hide_index=True)
         else:
             st.error(f"Erreur {response['status_code']} : {response['data']}")
