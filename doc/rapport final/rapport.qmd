@@ -160,6 +160,38 @@ La couche persistante est constituée de bases de données PostgreSQL qu'utilise
 
 #### Gestion de la sécurité de l'application  
 
+Bien que secondaire par rapport aux fonctionnalités de l'application, la sécurité reste un enjeu important. Nous avons identifié plusieurs risques, auxquels nous avons apporté des réponses plus ou moins complètes.
+
+**Le hachage des mots de passe**
+
+Le modèle de projet fourni proposait un hachage salé des mots de passe, avec la fonction SHA-256 et le nom d'utilisateur comme sel. Le sel empêche l'utilisation de tables de hachage précalculées génériques : deux utilisateurs ayant le même mot de passe n'ont pas le même hash en base.
+
+Ce choix présente toutefois des limites. Le nom d'utilisateur est un sel prévisible et identique d'un site à l'autre, ce qui permet de préparer une attaque à l'avance pour des noms courants comme ```admin```. Surtout, SHA-256 est une fonction très rapide, ce qui facilite les attaques par force brute en cas de fuite de la base. Enfin, le hash dépendant du nom d'utilisateur, il doit être recalculé à chaque changement de nom : l'application demande donc le mot de passe actuel lorsqu'un utilisateur modifie son nom, et impose un nouveau mot de passe lorsqu'un administrateur le fait.
+
+Plusieurs pistes d'amélioration s'offrent à nous : un sel aléatoire généré à la création du compte et stocké en base, un algorithme volontairement lent comme bcrypt et l'ajout d'un poivre (un secret stocké hors de la base). Faute de temps, elles n'ont pas été mises en place.
+
+**La génération et le stockage des *tokens***
+
+Lors de la connexion, l'application génère un *token* avec ```secrets.token_urlsafe(32)```, un générateur cryptographique qui le rend impossible à deviner. Ce *token* est stocké dans la table ```Users``` jusqu'à la connexion suivante, qui le remplace. Côté frontend, il est conservé dans la session Streamlit, sur le serveur, et n'est jamais enregistré dans le navigateur : un script malveillant injecté dans la page ne peut donc pas le récupérer. La contrepartie est la déconnexion lors d'un rafraîchissement de la page.
+
+Ce fonctionnement a plusieurs limites. Le *token* n'a pas de date d'expiration : s'il est volé, il reste valable indéfiniment. Il est stocké en clair, si bien qu'une fuite de la base donnerait accès à toutes les sessions ouvertes. Un utilisateur ne peut avoir qu'une session à la fois, puisqu'une nouvelle connexion invalide la précédente. Enfin, la colonne ```access_token``` n'est pas indexée : la recherche d'un utilisateur par son *token* parcourt toute la table, ce qui ralentirait les requêtes avec un grand nombre d'utilisateurs.
+
+Un index sur cette colonne suffirait à résoudre le problème de performance. Pour les autres limites, une table dédiée aux sessions, stockant une empreinte du *token* plutôt que le *token* lui-même, permettrait de gérer une date d'expiration, une déconnexion après une période d'inactivité et plusieurs connexions simultanées.
+
+**L'identification par *token* plutôt que par identifiant**
+
+Les *endpoints* protégés identifient l'utilisateur à partir du *token* transmis par le frontend dans l'en-tête ```X-Auth-Token```, et non à partir d'un ```id_user``` fourni dans la requête. Un utilisateur ne peut donc pas agir sur le compte d'un autre en modifiant simplement cet identifiant. Ce contrôle est effectué à chaque appel par les fonctions ```verify_token``` et ```require_admin``` présentées avec les classes liées aux utilisateurs. Seuls les *endpoints* d'ajout et de suppression de favoris ne l'appliquent pas encore (voir la partie *Déroulement du projet et pistes d'améliorations*).
+
+**La protection de la base de données**
+
+Toutes les requêtes SQL des classes DAO sont paramétrées : les valeurs fournies par l'utilisateur ne sont jamais insérées directement dans le texte de la requête, ce qui protège l'application contre les injections SQL. Les données reçues sont par ailleurs validées par les schémas Pydantic, et les réponses de l'API ne renvoient jamais le hash du mot de passe ni le *token*.
+
+**La gestion des droits administrateurs**
+
+Les administrateurs sont des utilisateurs de la table ```Users``` dont l'attribut ```admin``` est vrai. Ils peuvent consulter la liste des comptes, ainsi que modifier ou supprimer ceux des autres utilisateurs.
+
+En revanche, seul le premier administrateur, défini comme l'administrateur ayant le plus petit identifiant, peut attribuer ou retirer les droits administrateur. Cela évite une propagation incontrôlée des droits et empêche un administrateur de retirer ceux des autres. Ce premier administrateur est lui-même protégé : il ne peut ni perdre ses droits, ni voir son profil modifié ou son compte supprimé par un autre administrateur.
+
 ### Modèle de données  
 
 Afin que le modèle de données soit cohérent et pérenne, nous avons veillé à respecter les trois premières formes normales. Le modèle de données retenu est résumé en @fig-modele_donnees. Les raisons ayant amené à ce choix sont expliquées ci-dessous.  
