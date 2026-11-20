@@ -17,7 +17,7 @@ if "logs_initialized" not in st.session_state:
 logged_in = "user" in st.session_state
 
 pages = [
-    st.Page("pages/account.py", title="Mon compte", default=logged_in),
+    st.Page("pages/account.py", title="Mes informations", default=logged_in),
     st.Page("pages/admin.py", title="Administration"),
     st.Page(
         "pages/create_user.py",

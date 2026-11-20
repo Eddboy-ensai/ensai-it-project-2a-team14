@@ -43,66 +43,84 @@ Ce rapport est structuré en trois grandes parties : il présente tout d'abord l
 
 ## Cahier des charges
 
-L'objectif du projet est de produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application doit également fournir des indicateurs temporels et un score de qualité.   
+L'objectif du projet a été de produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application devait également fournir d'autres services, tels que des indicateurs temporels et un score de qualité. Voici les fonctionnalités attendues par le *product owner* :  
+- F1 : Gestion des utilisateurs  
+- F2 : Collecte des données de l'API externe d'une ville  
+- F3 : Consultation d’une station  
+- F4 : Score de fiabilité des stations
+- F5 : Recommandation de station
+- FO1 : Prévision de disponibilité (fonctionnalité optionnelle)
 
-### Utilisateurs  
+<!-- voir annexe pour plus de détails concernant la demande -->
 
-Deux types d'utilisateurs sont à distinguer. Il y a tout d'abord les utilisateurs «réguliers» de l'application, qui doivent créer un compte puis se connecter pour accéder aux différentes fonctionnalités de l'application. Une fois connectés, ils peuvent accéder aux données de l'application et gérer leurs stations favorites. Ensuite, il y a des comptes «administrateurs» qui peuvent gérer les comptes des autres utilisateurs. Ils peuvent supprimer un compte utilisateur ou élever un utilisateur en administrateur.
+La @fig-cas_utilisation résume les fonctionnalités implémentées.  
 
-### Fonctionnalités de l'applciation  
+![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png){#fig-cas_utilisation}  
 
-Le cahier des charges prévoyait un minimum de fonctionnalités attendues. La @fig-cas_utilisation résume les fonctionnalités implémentées et donc qu'un utilisateur peut effectuer. Ces actions sont détaillées ci-dessous avec, pour chacune, la solution technique envisagée.  
+Nous détaillons dans les sections suivantes ces fonctionnalités et nos choix de conception les concernant.  
 
-![Diagramme de cas d'utilisation](img/diag_cas_utilisation.png){#fig-cas_utilisation}   
+### Gestion des utilisateurs  
 
-**Collecter des données via une API externe**  
+Deux types d'utilisateurs sont à distinguer. Il y a tout d'abord les utilisateurs «réguliers» de l'application. Un nouvel utilisateur de l'application est invité à créer un compte afin de pouvoir profiter des autres fonctionnalités. Une fois connecté il peut accéder aux différentes données de l'application, gérer ses identifiants et gérer ses stations favorites en naviguant à travers les différentes pages de l'application. 
 
-La collecte des données concernant la disponibilité et l'état des stations de vélos se fait via une API externe d'une ville. Ce genre d'API respecte le standard GBFS, c'est-à-dire qu'elles transmettent plusieurs fichiers JSON formatés permettant de connaître les stations et leurs disponibilités. Les fichiers qui nous intéressent sont les fichiers ```station_information.json```[^1] (donnant des informations sur les stations) et ```station_status.json```[^2] (donnant des informations sur les disponibilités). Ces fichiers, qui sont collectés à intervalles de temps réguliers, permettent de nourrir une base de données. Cette dernière est hébergée sur un service PostgreSQL et contient notamment une table pour les stations, et une pour les relevés (voir la @fig-modele_donnees pour plus de détails).  
+Ensuite, il y a des comptes «administrateurs» qui peuvent gérer les comptes des autres utilisateurs. Ils peuvent ainsi supprimer un compte utilisateur ou élever un utilisateur au rang d'administrateur. Afin d'éviter tout conflit, il a été décidé que la création du premier administrateur se fasse directement dans la base de données sans passer par l'API. Celui-ci doit posséder le plus petit identifiant afin de conserver ses prérogatives sur les autres administrateurs.  
+
+### Collecte des données de l'API externe d'une ville  
+
+La collecte des données concernant la disponibilité et l'état des stations de vélos se fait via une API externe d'une ville. Ce type d'API respecte le standard GBFS, c'est-à-dire qu'elle transmet plusieurs fichiers JSON formatés permettant de connaître les stations et leurs disponibilités. Les fichiers qui nous intéressent sont les fichiers ```station_information.json```[^1] (donnant des informations sur les stations) et ```station_status.json```[^2] (donnant des informations sur les disponibilités). Les données de ces fichiers sont collectées toutes les cinq minutes par notre API, afin de conserver une actualisation fréquente et de fournir une application réactive, notamment aux horaires de pointes. Les données sont enregistrées dans une base de données hébergée sur un service PostgreSQL et contient notamment une table pour les stations, et une pour les relevés (voir la @fig-modele_donnees pour plus de détails).
+
+Nous avons fait le choix de travailler avec l'API externe de la métropole de Rennes. La ville de Rennes a la particularité de ne pas posséder de vélos électriques, mais notre implémentation et la standardisation offerte par le format GBFS permet de brancher l'application sur l'API d'une ville possédant de tels moyens de transport.
 
 [^1]: disponible ici : [https://eu.ftp.opendatasoft.com/star/gbfs/station_information.json](https://eu.ftp.opendatasoft.com/star/gbfs/station_information.json). Ce fichier possède les variables d'intérêts suivantes : l'identifiant de la station ```station_id```, son nom ```name```, ses coordonnées géographiques ```lon``` et ```lat```, ainsi que son nombre d'emplacements ```capacity```.  
 
 [^2]: disponible ici : [https://eu.ftp.opendatasoft.com/star/gbfs/station_status.json](https://eu.ftp.opendatasoft.com/star/gbfs/station_status.json). Ce fichier possède les variables d'intérêts suivantes : l'identifiant de la station ```station_id```, le nombre de vélos disponibles ```num_bikes_available```, le nombre d'emplacements libres ```num_docks_available``` et le fait qu'elle soit en service ou non ```is_installed```.  
 
-**Consulter des données**  
+### Consultation d’une station   
 
-Les utilisateurs peuvent consulter diverses informations pour la station de leur choix. Ce choix se fait grâce à la liste des stations ou grâce à un système de stations favorites. Les données consultables sont de deux types. Premièrement, les données fournies par l'API externe (état de fonctionnement, disponibilité, etc.). Deuxièmement, des données calculées grâce à l'accumulation des données collectées (taux de remplissage, évolution de la disponibilité, fréquence et durée moyenne des épisodes de saturation et de pénurie).  
+Une fois connecté, l'utilisateur est automatiquement redirigé vers la page des stations. Cette page permet de connaitre l'emplacement des stations sur une carte (la passtille de la station se colore). Sur cette page, l'utilisateur peut utiliser le tableau afin de cocher ses stations favorites qu'il peut ensuite enregistrer via le bouton en dessous du tableau. L'utilisateur pourra alors, par la suite, accéder directement à la disponibilité en terme de vélos ou d'emplacements libres dans la page "Mes informations". Enfin, l'utilisateur peut choisir d'obtenir des informations supplémentaires en sélectionnant une station via une boîte de sélection. La page se recharge et affiche différentes statistiques et informations :  
+- disponibilités actuelles en terme de vélos et d'emplacements,  
+- score de fiabilité (voir la section [Score de fiabilité des stations](#score-de-fiabilité-des-stations)),  
+- évolutions temporelles des disponibilités avec le choix de la fenêtre de temps (dernier jour, dernière semaine ou trente derniers jours),  
+- nombre de vélos et d'emplacements estimés dans une heure (voir la section [Prévision de disponibilité](#prevision-de-disponibilite)).  
 
-**Fournir un score de fiabilité**  
+### Score de fiabilité des stations  
 
-Pour chaque station, l'appli permet de calculer et fournir un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers ont deux types de demandes spécifiques, la première est de pouvoir emprunter un vélo dans la station, elle nécessite donc que la station ne soit pas vide. Un score de pénurie ($Spick$) sera donc crée pour évaluer la capacité de la station à repondre à ce besoin. Le score prendra des valeurs allant de 0 à 1 où le score de 1 sera attribué à une station qui n'a jamais d'épisode de saturation. Le second beosin est de pouvoir déposer un vélo emprunté dans une station, il est alors nécessaire que la station ne soit pas pleine. Un score de saturation ($Sdrop$) est donc crée en suivant la même logique que le score de pénurie. L'application calcule alors un score global en utilsant ($Spick$) et ($Ssat$) afin d'obtenir un score de fiabilité sur 100 de la station.
+Pour chaque station, l'application permet de calculer et fournir un score de fiabilité, traduisant sa capacité à répondre de manière constante aux besoins des usagers. Ces derniers ont deux types de demandes spécifiques. La première est de pouvoir emprunter un vélo dans la station : elle nécessite donc que la station ne soit pas vide. Un score de pénurie ($Spick$) a donc été calculé pour évaluer la capacité de la station à repondre à ce besoin. Ce score prend des valeurs allant de 0 à 1, où le score de 1 est attribué à une station qui n'a connu aucun épisode de saturation. Le second besoin est de pouvoir déposer un vélo emprunté dans une station, il est alors nécessaire que la station ne soit pas pleine. Un score de saturation ($Sdrop$) est donc calculé en suivant la même logique que le score de pénurie. L'application calcule alors un score global en utilsant ($Spick$) et ($Ssat$) afin d'obtenir un score de fiabilité sur 100 de la station.
 
-Pour évaluer cette fiabilité de façon pertinente, on s’appuie sur l'historique des états de la station sur une période donnée. Ce score intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de sanctionner la durée des pannes tout autant que leur fréquence, pour que l'application puisse mettre en avant les stations réellement fiables au quotidien. La division du score de fiabilité général en deux sous-scores lié aux besoins spécifiques de l'utilisateur permet dans un second temps lors de la partie recommandation de station, de pouvoir utiliser uniquement le sous-score adapté au besoin réél de l'utilisateur. En effet, la recommandation d'une station à un utilisateur qui souhaite déposer un vélo ne doit pas pénaliser les épisodes de pénurie de la station, l'utilisation d'un sous-score adapté est donc plus pertinent qu'un score général. Cet utilisation supplémentaire conditionne donc ces sous-scores à être compris entre 0 et 1 et non 100 comme l'est le score de fiabilité général.
+Pour évaluer cette fiabilité de façon pertinente, on s’appuie également sur l'historique des états de la station sur une période donnée. Pour cela, on calcule un score qui intègre deux dimensions principales : la fréquence d'indisponibilité, mesurée par le pourcentage de temps passé à l'état vide ou saturé, et la durée moyenne des épisodes de pénurie ou de saturation. L'idée est donc de pénaliser la durée des pannes tout autant que leurs fréquences, afin que l'application puisse mettre en avant les stations réellement fiables au quotidien. La sépartion du score de fiabilité général en deux sous-scores liés aux besoins spécifiques de l'utilisateur permet dans un second temps, lors de la recommandation de stations, de pouvoir utiliser uniquement le sous-score adapté au besoin réél de l'utilisateur. En effet, la recommandation d'une station à un utilisateur qui souhaite déposer un vélo ne doit pas pénaliser les épisodes de pénurie de la station, l'utilisation d'un sous-score adapté est donc plus pertinent qu'un score général. Cette utilisation supplémentaire conditionne donc ces sous-scores à être compris entre 0 et 1 et non 100 comme l'est le score de fiabilité général.
 
-La formule de la création des sous-scores tient donc des variables suivantes calculées grâce aux enregistrements de la stations choisie :
-- la proportion du temps passé vide ($Pshort$) et pleine ($Psat$),  
-- les durées moyennes des épisodes de pénurie ($Dshort$) et de saturation ($Dsat$) en secondes.
+La formule de la création des sous-scores tient donc comptes des variables suivantes calculées grâce aux enregistrements de la stations choisie :
+- la proportion du temps durant lequel la station a été vide ($Pshort$) et pleine ($Psat$),  
+- les durées moyennes des épisodes de pénurie ($Dshort$) et de saturation ($Dsat$), en secondes.
 
 La formule d'un sous-score est la suivante (ici appliquée à la pénurie mais similaire au cas saturation):  
 $Spick$ = (1 - $Pshort$) ** 0.5 * $dshort$ ** 0.5
-où $dshort$ = exp(-$Dshort$ / 3600) qui permet de transformer $Dshort$ qui est un temps en seconde en un score sans dimensions compris entre 0 et 1 et où 3600 est choisi arbitrairement. 
-La formule est de la forme x ** (1 - a) * y ** a où a = 0.5 choisit pour attribuer la même importance à la proportion du temps d'un épisode à leur durée moyenne. Une formule géométrique à été préférée à une formule arithmétique afin qu'une bonne variable ne puisse pas compenser l'autre si elle est très mauvaise.
+où $dshort$ = exp(-$Dshort$ / 3600) permet de transformer $Dshort$ qui est un temps en secondes en un score sans dimension compris entre 0 et 1, et où 3600 est choisi arbitrairement. 
+La formule est de la forme x ** (1 - a) * y ** a où a = 0.5 est choisi afin de pondérer équitablement la proportion du temps d'un épisode à sa durée moyenne. Une formule géométrique à été préférée à une formule arithmétique afin qu'une bonne variable ne puisse pas compenser l'autre si elle est très mauvaise.
 
 Enfin la formule générale du score de fiabilité est la suivante :
-S = 100 * (0.5 * $Spick$ + 0.5 * $Sdrop$) 
-de la forme (1 - a) * x + a * y où a = 0.5 ici pour donner autant d'importance aux épisode de pénurie que ceux de saturation.
+S = 100 * (0.5 * $Spick$ + 0.5 * $Sdrop$)   
+Il est de la forme (1 - a) * x + a * y où a = 0.5 ici pour donner autant d'importance aux épisode de pénurie qu'à ceux de saturation.
 
 
-**Recommander une station**  
+### Recommandation de station  
 
-L'application permet de recommander des stations à proximité de l'utilisateur. Elle distingue les deux besions de l'utilisateur. Elle donne donc les stations suggérées dans le cas où l'utilisateur souhaite prendre où déposer un vélo. Les deux méthodes de recommendation sont similaires, calculées et proposées en même temps à l'utilisateur sans qu'il n'ait besoin de spécifier son cas. L'une raisonne sur $Spick$ et le nombre de vélos disponibles tandis que l'autre sur $Sdrop$ et le nombre d'emplacements disponibles. On considérera dans cette partie uniquement ```suggestion_pick``` correspondant au premier cas.
+La page "Suggestions de stations" permet de répondre à la demande du cahier des charges de fournir des recommandations des stations à proximité de l'utilisateur. Nous n'avons pas trouvé de moyen permettant de déterminer la localisation de l'utilisateur avec la technologie utilisée. Afin de répondre au cahier des charges, nous avons donc fait le choix de donner à l'utilisateur la possibilité de choisir la station qu'il souhaite utiliser en cliquant sur une carte interactive. Il est ensuite invité à préciser son besoin (prendre où déposer un vélo). Nous détaillons dans la suite le fonctionnement de la méthode ```suggestion_pick``` permettant de retourner les stations suggérées lorsque l'utilisateur souhaite emprunter un vélo. 
 
-Cette recommandation se basera à la fois sur la distance à l'utilisateur ($D$), sur son score de fiabilité ($Spick$) et sur le nombre de vélos disponibles lors du dernier relevé ($N$). La localisation de l'utilisateur n'étant pas possible à prélever directement, on lui demande de choisir la station la plus proche de lui qu'on considérera comme sa localisation. Le choix de recommendation d'une station plutôt qu'une autre est réalisé en comparant leur score de recommendation respectif calculé selon la formule suivante :
-Score = 100 * ($d$ ** 0.3 * $n$ ** 0.5 * $Spick$ ** 0.2)
-où $d$ = exp (- $D$ / 800) et $n$ = 1 - exp (- $N$ / 3) sont des transformations qui permettent d'obtenir des scores entre 0 et 1 sans unités et selon un seuil référence. En effet un nombre de vélo <= 3 commence à poser un réel problème tout comme une distance avec l'utilisateur >= 800m. Il s'agit donc de seuils choisis subjectivement selon ce qu'on considérait acceptable pour une station recommendable. Les exposant permettent de hierarchiser les paramètres selon l'importance qu'on leur accorde. La nécessité d'avoir un vélo l'emporte sur le besoin de parcourir une faible distance et le score de fiabilité. Une station qui il y a cinq minutes avait 30 vélo n'a pas besoin d'avoir un bon score de fiaibilité pour qu'on suppose qu'il y en ait toujours au moins 1.
+Tout d'abord, nous construisons un score de recommandation d'une station qui se base à la fois sur la distance à la station sélectionnée ($D$), sur son score de fiabilité de vélos disponibles ($Spick$) et sur le nombre de vélos disponibles lors du dernier relevé ($N$). Voici la formule retenue :  
+Score = 100 * ($d$ ** 0.3 * $n$ ** 0.5 * $Spick$ ** 0.2)  
+où $d$ = exp (- $D$ / 800) et $n$ = 1 - exp (- $N$ / 3) sont des transformations qui permettent d'obtenir des scores entre 0 et 1 sans unité. Cette formule a nécessité plusieurs choix de conception, les seuils de références et la valeur des exposants, que nous détaillons ci-dessous.  
 
-L'application cherche tout d'abord à déterminer si la station choisie par l'utilisateur est recommendable. Elle vérifie d'abord qu'elle ne soit pas vide et que dans le cas où elle ne compte qu'un seul vélo, $Spick$ soit supérieur à 80. Ce premier filtre cherche à limiter la possibilité de recommender une station vide à l'utilisateur. Ces deux contraintes respectées, si son score de recommendation dépasse 70, elle est alors recommandée. Si la station choisie n'est pas recommandable, on recommande alors les stations à moins de 1km de l'utilisateur, avec au moins 2 vélos lors dernier relevé et un score de recommendation supérieur à 70.
+Nous avons dû, dans un premier temps, choisir des seuils de référence. Nous avons considéré qu'un nombre de vélos inférieur ou égal 3 peut poser problème si l'utilisateur ne peut se rendre dans la station que d'ici plusieurs minutes. Une distance trop grande (ici supérieure à 800m) pose un problème similaire.  
+
+Les exposants dans la formule permettent quant à eux de hiérarchiser les paramètres selon l'importance qu'on leur accorde. Nous avons fait le choix de privilégier la possibilité d'obtenir un vélo, au détriment de la nécessité de parcourir une faible distance et du score de fiabilité. Ce choix est justifié par le fait qu'une station ayant de nombreux vélos n'a pas besoin d'avoir un bon score de fiabilité pour répondre aux besoins de l'utilisateur dans un futur proche.  
+
+Pour revenir à l'interface utilisateur, lorsque l'utilisateur sélectionne une station, l'application cherche tout d'abord à déterminer si la station sélectionnée est recommandable. Elle vérifie si elle n'est pas vide et si, dans le cas où elle ne compte qu'un seul vélo, $Spick$ soit supérieur à 80. Ce premier filtre cherche à limiter la possibilité de recommander une station vide à l'utilisateur. Si ces deux contraintes respectées et si son score de recommandation dépasse 70, elle est alors l'unique station recommandée. Si la station choisie n'est pas recommandable, l'application suggère alors les stations à moins de un kilomètre de l'utilisateur, possédant au moins deux vélos lors du dernier relevé et un score de recommandation supérieur à 70. Les différentes stations recommandées sont ensuite classées grâce à leur score de recommandation respectif puis affichées dans un tableau.
 
 
-**Fournir des statistiques**
+### Prévision de disponibilité  
 
-En plus de fournir les statistiques nécéssaires au calculs des scores de fiabilité et de recommendation, l'application permet de calculer des statistiques bien spécifiques. Tout d'abord, elle donne le ratio de remplissage de la station lors du dernier relevé et permet permet également de tracer la disponibilité des vélos et des emplacements dans la station choisie en fonction du temps. Ces deux fonctionnalités couplés aux parties précédentes permettent ainsi de valider le cahier des charges de l'application concernant les différentes statistiques.
-
-L'application permet enfin de predire, pour une station donnée, le nombre de vélo et d'emplacements disponibles dans une heure. Pour cela, elle se base sur la moyenne des vélos/emplacements disponibles à la même heure le même jour des semaines précédentes (exemple: tous les lundi 13h si on est un lundi à 12h). Le calcul de prédiction ne prenant en compte qu'un seul enregistrement par semaine, il est possible que ce dernier soit faussé si l'un d'eux est "NOT_INSTALLED" à cause d'un problème relatif à l'API externe et ne donne pas la vraie valeure de vélo/emplacements dans la station. Il donnerait donc une estimation biaisée par rapport à la réalité. Une piste d'amélioration serait de prendre la moyenne de tous les enregistrements sur une étendue de 20 min autour de l'heure cible des semaines précédentes pour limiter l'impact de ce problème.
+L'application permet de prédire, pour une station donnée, le nombre de vélos et d'emplacements disponibles dans une heure. Pour cela, elle se base sur la moyenne des vélos/emplacements disponibles à la même heure le même jour des semaines précédentes (exemple: tous les lundi 13h si on est un lundi à 12h). Le calcul de prédiction ne prenant en compte qu'un seul enregistrement par semaine, il est possible que ce dernier soit faussé si l'un d'eux est "NOT_INSTALLED" à cause d'un problème relatif à l'API externe et non à la station elle-même. Il donnerait donc une estimation biaisée par rapport à la réalité. Une piste d'amélioration de notre application serait de prendre la moyenne de tous les enregistrements sur une plage de 20 min autour de l'heure cible des jours ciblés afin de limiter l'impact de ce problème.  
 
 {{< pagebreak >}}
 
@@ -230,7 +248,7 @@ Les classes liées à la collecte constituent une pierre angulaire de l'applicat
 #### Classes liées au traitement des données liées aux stations  
 
 
-Les classes liées aux traitement de données correspondent à la valeur ajouté de l'application par rapport aux données récoltées sur l'API externe. Ces classes sont ```CalculationService``` et ```SuggestionService``` et correspondent à respectivement l'ensemble des méthodes de calculs statistiques/scores de fiabilités concernant la station demandée et les méthodes de recommendation d'une station. 
+Les classes liées aux traitement de données correspondent à la valeur ajouté de l'application par rapport aux données récoltées sur l'API externe. Ces classes sont ```CalculationService``` et ```SuggestionService``` et correspondent à respectivement l'ensemble des méthodes de calculs statistiques/scores de fiabilités concernant la station demandée et les méthodes de recommandation d'une station. 
 
 La séparation en deux classes plutôt qu'une seule classe regroupant tous les calculs repose sur trois arguments :
 
@@ -246,7 +264,7 @@ La classe `CalculationService` est construite de manière très intuitive. Tout 
 
 Dans La classe `SuggestionService`, on dispose de trois types de méthodes (`station_pick/drop_suggestion_score`, `compute_distance`, `get_suggestion_pick/drop`). 
 
-Tout d'abord la première correspond au calcul du score de recommendation de la station séléctionnée seulement tandis que la dernière calcule celui de toutes les autres stations dans le cas où l'on ne retient pas la station choisie. Ce choix a été fait en présupposant que l'utilisateur avait une localisation très proche de la station qu'il choisit. N'ayant pas la possibilité de récupérer directement la localisation de son appareil, on utiliserait ainsi la localisation de la station comme tel. De plus ces conditions vérifiées, l'utilisateur aurait tout intérêt à aller dans cette station si elle s'avère recommendable. Ainsi la méthode `get_suggestion_` vérifie dans un premier temps si la station est élligible avant de faire le calcul des scores de recommendation des autres stations. On renvoit donc que la station séléctionnée avec son score si elle est éligible puisque l'utilisateur n'a pas besoin de savoir si d'autres station sont recommendables du moment quelle celle-ci l'est. 
+Tout d'abord la première correspond au calcul du score de recommandation de la station séléctionnée seulement tandis que la dernière calcule celui de toutes les autres stations dans le cas où l'on ne retient pas la station choisie. Ce choix a été fait en présupposant que l'utilisateur avait une localisation très proche de la station qu'il choisit. N'ayant pas la possibilité de récupérer directement la localisation de son appareil, on utiliserait ainsi la localisation de la station comme tel. De plus ces conditions vérifiées, l'utilisateur aurait tout intérêt à aller dans cette station si elle s'avère recommandable. Ainsi la méthode `get_suggestion_` vérifie dans un premier temps si la station est élligible avant de faire le calcul des scores de recommandation des autres stations. On renvoit donc que la station séléctionnée avec son score si elle est éligible puisque l'utilisateur n'a pas besoin de savoir si d'autres station sont recommandables du moment quelle celle-ci l'est. 
 
 Enfin la méthode `compute_distance` calcule la distance entre deux points en utilisant leur coordonnées géographique. Ce calcul aurait lui aussi pu être inclut dans les dernière méthode mais il aurait du être fait deux fois (une dans chaque `get_suggestion`) et aurait impacter la lisibilité des dernières méthodes qui sont déjà de taille conséquente.
 
@@ -337,9 +355,34 @@ Le calendrier prévisionnel est donné ci-dessous par le diagramme de Gantt en @
 Ce calendrier a été respecté durant la majeur partie du développement. Cependant, un léger retard de la rédaction du rapport et une accumulation de contraintes scolaires autour de la semaine des vacances d'Octobre nous a amené à précipiter la fin du projet et à ne pas peaufiner le code autant que nous l'aurions souhaité. Par exemple, les appels aux endpoints Favorite ne vérifient pas le *token* de l'utilisateur. De plus, nous n'avons pas pu mettre en place toutes les sécurités souhaitées. Ainsi, nous avons dû nous contenter, pour certaines parties du code, de la déconnexion lors d'un rafraichissement de la page ou lors de l'entrée d'une nouvelle URL.
 
 
-<!--{{< pagebreak >}}
+{{< pagebreak >}}
 
 ## Annexes {.unnumbered}
 
+### Retour d'expérience : Méline BONAVERO 
 
-{{< pagebreak >}} -->
+
+
+### Retour d'expérience : Eddy BOYCE  
+
+Durant ce projet, j'ai endossé le rôle de chef de projet. Ce choix a été naturel puisque j'avais l'habitude de gérer des projets de par mon expérience professionnelle antérieure. Ce rôle a été particulièrement agréable à gérer puisque mes camarades étaient réactifs aux demandes. L'entente du groupe a été bonne et a permis d'avancer régulièrement sur le projet dans une ambiance sereine.  
+
+Ce rôle m'a permis d'aborder tous les sujets du projet. Je me suis tout d'abord consacré à l'architecture logicielle. Cette part du projet a été gratifiante car elle m'a permis de découvrir l'univers des API, tout en consolidant mes compétences en architecture logicielle acquise lors du projet informatique de première année. Cela m'a permis d'avoir une vision d'ensemble du projet et de pouvoir coordonner la rédaction des rapports ainsi que la production des différents diagrammes.  
+
+J'ai ensuite participé à l'implémentation de certaines parties (gestion des utilisateurs, les classes concernant les stations favorites et leurs tests, mise en plus du frontend). J'ai donc eu l'occasion d'assimiler beaucoup de connaissance concernant l'implémentation d'une application, de l'interface utilisateur aux bases de données en passant par le backend.  
+
+Ce rôle a donc été pour moi un plaisir double. Celui de la gestion de l'humain avec une équipe motivée et facile à encadrer d'une part. Celui d'assouvir ma curiosité en découvrant de nombreux aspects techniques et en relevant des défis informatiques d'autres part.  
+
+### Retour d'expérience : Eliot CHATONNIER  
+
+
+
+### Retour d'expérience : Samuel LEJARS  
+
+
+
+### Retour d'expérience : Alix MOINERAUD--DOUCET
+
+
+
+{{< pagebreak >}} 
