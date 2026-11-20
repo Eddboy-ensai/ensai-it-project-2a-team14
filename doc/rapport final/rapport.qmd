@@ -144,7 +144,7 @@ Tout d'abord, une couche *controller* reçoit les requêtes fournies par le *fro
 
 La couche *service* est le cœur de l'application, c'est dans cette couche que sont regroupées les fonctions apportant une valeur ajoutée. Il s'agit par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services font donc appel à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  
 
-La couche *DAO* reçoit les demandes de données de la part de la couche *service*. Elle est chargée de convertir ces demandes en requêtes SQL. Ces requêtes sont alors traitées par la couche persistante : celle des bases de données. La couche *DAO* a alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet *User* ou *Station*, voir la section [Classes](#classes) pour plus de détails). Ces objets sont ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus sont transmis à la couche *controller* puis au *frontend* pour affichage à l'utilisateur.  
+La couche *DAO* reçoit les demandes de données de la part de la couche *service*. Elle est chargée de convertir ces demandes en requêtes SQL. Ces requêtes sont alors traitées par la couche persistante : celle des bases de données. La couche *DAO* a alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet *User* ou *Station*, voir la section correspondante pour plus de détails). Ces objets sont ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus sont transmis à la couche *controller* puis au *frontend* pour affichage à l'utilisateur.  
 
 #### Couche persistante  
 
@@ -180,9 +180,9 @@ L'architecture logicielle présentée en @fig-archi-log nécessite l'implémenta
 
 #### Classes liées aux utilisateurs  
 
-Les classes liées aux utilisateurs permettront essentiellement de créer les utilisateurs et de gérer leur rôle (utilisateur ou administrateur). La classe modèle est la classe ```User```. Les autres classes seront essentiellement fonctionnelles et permettront de gérer la connexion et la base de données. Les autorisations pour les comptes administrateurs se feront au niveau de la classe ```UserController``` à l'aide de *tokens*. Le diagramme de classes prévu pour les utilisateurs est présenté en @fig-classes-user.   
+Les classes liées aux utilisateurs permettront essentiellement de créer les utilisateurs et de gérer leur rôle (utilisateur ou administrateur). La classe modèle est la classe ```User```. Les autres classes seront essentiellement fonctionnelles et permettront de gérer la connexion et la base de données. Les autorisations pour les comptes administrateurs se feront au niveau de la classe ```UserController``` à l'aide de *tokens*. Le diagramme de classes prévu pour les utilisateurs est présenté en @fig-classes-users.   
 
-![Diagramme de classes lié aux utilisateurs](img/diag_classes_user.png){#fig-classes-user}   
+![Diagramme de classes lié aux utilisateurs](img/diag_classes_users.png){#fig-classes-users}   
 
 #### Classes liées aux stations   
 
@@ -190,9 +190,9 @@ La classe modèle ```Station``` est la brique pour de nombreuses fonctionnalité
 
 La partie DAO de la classe possède, quant à elle, les méthodes ```create``` et ```update``` qui permettent de créer et mettre à jour la base de données des stations. Cette mise à jour est effectuée à partir des données collectées via l'API externe. Ces méthodes sont appelées par une autre partie du programme, dont nous détaillons l'implémentation dans le paragraphe suivant.
 
-Le diagramme de classes pour les stations est présenté en @fig-classes-station et @fig-classes-record.  
+Le diagramme de classes pour les stations est présenté en @fig-classes-stations et @fig-classes-record.  
 
-![Diagramme de classes lié aux stations](img/diag_classes_station.png){#fig-classes-station width="97%"}   
+![Diagramme de classes lié aux stations](img/diag_classes_stations.png){#fig-classes-stations width="97%"}   
 
 ![Diagramme de classes lié aux enregistrements](img/diag_classes_record.png){#fig-classes-record width="40%"}   
 
