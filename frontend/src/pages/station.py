@@ -97,7 +97,8 @@ else:  # display the page without query
     col1.title("Veloscope")
 
     if "message_fav" in st.session_state:
-        st.success(st.session_state.pop("message_fav"))
+        st.success(st.session_state["message_fav"])
+        del st.session_state["message_fav"]
 
     if col2.button("Compte"):
         st.switch_page("pages/account.py")
