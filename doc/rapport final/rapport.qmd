@@ -81,7 +81,7 @@ Une fois connecté, l'utilisateur est automatiquement redirigé vers la page des
 - disponibilités actuelles en terme de vélos et d'emplacements,  
 - score de fiabilité (voir la section [Score de fiabilité des stations](#score-de-fiabilité-des-stations)),  
 - évolutions temporelles des disponibilités avec le choix de la fenêtre de temps (dernier jour, dernière semaine ou trente derniers jours),  
-- nombre de vélos et d'emplacements estimés dans une heure (voir la section [Prévision de disponibilité](#prevision-de-disponibilite)).  
+- nombre de vélos et d'emplacements estimés dans une heure (voir la section [Prévision de disponibilité](#prévision-de-disponibilité)).  
 
 ### Score de fiabilité des stations  
 
@@ -100,8 +100,7 @@ La formule est de la forme x ** (1 - a) * y ** a où a = 0.5 est choisi afin de 
 
 Enfin la formule générale du score de fiabilité est la suivante :
 S = 100 * (0.5 * $Spick$ + 0.5 * $Sdrop$)   
-Il est de la forme (1 - a) * x + a * y où a = 0.5 ici pour donner autant d'importance aux épisode de pénurie qu'à ceux de saturation.
-
+Il est de la forme (1 - a) * x + a * y où a = 0.5 ici pour donner autant d'importance aux épisode de pénurie qu'à ceux de saturation.  
 
 ### Recommandation de station  
 
@@ -115,12 +114,11 @@ Nous avons dû, dans un premier temps, choisir des seuils de référence. Nous a
 
 Les exposants dans la formule permettent quant à eux de hiérarchiser les paramètres selon l'importance qu'on leur accorde. Nous avons fait le choix de privilégier la possibilité d'obtenir un vélo, au détriment de la nécessité de parcourir une faible distance et du score de fiabilité. Ce choix est justifié par le fait qu'une station ayant de nombreux vélos n'a pas besoin d'avoir un bon score de fiabilité pour répondre aux besoins de l'utilisateur dans un futur proche.  
 
-Pour revenir à l'interface utilisateur, lorsque l'utilisateur sélectionne une station, l'application cherche tout d'abord à déterminer si la station sélectionnée est recommandable. Elle vérifie si elle n'est pas vide et si, dans le cas où elle ne compte qu'un seul vélo, $Spick$ soit supérieur à 80. Ce premier filtre cherche à limiter la possibilité de recommander une station vide à l'utilisateur. Si ces deux contraintes respectées et si son score de recommandation dépasse 70, elle est alors l'unique station recommandée. Si la station choisie n'est pas recommandable, l'application suggère alors les stations à moins de un kilomètre de l'utilisateur, possédant au moins deux vélos lors du dernier relevé et un score de recommandation supérieur à 70. Les différentes stations recommandées sont ensuite classées grâce à leur score de recommandation respectif puis affichées dans un tableau.
-
+Pour revenir à l'interface utilisateur, lorsque l'utilisateur sélectionne une station, l'application cherche tout d'abord à déterminer si la station sélectionnée est recommandable. Elle vérifie si elle n'est pas vide et si, dans le cas où elle ne compte qu'un seul vélo, $Spick$ soit supérieur à 80. Ce premier filtre cherche à limiter la possibilité de recommander une station vide à l'utilisateur. Si ces deux contraintes respectées et si son score de recommandation dépasse 70, elle est alors l'unique station recommandée. Si la station choisie n'est pas recommandable, l'application suggère alors les stations à moins de un kilomètre de l'utilisateur, possédant au moins deux vélos lors du dernier relevé et un score de recommandation supérieur à 70. Les différentes stations recommandées sont ensuite classées grâce à leur score de recommandation respectif puis affichées dans un tableau.  
 
 ### Prévision de disponibilité  
 
-L'application permet de prédire, pour une station donnée, le nombre de vélos et d'emplacements disponibles dans une heure. Pour cela, elle se base sur la moyenne des vélos/emplacements disponibles à la même heure le même jour des semaines précédentes (exemple: tous les lundi 13h si on est un lundi à 12h). Le calcul de prédiction ne prenant en compte qu'un seul enregistrement par semaine, il est possible que ce dernier soit faussé si l'un d'eux est "NOT_INSTALLED" à cause d'un problème relatif à l'API externe et non à la station elle-même. Il donnerait donc une estimation biaisée par rapport à la réalité. Une piste d'amélioration de notre application serait de prendre la moyenne de tous les enregistrements sur une plage de 20 min autour de l'heure cible des jours ciblés afin de limiter l'impact de ce problème.  
+L'application permet de prédire, pour une station donnée, le nombre de vélos et d'emplacements disponibles dans une heure. Pour cela, elle se base sur la moyenne des vélos (repsectivement emplacements) disponibles à la même heure le même jour des quatre semaines précédentes. Par exemple, si l'application est utilisée lundi à 12h, la prédiction se basera sur les données des quatre derniers lundis à 13h. La prédiction que nous avons implémenté est toutefois perfectible, puisque le calcul de prédiction ne prend en compte qu'un seul enregistrement par semaine. Pour plus de détails, voir la section ...
 
 {{< pagebreak >}}
 
@@ -142,21 +140,26 @@ L'accès aux fonctionnalités de l'application se situe dans la partie basse du 
 
 {{< pagebreak >}}
 
-## Modélisation  
+## Architecture de l'application  
 
-### Architecture de l'application  
-
-L'application sera constituée de plusieurs couches afin de respecter le principe de séparations des responsabilités. L'architecture logicielle envisagée est présentée dans la @fig-archi-log.
+Le code de l'application est constituée de plusieurs couches afin de respecter le principe de séparations des responsabilités. L'architecture logicielle retenue est présentée dans la @fig-archi-log.
 
 ![Diagramme d'architecture logicielle](img/diag_archi_log.png){#fig-archi-log}  
 
-#### Frontend  
+Dans la suite, nous décrivons les choix de conception de ces différentes couches.  
 
-Place pour Alix 
+### Frontend  
 
-I)	Objectifs généraux 
-L’interface utilisateur de l’application, qui sera ici appelée sous le nom de « frontend », est la partie visible et interactive de celle-ci. Elle a pour objectif d’améliorer l’expérience des utilisateurs. Cela passe par la transformation d’un ensemble de fonctionnalités complexes ; appel de fonctions particulières via une syntaxe précise, en un système intelligible par un utilisateur souvent étranger à la programmation. Ce « système intelligible » repose sur des mécanismes de compréhension simples ; cliquer sur un bouton, visualiser les zones de textes à compléter, ou encore être redirigé automatiquement lorsque certaines actions sont effectuées pour décharger l’utilisateur. 
-Le rôle de toute personne réalisant le frontend est de guider au mieux un utilisateur souhaitant effectuer des actions, parfois basiques, afin d’arriver à des fins particulières. Il nous faut faciliter au plus l’accès à l’information recherchée. 
+<!-- I)	Objectifs généraux --> 
+L'interface utilisateur de l'application, dont l'implémentation est appelée *frontend*, est la partie visible et interactive de celle-ci. Elle a pour objectif d'optimiser l'expérience des utilisateurs en leur fournissant un accès intuitif aux données fournies par l'API. Nous avons essayé de rendre la navigation intuitive et interactive, avec de nombreux éléments graphiques (cartes et graphiques interactifs, tableaux récapitulatifs). Nous détaillons dans la suite les choix de conception concernant le *frontend*.
+
+#### Streamlit  
+
+L'outil utilisé pour développer le *frontend* a été Streamlit. Il fournit des commandes et des composants d'interfaces adaptés à nos besoins. Il permet également la mise en place d'un système de gestion des requêtes fournis dans le template du projet. Ainsi, les requêtes se font via la commande « api_client.x(y) » où x est la méthode et y l'adresse du endpoint. 
+De plus, Streamlit se concentre uniquement sur l’interface graphique (envoi de requêtes et mise en forme des réponses), ce qui permet de respecter la « séparation des préoccupations » (« separation of concerns ») faisant partie des bonnes pratiques de programmation. <!-- De plus, en cas de modification du chemin, seul « api_client » sera a changer et il n’y aura pas à modifier toutes les pages individuellement. Cela respecte le principe DRY (« Don’t Repeat yourself ») faisant également partie des bonnes pratiques.  -->
+<!-- Ce choix se justifie de la manière suivante ; c’est le plus efficace dans sa mise en place permettant de valide rapidement la communication sans complexité excessive. Ensuite, c’est un atout lors du débogage de notre code puisque chaque requête est indépendante et contient toutes les informations nécessaires pour être testée de manière isolée.  -->
+<!-- Cela passe par la transformation d’un ensemble de fonctionnalités complexes ; appel de fonctions particulières via une syntaxe précise, en un système intelligible par un utilisateur souvent étranger à la programmation. Ce « système intelligible » repose sur des mécanismes de compréhension simples ; cliquer sur un bouton, visualiser les zones de textes à compléter, ou encore être redirigé automatiquement lorsque certaines actions sont effectuées pour décharger l’utilisateur. 
+Le rôle de toute personne réalisant le frontend est de guider au mieux un utilisateur souhaitant effectuer des actions, parfois basiques, afin d’arriver à des fins particulières. Il nous faut faciliter au plus l’accès à l’information recherchée.
 
 Ainsi, dans le cadre de notre projet, les objectifs associés à la partie frontend résident dans le cahier des charges suivant : 
 -	Permettre à l’utilisateur de créer aisément son compte, de s’y connecter, et de pouvoir le modifier à tout moment (identifiant et mot de passe). 
@@ -164,59 +167,55 @@ Ainsi, dans le cadre de notre projet, les objectifs associés à la partie front
 -	Lui permettre de choisir une station précise pour avoir des informations sur celle-ci
 -	Montrer toutes les informations relatives à une station de manière fixée (informations en direct), ou sur une période (journalière, hebdomadaire, ou mensuel). Dans le cas des informations temporelles, sera affichée un graphique récapitulant l’évolution des variables considérées ; les emplacements libres et les vélos disponibles. 
 -	Donner la possibilité à un utilisateur d’ajouter des stations en favoris afin qu’elles apparaissent sur son profil, lui permettant alors d’avoir accès aux informations relatives à ces stations plus rapidement. 
--	Proposer une section dédiée aux administrateurs afin qu’ils puissent X
+-	Proposer une section dédiée aux administrateurs afin qu’ils puissent X -->
 
-II)	Justification des choix de modélisation retenus 
-a.	Pages 
+#### Connexion et gestion de compte  
 
-A propos du choix de la page d’accueil ; étant donné que les comptes créés sont stockés dans une table, il est pertinent d’avoir en tant qu’accueil la page associée à la connexion. La création de compte ne se fait qu’une fois par personne là où la connexion se fait à chaque visite, la page par défaut a été alors défini comme étant celle pour se connecter. Ainsi, les utilisateurs n’ayant pas déjà un compte sont invités à changer de page, se créé un compte, puis revenir sur la page de connexion. 
+Les utilisateurs doivent se connecter à l'application pour accéder aux différentes pages. La création de compte ne se faisant qu'une seule fois, il est donc naturel choisir la page de connexion comme page d'accueil. Ainsi, les utilisateurs n’ayant pas déjà un compte sont invités à changer de page, se créé un compte, puis revenir sur la page de connexion.  
 
-Pour ce qui est de l’affichage des droits d’administrateurs, la maquette du frontend réalisée plus tôt suggérait de les incorporer sur la page de compte et ne les afficher que si l’utilisateur était un administrateur. Ce projet a été écarté pour plusieurs raisons ; tout d’abord, cela permet de gagner en clarté lors de l’usage de l’application avec une séparation claire des tâches. Une page trop chargée perd en efficacité et peut perdre l’utilisateur. Ensuite, cela permet de limiter le risque d’erreur lorsqu’on manipule les informations de notre compte, et ainsi éviter de cliquer sur un bouton qui pourrait par exemple supprimer un utilisateur de manière maladroite. 
+Des choix élémentaires ont été faits au sujet des fonctionnalités de création d’un compte et de connexion. L'utilisateur est amené à rentrer manuellement son identifiant et le mot de passe souhaité. Un bouton cliquable permet de faire le lien avec la base de données pour enregistrer le compte ou vérifier l'authentification. Afin que l'utilisateur puisse naviguer entre les pages sans perdre son accréditation, Streamlit propose un outil, nommé « session_state », permettant de conserver des informations lors d'un changement de page (notamment son *token* d'accès). Il est alors possible pour les utilisateurs d’interagir avec les boutons pour être redirigé vers d'autres pages sans avoir de problèmes d’accès. Lors de la déconnexion, les informations contenus dans « session_state » sont supprimées. 
 
-De la même manière, initialement la page actuelle « suggestion » n’était pas prévue. Les informations de suggestion devaient figurer sur la page « Stations » qui s’appelle désormais « Informations sur les stations ». Il a été remarqué qu’afficher une page avec autant d’informations pourrait la ralentir via une quantité élevée de requêtes. Cela produirait également une page lourde en information et peu ergonomique. Avoir une page de suggestion autonome permet également de mettre en avant l’information recherchée par un utilisateur. 
-Bien qu’on puisse également envisagée que multiplier le nombre de page pourrait ralentir la navigation de l’utilisation ou le perdre, ce choix de séparer les pages semblait être le plus judicieux en pratique. 
+L'application permet également, via la page « Mon compte », de modifier les informations saisies lors de la création du compte par un système de zones de saisie. La saisie est la manière la plus appropriée pour laisser le choix de l'identifiant et du mot de passe à l'utilisateur. Streamlit permet notamment, via un paramètre « type="password" », de masquer les caractères saisis dans un champ de formulaire sensible.
 
+Initialement, nous avions pensé à ne proposer qu'une page de gestion de compte. Celle-ci aurait permis aux utilisateurs de modifier leur profil, et aux administrateurs de pouvoir également accéder à la gestion des comptes des autres utilisateurs. Cependant, la page des administrateurs auraient pu prêter à confusion entre modification d'un compte utilisateur ou modification de leur propre compte. Nous avons finalement décidé de séparer la gestion des comptes en deux pages distinctes : une page pour gérer son propre son compte, et une page accessible uniquement aux administrateurs. Cela permet une séparation claire des tâches et une navigation facilité pour les administrateurs. <!--Pour ce qui est de l'affichage des droits d'administrateurs, la maquette du frontend réalisée plus tôt suggérait de les incorporer sur la page de compte et ne les afficher que si l’utilisateur était un administrateur. Ce projet a été écarté pour plusieurs raisons ; tout d’abord, cela permet de gagner en clarté lors de l’usage de l’application avec une séparation claire des tâches. Une page trop chargée perd en efficacité et peut perdre l’utilisateur. Ensuite, cela permet de limiter le risque d’erreur lorsqu’on manipule les informations de notre compte, et ainsi éviter de cliquer sur un bouton qui pourrait par exemple supprimer un utilisateur de manière maladroite. -->
+
+
+<!--Bien qu’on puisse également envisagée que multiplier le nombre de page pourrait ralentir la navigation de l’utilisation ou le perdre, ce choix de séparer les pages semblait être le plus judicieux en pratique. -->
+
+
+
+<!-- b.	Fonctionnalités de base 
+Nous envisagerons ici les différentes fonctionnalités qui ont été considérés, les problématiques associées, et les décisions qui ont été prises. 
+Des fonctionnalités transversales ont été implémentés sur les différentes pages du frontend, à savoir ; (logger, redirections, tout ça) -->
+
+#### Informations sur les stations
+
+Plusieurs pages permettent d'accéder aux informations des stations fournies par l'application. Initialement la page de suggestions des stations n’était pas prévue. Les suggestions devaient apparaître directement dans la page «Informations sur les stations». Cependant, cette page aurait nécessité un grand nombre de requêtes au *backend*, ce qui aurait pu ralentir son chargement. Cela aurait également produit une page lourde en informations et peu ergonomique. Avoir une page de suggestions autonome permet également de facilité la navigation de l'utilisateur. 
+
+La page contenant les informations des stations a nécessité la mise en place de plusieurs outils graphiques complexes, notamment des cartes et tableau interactifs, ainsi que des graphiques d'historique. Concernant l'affichage, il était initialement prévu pour être vertical, mais cela ne s’est pas révélée être satisfaisant puisque les contenus de la page « Information des stations » est complémentaire. Nous avons donc retenu un affichage horizontal des composant, permettant d’avoir accès simultanément aux cartes, et au tableau récapitulant des informations complémentaires.  
+
+### 
+Pouvoir permettre à un utilisateur d’ajouter des stations en tant que favorites fait partie des fonctionnalités principales de l’applications. La mise en pratique de cette fonctionnalité fût plus complexe qu’initialement envisagé, notamment via des questionnements sur la nature des endpoints associées et la manière dont l’information allait être conservée. Il a également été question de la manière dont les favoris allaient être enregistré ; la première solution envisagée consistait à associer chaque ligne de notre dataframe a un bouton particulier qui, une fois cliqué, ajouterait la station en favori. La solution retenue réside dans la possibilité de cocher ou décocher un ensemble de stations puis, d’un seul clic, d’enregistrer toutes les modifications. Les avantages de cette solution sont, tout d’abord, un nombre bien moindre de requêtes effectuées, une visualisation bien meilleure pour l’utilisateur des stations qu’il a ou non en favori, et une page moins chargée visuellement. 
+L’affichage vertical initialement pensé ne s’est pas révélée être satisfaisant puisque le contenu de la page « Information des stations » est complémentaire. Nous avons donc retenu un affichage plutôt horizontal permettant d’avoir accès simultanément aux cartes, et au tableau récapitulant les différentes informations.  
 Pourquoi avoir géré les query de cette manière ? 
 
-b.	Fonctionnalités de base 
-Nous envisagerons ici les différentes fonctionnalités qui ont été considérés, les problématiques associées, et les décisions qui ont été prises. 
-Des fonctionnalités transversales ont été implémentés sur les différentes pages du frontend, à savoir ; (logger, redirections, tout ça) 
-i.	Création et gestion de son compte
-Des choix plutôt élémentaires ont été fait au sujet des fonctionnalités de création d’un compte et de connexion à celui-ci. L’utilisateur est amené à rentrer manuellement son identifiant et le mot de passe souhaité, puis un bouton cliquable permet de faire le lien avec la base de données pour enregistrer le compte. 
 
-L’application permet également, via la page « Mon compte », de modifier les informations saisies lors de la création du compte par un système de zone de saisie. La saisie est la manière la plus appropriée pour laisser le choix de l’identifiant et du mot de passe à l’utilisateur. Le paramètre « type="password" » permet de masquer les caractères saisis, ce qui est cohérent avec le fait d’insérer un mot de passe supposé privé. 
-
-ii.	Conservation de l’identification 
-
-Au sein de la page d’accueil (« Se connecter »), il y a les mêmes possibilités que sur la page de création de compte complétées par une fonctionnalité d’authentification. Sur Streamlit, la meilleure manière de conserver des informations sur un site multipage est via l’utilisation de « session_state ». Il est alors possible pour les utilisateurs d’interagir avec les boutons, de changer de pages (manuellement ou en étant redirigé) sans avoir de problèmes d’accès car les pages sont réservées aux utilisateurs connectés. Les informations conservées étant : les informations d’un utilisateur ainsi que son token d’authentification. 
-
-Lors de la déconnexion, ces informations sont supprimées. 
-
-
-iii.	Récupération des données 
-La liaison entre le backend et le frontend s’opère via les opérations « api_client.x() » récupérant ainsi l’endpoint associé, et les données. Ce choix se justifie de la manière suivante ; c’est le plus efficace dans sa mise en place permettant de valide rapidement la communication sans complexité excessive. Ensuite, c’est un atout lors du débogage de notre code puisque chaque requête est indépendante et contient toutes les informations nécessaires pour être testée de manière isolée.  
-Le code streamlit se concentre uniquement sur l’interface graphique sans afficher la mécanique du réseau ce qui permet de respecter la « Séparation des préoccupations » (« Separation of Concerns ») faisant partie des bonnes pratiques de programmation. De plus, en cas de modification du chemin, seul « api_client » sera a changer et il n’y aura pas à modifier toutes les pages individuellement. Cela respecte le principe DRY (« Don’t Repeat yourself ») faisant également partie des bonnes pratiques.  
-
-iv.	Afficher les informations des stations 
+<!--iv.	Afficher les informations des stations 
 1.	Carte 
 2.	Tableau 
 3.	Graphiques d’historique 
-v.	Gestion des favoris 
-Pouvoir permettre à un utilisateur d’ajouter des stations en tant que favorites fait partie des fonctionnalités principales de l’applications. La mise en pratique de cette fonctionnalité fût plus complexe qu’initialement envisagé, notamment via des questionnements sur la nature des endpoints associées et la manière dont l’information allait être conservée. Il a également été question de la manière dont les favoris allaient être enregistré ; la première solution envisagée consistait à associer chaque ligne de notre dataframe a un bouton particulier qui, une fois cliqué, ajouterait la station en favori. La solution retenue réside dans la possibilité de cocher ou décocher un ensemble de stations puis, d’un seul clic, d’enregistrer toutes les modifications. Les avantages de cette solution sont, tout d’abord, un nombre bien moindre de requêtes effectuées, une visualisation bien meilleure pour l’utilisateur des stations qu’il a ou non en favori, et une page moins chargée visuellement. 
+v.	Gestion des favoris -->
 
-c.	 Fonctionnalités précises 
+
+<!--c.	 Fonctionnalités précises 
 i.	Changements de page automatiques 
-Dans l’objectif de simplifier les actions l’utilisateur, il a été ajouté à l’application une fonctionnalité de redirection automatique de page en page. Cela se base sur la prévision du parcours classique d’un utilisateur quelconque afin de le guider vers les fonctionnalités qu’il pourrait rechercher. Cette redirection passe par la fonction « switch_page ». 
+Dans l’objectif de simplifier les actions l’utilisateur, il a été ajouté à l’application une fonctionnalité de redirection automatique de page en page. Cela se base sur la prévision du parcours classique d’un utilisateur quelconque afin de le guider vers les fonctionnalités qu’il pourrait rechercher. Cette redirection passe par la fonction « switch_page ».
 ii.	Afficher des messages d’information suite à des actions précises
 Rejoignant la volonté d’améliorer l’expérience utilisateur, il nous est possible d’éclairer l’utilisateur sur la réussite ou non de ses actions via la fonction « success ». Lorsque des pages sont amenées à être rechargées, pour la modification des favoris par exemple, afin que l’utilisateur sache différencier un éventuel bug d’une action normale du site, celui-ci envoie un message informatif quant à l’action précédemment effectuée.  
-iii.	Affichage horizontal 
-L’affichage vertical initialement pensé ne s’est pas révélée être satisfaisant puisque le contenu de la page « Information des stations » est complémentaire. Nous avons donc retenu un affichage plutôt horizontal permettant d’avoir accès simultanément aux cartes, et au tableau récapitulant les différentes informations.  
+iii.	Affichage horizontal -->
 
-III)	Difficultés et regrets 
 
-La réalisation de la partie frontend de l’application a amené plusieurs déceptions au sein du groupe, celles-ci concernaient essentiellement les limites techniques permises par une utilisation exclusive et débutante de Streamlit. Un des objectifs fixés était celui de pouvoir recommander à l’utilisateur la station la plus pertinente vis-à-vis de sa position, ce qui s’est révélé être impossible à mettre en place de façon pertinente. Il n’était pas possible de pouvoir incorporer une carte entièrement interactive à l’application, pour pouvoir rendre la carte cliquable il fallait déterminer à l’avance quels points le seraient. Ne pouvant définir des milliers de points et sachant qu’il paraissait peu concevable de demander à l’utilisateur de rentrer sa longitude et latitude exacte sur l’application avant de lui proposer une station, nous avons abandonné cet objectif. Une autre idée qui avait pu être évoquée était celle de la possibilité de recommander un trajet aux utilisateurs de l’application. Cela a été abandonnée puisqu’il n’y avait pas d’outils directement incorporés dans Streamlit nous permettant de faire cela, il aurait fallu connecter une seconde API à notre application ce qui aurait été à la fois plus complexe et chronophage. 
-
-#### Backend  
+### Backend  
 
 Le *frontend* envoit des requêtes HTTP au *backend*, qui est chargé de traiter ces requêtes et de renvoyer la réponse attendue. Ces requêtes concernent soit la gestion des utilisateurs (création de compte par exemple), soit la gestion des stations de vélos (consultation de la page d'une station par exemple). Le *backend* a été séparé en plusieurs couches.  
 
@@ -224,13 +223,27 @@ Tout d'abord, une couche *controller* reçoit les requêtes fournies par le *fro
 
 La couche *service* est le cœur de l'application, c'est dans cette couche que sont regroupées les fonctions apportant une valeur ajoutée. Il s'agit par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche *service* a besoin de données. Ces services font donc appel à une couche *DAO* (Data Access Object) afin de communiquer avec les bases de données.  
 
-La couche *DAO* reçoit les demandes de données de la part de la couche *service*. Elle est chargée de convertir ces demandes en requêtes SQL. Ces requêtes sont alors traitées par la couche persistante : celle des bases de données. La couche *DAO* a alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet *User* ou *Station*, voir la section correspondante pour plus de détails). Ces objets sont ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus sont transmis à la couche *controller* puis au *frontend* pour affichage à l'utilisateur.  
+La couche *DAO* reçoit les demandes de données de la part de la couche *service*. Elle est chargée de convertir ces demandes en requêtes SQL. Ces requêtes sont alors traitées par la couche persistante : celle des bases de données. La couche *DAO* a alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet *User* ou *Station*, voir la section correspondante pour plus de détails). Ces objets sont ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus sont transmis à la couche *controller* puis au *frontend* pour affichage à l'utilisateur.
 
-#### Couche persistante  
+Les choix de conception du *backend* seront détaillés dans la section [Classes et implémentation du backend](#classes-et-implémentation-du-backend).  
 
-La couche persistante est constituée de bases de données PostgreSQL qu'utilise notre application. Le modèle et les tables de données sont présentés dans la section suivante.    
+### Couche persistante et modèle de données   
 
-#### Gestion de la sécurité de l'application  
+La couche persistante est constituée de bases de données PostgreSQL qu'utilise notre application. Nous avons pour cela dû concevoir un modèle adapté, pérenne et cohérent. Pour nous aider dans cette tâche, nous avons essayé de respecter les trois premières formes normales. Le modèle de données retenu est résumé en @fig-modele_donnees.  
+
+![Diagramme UML du modèle de données](img/diag_modele_donnees.png){#fig-modele_donnees}  
+
+Concernant les utilisateurs, une table ```Users``` est nécessaire. Elle contient les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, rôle (utilisateur ou administrateur). 
+
+Pour les stations, les données à stocker sont les suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date (avec heure). Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des relevés dans une seule table nécessiterait une clé composite (```id_station```, ```date```). Cela créerait plusieurs problèmes :  
+- l'attribut ```name_station``` serait en dépendance fonctionnelle avec ```id_station``` et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
+- les attributs de coordonnées géographiques ```lon``` et ```lat``` seraient en dépendance fonctionnelle avec ```name_station``` (contradiction avec le principe de la troisième forme normale).  
+
+Pour respecter les trois formes normales, le projet nécessite donc deux tables. La première sera la relation ```Stations```. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom, ses coordonnées géographiques, le nombre d'emplacement (attribut ```capacity```). La seconde sera la relation ```StationRecords```, qui stockera les données de disponibilités des stations. Ses attributs seront les suivants : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (```date```), l'état de fonctionnement (```status```), le nombre d'emplacements libres de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).    
+
+Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association ```Favorites``` qui permettra de lier un utilisateur à ses stations favorites.       
+
+### Gestion de la sécurité de l'application  
 
 Bien que secondaire par rapport aux fonctionnalités de l'application, la sécurité reste un enjeu important. Nous avons identifié plusieurs risques, auxquels nous avons apporté des réponses plus ou moins complètes.
 
@@ -264,23 +277,9 @@ Les administrateurs sont des utilisateurs de la table ```Users``` dont l'attribu
 
 En revanche, seul le premier administrateur, défini comme l'administrateur ayant le plus petit identifiant, peut attribuer ou retirer les droits administrateur. Cela évite une propagation incontrôlée des droits et empêche un administrateur de retirer ceux des autres. Ce premier administrateur est lui-même protégé : il ne peut ni perdre ses droits, ni voir son profil modifié ou son compte supprimé par un autre administrateur.
 
-### Modèle de données  
 
-Afin que le modèle de données soit cohérent et pérenne, nous avons veillé à respecter les trois premières formes normales. Le modèle de données retenu est résumé en @fig-modele_donnees. Les raisons ayant amené à ce choix sont expliquées ci-dessous.  
 
-![Diagramme UML du modèle de données](img/diag_modele_donnees.png){#fig-modele_donnees}  
-
-Concernant les utilisateurs, une table ```Users``` est nécessaire. Elle contient les données des utilisateurs : identifiant, pseudonyme de l'utilisateur, mot de passe hashé, rôle (utilisateur ou administrateur). 
-
-Pour les stations, les données à stocker sont les suivantes : identifiant et nom de la station, coordonnées géographiques, état de la station, nombre d'emplacements, nombre d'emplacements libres, nombre de vélos disponibles (potentiellement électriques), date (avec heure). Le stockage des données au cours du temps nécessite d'être attentif aux formes normales. En effet, un stockage naïf des relevés dans une seule table nécessiterait une clé composite (```id_station```, ```date```). Cela créerait plusieurs problèmes :  
-- l'attribut ```name_station``` serait en dépendance fonctionnelle avec ```id_station``` et donc avec seulement une partie de la clé primaire (contradiction avec le principe de la deuxième forme normale) ;  
-- les attributs de coordonnées géographiques ```lon``` et ```lat``` seraient en dépendance fonctionnelle avec ```name_station``` (contradiction avec le principe de la troisième forme normale).  
-
-Pour respecter les trois formes normales, le projet nécessite donc deux tables. La première sera la relation ```Stations```. Ses attributs stockeront les données concernant les stations elles-mêmes : l'identifiant de la station (clé primaire), son nom, ses coordonnées géographiques, le nombre d'emplacement (attribut ```capacity```). La seconde sera la relation ```StationRecords```, qui stockera les données de disponibilités des stations. Ses attributs seront les suivants : l'identifiant de la station (attribut ```id_station```), date et heure de l'enregistrement (```date```), l'état de fonctionnement (```status```), le nombre d'emplacements libres de la station (```nb_available_spaces```), le nombre de vélos disponibles (```nb_available_bikes```) et le nombre de vélos électriques disponibles(```nb_available_ebikes```).    
-
-Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association ```Favorites``` qui permettra de lier un utilisateur à ses stations favorites.    
-
-### Classes et implémentations  
+### Classes et implémentation du backend  
 
 #### Généralités  
 
@@ -358,10 +357,6 @@ Enfin la méthode `compute_distance` calcule la distance entre deux points en ut
 
 La nécessité d'une table de liaison ```Favorites``` dans la base de données nous a amené à implémenter une classe ```Favorite``` dont les attributs sont un identifiant station et un identifiant utilisateur. Les classes associées (controller, services et DAO) sont essentiellement techniques et permettent à l'utilisateur d'ajouter et de supprimer ses stations favorites dans la base de données.  
 
-#### Schémas  
-
-Afin de gérer facilement l'échange de données entre backend au frontend, nous avons utilisés des schémas avec la librairie *Pydantic*. Ces schémas permettent de gérer le format attendu lors d'une requête ou d'un réponse afin de ne pas compromettre l'intégrité du sytème.  
-
 ### Description des endpoints  
 
 Les tableaux suivants décrivent les différents endpoints de l'application.  
@@ -434,12 +429,23 @@ Certaines fonctions ont été modifiées afin de permettre d'être testées plus
 
 ### Déroulement du projet et pistes d'améliorations  
 
+#### Organisation  
+
 Le calendrier prévisionnel est donné ci-dessous par le diagramme de Gantt en @fig-diag_gantt.  
 
 ![Diagramme de Gantt](img/diag_gantt.png){#fig-diag_gantt width="92%"}  
 
 Ce calendrier a été respecté durant la majeur partie du développement. Cependant, un léger retard de la rédaction du rapport et une accumulation de contraintes scolaires autour de la semaine des vacances d'Octobre nous a amené à précipiter la fin du projet et à ne pas peaufiner le code autant que nous l'aurions souhaité. Par exemple, les appels aux endpoints Favorite ne vérifient pas le *token* de l'utilisateur. De plus, nous n'avons pas pu mettre en place toutes les sécurités souhaitées. Ainsi, nous avons dû nous contenter, pour certaines parties du code, de la déconnexion lors d'un rafraichissement de la page ou lors de l'entrée d'une nouvelle URL.
 
+#### Pistes d'améliorations  
+
+Point de vue métier :
+prédiction
+Statistiquement, cela ne permet pas de prendre en compte la dispersion aléatoire. De plus, la collecte de données via l'API externe semble parfois posséder des anomalies. Nous avons en effet remarqué que certaines stations peuvent être considérée comme non-installée lors d'une collecte de données, alors que la précédente et la suivante sont normales. Il donnerait donc une estimation biaisée par rapport à la réalité. Une piste d'amélioration de notre application serait de prendre la moyenne de tous les enregistrements sur une plage de 20 min autour de l'heure cible des jours ciblés afin de limiter l'impact de ce problème.  
+
+
+Frontend : 
+La réalisation de la partie frontend de l’application a amené plusieurs déceptions au sein du groupe, celles-ci concernaient essentiellement les limites techniques permises par une utilisation exclusive et débutante de Streamlit. Un des objectifs fixés était celui de pouvoir recommander à l’utilisateur la station la plus pertinente vis-à-vis de sa position, ce qui s’est révélé être impossible à mettre en place de façon pertinente. Il n’était pas possible de pouvoir incorporer une carte entièrement interactive à l’application, pour pouvoir rendre la carte cliquable il fallait déterminer à l’avance quels points le seraient. Ne pouvant définir des milliers de points et sachant qu’il paraissait peu concevable de demander à l’utilisateur de rentrer sa longitude et latitude exacte sur l’application avant de lui proposer une station, nous avons abandonné cet objectif. Une autre idée qui avait pu être évoquée était celle de la possibilité de recommander un trajet aux utilisateurs de l’application. Cela a été abandonnée puisqu’il n’y avait pas d’outils directement incorporés dans Streamlit nous permettant de faire cela, il aurait fallu connecter une seconde API à notre application ce qui aurait été à la fois plus complexe et chronophage. 
 
 {{< pagebreak >}}
 
