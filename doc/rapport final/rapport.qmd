@@ -308,7 +308,7 @@ Les droits sont ainsi répartis en trois niveaux. Un utilisateur connecté peut 
 
 Le diagramme de classes des utilisateurs est présenté en @fig-classes-users.  
 
-![Diagramme de classes lié aux utilisateurs](img/diag_classes_users.png){#fig-classes-users}   
+![Diagramme de classes des utilisateurs](img/diag_classes_users.png){#fig-classes-users}   
 
 #### Classes liées aux stations   
 
@@ -316,15 +316,15 @@ La classe modèle ```Station``` est la brique pour de nombreuses fonctionnalité
 
 La partie DAO de la classe possède, quant à elle, les méthodes ```create``` et ```update``` qui permettent de créer et mettre à jour la base de données des stations. Cette mise à jour est effectuée à partir des données collectées via l'API externe. Ces méthodes sont appelées par une autre partie du programme, dont nous détaillons l'implémentation dans le paragraphe suivant.  
 
-Le diagramme de classes pour les stations est présenté en @fig-classes-stations et @fig-classes-record.  
+Le diagramme de classes pour les stations est présenté en @fig-classes-stations.  
 
-![Diagramme de classes lié aux stations](img/diag_classes_stations.png){#fig-classes-stations width="97%"}   
-
-![Diagramme de classes lié aux enregistrements](img/diag_classes_record.png){#fig-classes-record width="40%"}   
+![Diagramme de classes des stations](img/diag_classes_stations.png){#fig-classes-stations width="97%"}   
 
 #### Classes liées à la collecte de données liées aux stations  
 
-Les classes liées à la collecte constituent une pierre angulaire de l'application : ce sont elles qui alimentent la base de données à partir de l'API externe présentée dans le cahier des charges. Il s'agit de ```CollectService```, qui orchestre la collecte, de ```GbfsDao```, qui interroge l'API externe, et des classes ```StationDao``` et ```StationRecordDao```, qui enregistrent en base les objets ```Station``` et ```StationRecord```. Contrairement aux autres fonctionnalités, la collecte n'est pas déclenchée par une requête du frontend : elle est lancée par un script indépendant, ```collector.py```, qui la répète toutes les cinq minutes tant qu'il est en fonctionnement.  
+Les classes liées à la collecte constituent une pierre angulaire de l'application : ce sont elles qui alimentent la base de données à partir de l'API externe présentée dans le cahier des charges. Il s'agit de ```CollectService```, qui orchestre la collecte, de ```GbfsDao```, qui interroge l'API externe, et des classes ```StationDao``` et ```StationRecordDao```, qui enregistrent en base les objets ```Station``` et ```StationRecord```. Contrairement aux autres fonctionnalités, la collecte n'est pas déclenchée par une requête du frontend : elle est lancée par un script indépendant, ```collector.py```, qui la répète toutes les cinq minutes tant qu'il est en fonctionnement. Le diagramme de classe implémenté, que nous détaillons dans la suite, est présenté en @fig-classes-record.  
+
+![Diagramme de classes de la collecte de données](img/diag_classes_record.png){#fig-classes-record width="80%"}    
 
 **L'accès à l'API externe.** La classe `GbfsDao` récupère les deux fichiers JSON que nous avons décrits dans le cahier des charges (`station_information.json` et `station_status.json`). Bien qu'elle n'exécute aucune requête SQL, elle appartient à la couche DAO : son rôle est le même que celui des autres DAO, à savoir fournir des données à la couche service, qui n'a pas à savoir si elles proviennent d'une API ou de la base PostgreSQL.  
 
@@ -342,7 +342,7 @@ Les classes liées à la collecte constituent une pierre angulaire de l'applicat
 
 Les classes liées au traitement de données correspondent à la valeur ajoutée de l'application par rapport aux données récoltées sur l'API externe. Ces classes sont ```CalculationService``` et ```SuggestionService``` et correspondent respectivement à l'ensemble des méthodes de calcul de statistiques et de scores de fiabilité concernant la station demandée et les méthodes de recommandation d'une station. La @fig-classes-traitement présente le diagramme de classes retenu.  
 
-![Diagramme de classes lié au traitement des données](img/diag_classes_traitement.png){#fig-classes-traitement width="40%"}   
+![Diagramme de classes du traitement des données](img/diag_classes_traitement.png){#fig-classes-traitement width="100%"}   
 
 La séparation en deux classes plutôt qu'une seule classe regroupant tous les calculs repose sur trois arguments. Le premier argument est que chacune donne une signification différente à l'attribut `Station`. Les deux classes reçoivent une `Station`, mais avec un rôle distinct. Dans `CalculationService`, elle désigne la station dont on veut obtenir des statistiques. Dans `SuggestionService`, elle représente la position présumée de l'utilisateur et traduit un besoin réel de sa part.  
 
@@ -362,7 +362,9 @@ L'implémentation de ces classes pourrait être nettement améliorée. En effet,
 
 La nécessité d'une table de liaison ```Favorites``` dans la base de données nous a amenés à implémenter une classe ```Favorite``` dont les attributs sont un identifiant station et un identifiant utilisateur. Les classes associées (controller, service et DAO) sont essentiellement techniques et permettent à l'utilisateur d'ajouter et de supprimer ses stations favorites dans la base de données. La @fig-classes-favorite présente le diagramme de classes associé à ces classes.  
 
-![Diagramme de classes lié aux stations favorites](img/diag_classes_favorite.png){#fig-classes-favorite}   
+![Diagramme de classes des stations favorites](img/diag_classes_favorite.png){#fig-classes-favorite}   
+
+La classe FavoriteController possède notamment la méthode `favorite_by_token`, qui permet de renvoyer la liste des stations favorites d'un utilisateur connecté en utilisant son token.  
 
 ### Description des endpoints  
 
@@ -481,10 +483,12 @@ Ce projet a été pour nous riche en apprentissages et en développement de comp
 *Fonctionnalités optionnelles implémentée*  
 - FO1 : Prévision de disponibilité. À partir de l’historique, tenter d’estimer la probabilité qu’une station soit vide ou saturée dans les prochaines heures. Il est possible de commencer avec un modèle statistique très simple avant d’utiliser une approche plus avancée.  
 
+{{< pagebreak >}} 
+
 ### Retour d'expérience : Méline BONAVERO  
 
 
-
+{{< pagebreak >}} 
 ### Retour d'expérience : Eddy BOYCE  
 
 Durant ce projet, j'ai endossé le rôle de chef de projet. Ce choix a été naturel puisque j'avais l'habitude de gérer des projets de par mon expérience professionnelle antérieure. Ce rôle a été particulièrement agréable à gérer puisque mes camarades étaient réactifs aux demandes. L'entente du groupe a été bonne et a permis d'avancer régulièrement sur le projet dans une ambiance sereine.  
@@ -495,14 +499,16 @@ J'ai ensuite participé à l'implémentation de certaines parties (gestion des u
 
 Ce rôle a donc été pour moi un plaisir double. Celui de la gestion de l'humain avec une équipe motivée et facile à encadrer d'une part. Celui d'assouvir ma curiosité en découvrant de nombreux aspects techniques et en relevant des défis informatiques d'autre part.  
 
+{{< pagebreak >}} 
 ### Retour d'expérience : Eliot CHATONNIER  
 
 
 
+{{< pagebreak >}} 
 ### Retour d'expérience : Samuel LEJARS  
 
 
-
+{{< pagebreak >}} 
 ### Retour d'expérience : Alix MOINERAUD--DOUCET
 
 

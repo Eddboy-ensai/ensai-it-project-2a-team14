@@ -42,7 +42,6 @@ async def add_favorite(favorite: FavoriteAddModel, favorite_service=Depends(get_
     return favorite
 
 
-# à retravailler : quel argument ? quelles vérifications ? Similaire à delete un joueur ?
 @router.delete("/{id_user}", tags=["Favorites"])
 async def delete_favorite(
     id_user: int, body: FavoriteDeleteModel, favorite_service=Depends(get_favorite_service)
