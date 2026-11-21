@@ -154,13 +154,67 @@ L'application sera constituée de plusieurs couches afin de respecter le princip
 
 Place pour Alix 
 
-Le *frontend* correspond à l'interface homme-machine. L'interface de l'application se voudra simple et fonctionnelle : elle se présentera sous la forme d'une page Web. Un menu à gauche permettra à l'utilisateur de sélectionner la fonctionnalité qu'il souhaite. Les différentes fonctionnalités disponibles porteront les noms suivants :  
-- rechercher une station,  
-- mes stations favorites,  
-- recommandation de station,  
-- gérer les comptes utilisateurs (n'apparaîtra que pour les administrateurs).  
+I)	Objectifs généraux 
+L’interface utilisateur de l’application, qui sera ici appelée sous le nom de « frontend », est la partie visible et interactive de celle-ci. Elle a pour objectif d’améliorer l’expérience des utilisateurs. Cela passe par la transformation d’un ensemble de fonctionnalités complexes ; appel de fonctions particulières via une syntaxe précise, en un système intelligible par un utilisateur souvent étranger à la programmation. Ce « système intelligible » repose sur des mécanismes de compréhension simples ; cliquer sur un bouton, visualiser les zones de textes à compléter, ou encore être redirigé automatiquement lorsque certaines actions sont effectuées pour décharger l’utilisateur. 
+Le rôle de toute personne réalisant le frontend est de guider au mieux un utilisateur souhaitant effectuer des actions, parfois basiques, afin d’arriver à des fins particulières. Il nous faut faciliter au plus l’accès à l’information recherchée. 
 
-La gestion des stations favorites se fera de la manière suivante : l'utilisateur pourra ajouter de nouvelles stations lors de la consultation de la page d'une station. Il pourra ensuite consulter ses stations favorites ou les supprimer dans l'onglet «mes stations favorites».  
+Ainsi, dans le cadre de notre projet, les objectifs associés à la partie frontend résident dans le cahier des charges suivant : 
+-	Permettre à l’utilisateur de créer aisément son compte, de s’y connecter, et de pouvoir le modifier à tout moment (identifiant et mot de passe). 
+-	Une fois connecté, lui montrer des informations globales sur toutes les stations parmi lesquelles on retrouve : une carte avec la localisation de chaque station rennaise, et un tableau récapitulant toutes les stations  
+-	Lui permettre de choisir une station précise pour avoir des informations sur celle-ci
+-	Montrer toutes les informations relatives à une station de manière fixée (informations en direct), ou sur une période (journalière, hebdomadaire, ou mensuel). Dans le cas des informations temporelles, sera affichée un graphique récapitulant l’évolution des variables considérées ; les emplacements libres et les vélos disponibles. 
+-	Donner la possibilité à un utilisateur d’ajouter des stations en favoris afin qu’elles apparaissent sur son profil, lui permettant alors d’avoir accès aux informations relatives à ces stations plus rapidement. 
+-	Proposer une section dédiée aux administrateurs afin qu’ils puissent X
+
+II)	Justification des choix de modélisation retenus 
+a.	Pages 
+
+A propos du choix de la page d’accueil ; étant donné que les comptes créés sont stockés dans une table, il est pertinent d’avoir en tant qu’accueil la page associée à la connexion. La création de compte ne se fait qu’une fois par personne là où la connexion se fait à chaque visite, la page par défaut a été alors défini comme étant celle pour se connecter. Ainsi, les utilisateurs n’ayant pas déjà un compte sont invités à changer de page, se créé un compte, puis revenir sur la page de connexion. 
+
+Pour ce qui est de l’affichage des droits d’administrateurs, la maquette du frontend réalisée plus tôt suggérait de les incorporer sur la page de compte et ne les afficher que si l’utilisateur était un administrateur. Ce projet a été écarté pour plusieurs raisons ; tout d’abord, cela permet de gagner en clarté lors de l’usage de l’application avec une séparation claire des tâches. Une page trop chargée perd en efficacité et peut perdre l’utilisateur. Ensuite, cela permet de limiter le risque d’erreur lorsqu’on manipule les informations de notre compte, et ainsi éviter de cliquer sur un bouton qui pourrait par exemple supprimer un utilisateur de manière maladroite. 
+
+De la même manière, initialement la page actuelle « suggestion » n’était pas prévue. Les informations de suggestion devaient figurer sur la page « Stations » qui s’appelle désormais « Informations sur les stations ». Il a été remarqué qu’afficher une page avec autant d’informations pourrait la ralentir via une quantité élevée de requêtes. Cela produirait également une page lourde en information et peu ergonomique. Avoir une page de suggestion autonome permet également de mettre en avant l’information recherchée par un utilisateur. 
+Bien qu’on puisse également envisagée que multiplier le nombre de page pourrait ralentir la navigation de l’utilisation ou le perdre, ce choix de séparer les pages semblait être le plus judicieux en pratique. 
+
+Pourquoi avoir géré les query de cette manière ? 
+
+b.	Fonctionnalités de base 
+Nous envisagerons ici les différentes fonctionnalités qui ont été considérés, les problématiques associées, et les décisions qui ont été prises. 
+Des fonctionnalités transversales ont été implémentés sur les différentes pages du frontend, à savoir ; (logger, redirections, tout ça) 
+i.	Création et gestion de son compte
+Des choix plutôt élémentaires ont été fait au sujet des fonctionnalités de création d’un compte et de connexion à celui-ci. L’utilisateur est amené à rentrer manuellement son identifiant et le mot de passe souhaité, puis un bouton cliquable permet de faire le lien avec la base de données pour enregistrer le compte. 
+
+L’application permet également, via la page « Mon compte », de modifier les informations saisies lors de la création du compte par un système de zone de saisie. La saisie est la manière la plus appropriée pour laisser le choix de l’identifiant et du mot de passe à l’utilisateur. Le paramètre « type="password" » permet de masquer les caractères saisis, ce qui est cohérent avec le fait d’insérer un mot de passe supposé privé. 
+
+ii.	Conservation de l’identification 
+
+Au sein de la page d’accueil (« Se connecter »), il y a les mêmes possibilités que sur la page de création de compte complétées par une fonctionnalité d’authentification. Sur Streamlit, la meilleure manière de conserver des informations sur un site multipage est via l’utilisation de « session_state ». Il est alors possible pour les utilisateurs d’interagir avec les boutons, de changer de pages (manuellement ou en étant redirigé) sans avoir de problèmes d’accès car les pages sont réservées aux utilisateurs connectés. Les informations conservées étant : les informations d’un utilisateur ainsi que son token d’authentification. 
+
+Lors de la déconnexion, ces informations sont supprimées. 
+
+
+iii.	Récupération des données 
+La liaison entre le backend et le frontend s’opère via les opérations « api_client.x() » récupérant ainsi l’endpoint associé, et les données. Ce choix se justifie de la manière suivante ; c’est le plus efficace dans sa mise en place permettant de valide rapidement la communication sans complexité excessive. Ensuite, c’est un atout lors du débogage de notre code puisque chaque requête est indépendante et contient toutes les informations nécessaires pour être testée de manière isolée.  
+Le code streamlit se concentre uniquement sur l’interface graphique sans afficher la mécanique du réseau ce qui permet de respecter la « Séparation des préoccupations » (« Separation of Concerns ») faisant partie des bonnes pratiques de programmation. De plus, en cas de modification du chemin, seul « api_client » sera a changer et il n’y aura pas à modifier toutes les pages individuellement. Cela respecte le principe DRY (« Don’t Repeat yourself ») faisant également partie des bonnes pratiques.  
+
+iv.	Afficher les informations des stations 
+1.	Carte 
+2.	Tableau 
+3.	Graphiques d’historique 
+v.	Gestion des favoris 
+Pouvoir permettre à un utilisateur d’ajouter des stations en tant que favorites fait partie des fonctionnalités principales de l’applications. La mise en pratique de cette fonctionnalité fût plus complexe qu’initialement envisagé, notamment via des questionnements sur la nature des endpoints associées et la manière dont l’information allait être conservée. Il a également été question de la manière dont les favoris allaient être enregistré ; la première solution envisagée consistait à associer chaque ligne de notre dataframe a un bouton particulier qui, une fois cliqué, ajouterait la station en favori. La solution retenue réside dans la possibilité de cocher ou décocher un ensemble de stations puis, d’un seul clic, d’enregistrer toutes les modifications. Les avantages de cette solution sont, tout d’abord, un nombre bien moindre de requêtes effectuées, une visualisation bien meilleure pour l’utilisateur des stations qu’il a ou non en favori, et une page moins chargée visuellement. 
+
+c.	 Fonctionnalités précises 
+i.	Changements de page automatiques 
+Dans l’objectif de simplifier les actions l’utilisateur, il a été ajouté à l’application une fonctionnalité de redirection automatique de page en page. Cela se base sur la prévision du parcours classique d’un utilisateur quelconque afin de le guider vers les fonctionnalités qu’il pourrait rechercher. Cette redirection passe par la fonction « switch_page ». 
+ii.	Afficher des messages d’information suite à des actions précises
+Rejoignant la volonté d’améliorer l’expérience utilisateur, il nous est possible d’éclairer l’utilisateur sur la réussite ou non de ses actions via la fonction « success ». Lorsque des pages sont amenées à être rechargées, pour la modification des favoris par exemple, afin que l’utilisateur sache différencier un éventuel bug d’une action normale du site, celui-ci envoie un message informatif quant à l’action précédemment effectuée.  
+iii.	Affichage horizontal 
+L’affichage vertical initialement pensé ne s’est pas révélée être satisfaisant puisque le contenu de la page « Information des stations » est complémentaire. Nous avons donc retenu un affichage plutôt horizontal permettant d’avoir accès simultanément aux cartes, et au tableau récapitulant les différentes informations.  
+
+III)	Difficultés et regrets 
+
+La réalisation de la partie frontend de l’application a amené plusieurs déceptions au sein du groupe, celles-ci concernaient essentiellement les limites techniques permises par une utilisation exclusive et débutante de Streamlit. Un des objectifs fixés était celui de pouvoir recommander à l’utilisateur la station la plus pertinente vis-à-vis de sa position, ce qui s’est révélé être impossible à mettre en place de façon pertinente. Il n’était pas possible de pouvoir incorporer une carte entièrement interactive à l’application, pour pouvoir rendre la carte cliquable il fallait déterminer à l’avance quels points le seraient. Ne pouvant définir des milliers de points et sachant qu’il paraissait peu concevable de demander à l’utilisateur de rentrer sa longitude et latitude exacte sur l’application avant de lui proposer une station, nous avons abandonné cet objectif. Une autre idée qui avait pu être évoquée était celle de la possibilité de recommander un trajet aux utilisateurs de l’application. Cela a été abandonnée puisqu’il n’y avait pas d’outils directement incorporés dans Streamlit nous permettant de faire cela, il aurait fallu connecter une seconde API à notre application ce qui aurait été à la fois plus complexe et chronophage. 
 
 #### Backend  
 
