@@ -20,7 +20,7 @@ check_authentification()
 
 id_station = st.query_params.get("id_station")
 
-if id_station:  # si on a précisé une id_station en query, par ex adresse station?id_station=5501
+if id_station:  # display of the page with a query "id_station"
     API_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
     if st.query_params.get("selected_range"):
         range = int(st.query_params.get("selected_range"))
@@ -60,9 +60,6 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
 
     st.write("Evolution temporelle du nombre d'emplacements libres disponibles dans la station")
     spaces = [
-        # {"date": "2026-11-10T00:49:01Z", "places disponibles": 0},
-        # {"date": "2026-11-10T01:49:01Z", "places disponibles": 5},
-        # {"date": "2026-11-10T02:49:01Z", "places disponibles": 12}
         {"date": date, "places disponibles": nb}
         for element in station.get("availability_spaces")
         for date, nb in element.items()
@@ -95,7 +92,7 @@ if id_station:  # si on a précisé une id_station en query, par ex adresse stat
         st.query_params.clear()
         st.rerun()
 
-else:  # affichage de la page sans query
+else:  # display the page without query
     col1, col2 = st.columns([6, 1])
     col1.title("Veloscope")
 
@@ -118,13 +115,13 @@ else:  # affichage de la page sans query
 
     user_id = st.session_state["user"]["id_user"]
 
-    # infos de la carte
+    # dataframe for the map
     df_stations = pd.DataFrame(stations)
 
     df_stations["lat"] = pd.to_numeric(df_stations["lat"])
     df_stations["lon"] = pd.to_numeric(df_stations["lon"])
 
-    # infos du df des favoris
+    # information about favorites
     favoris_ids = []
     res_fav = api_client.get("/favorite")
 
