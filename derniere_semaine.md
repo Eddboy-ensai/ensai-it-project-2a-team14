@@ -56,7 +56,6 @@ Prioritaires :
 - écrire README en anglais (un peu frontend, un pour back, un pour le général ?)
 - ajouter des images de l'appli au rapport
 - ajouter à l'appli les fonctionnalités qui manquent en obligatoire
-- vérifier la cohérence entre ce qu'à écrit Eliot et le fonctionnement de l'appli sur la gestion des admins (actuellement, le rôle de superadmin n'est pas mis en place)
 - commenter et nettoyer le code
 
 
