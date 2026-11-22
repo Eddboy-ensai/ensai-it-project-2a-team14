@@ -78,6 +78,7 @@ Nous avons fait le choix de travailler avec l'API externe de la métropole de Re
 ### Consultation d'une station   
 
 Une fois connecté, l'utilisateur est automatiquement redirigé vers la page des stations. Cette page permet de connaître l'emplacement des stations sur une carte (la pastille de la station se colore). Sur cette page, l'utilisateur peut utiliser le tableau afin de cocher ses stations favorites qu'il peut ensuite enregistrer via le bouton en dessous du tableau. L'utilisateur pourra alors, par la suite, accéder directement à la disponibilité en terme de vélos ou d'emplacements libres dans la page "Mes informations". Enfin, l'utilisateur peut choisir d'obtenir des informations supplémentaires en sélectionnant une station via une boîte de sélection. La page se recharge et affiche différentes statistiques et informations :  
+- le statut et le taux de remplissage de la station,  
 - disponibilités actuelles en termes de vélos et d'emplacements,  
 - score de fiabilité (voir la section [Score de fiabilité des stations](#score-de-fiabilité-des-stations)),  
 - évolution temporelle des disponibilités avec le choix de la fenêtre de temps (dernier jour, dernière semaine ou trente derniers jours),  
