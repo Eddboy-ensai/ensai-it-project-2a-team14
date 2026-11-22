@@ -30,11 +30,15 @@ if id_station:  # display of the page with a query "id_station"
     st.title(f"Informations concernant la station {station['name']}")
 
     st.subheader("Informations en direct")
+    # st.write(f"Statut actuel de la station : {list(station['status'][-1].values())[0]}")
     st.write(f"Score de fiabilité de la station : {station['score']} / 100")
-    st.write(f"Nombre de vélos disponibles : {list(station['availability_bikes'][-1].values())[0]}")
     st.write(
-        f"Nombre d'emplacements libres disponibles : {list(station['availability_spaces'][-1].values())[0]}"
+        f"Nombre de vélos actuellement disponibles : {list(station['availability_bikes'][-1].values())[0]}"
     )
+    st.write(
+        f"Nombre d'emplacements actuellement disponibles : {list(station['availability_spaces'][-1].values())[0]}"
+    )
+    st.write(f"Taux de remplissage de la station : {round(station['fill_rate'] * 100)}%")
     st.write(f"Nombre de vélos disponibles estimé dans une heure : {station['prediction_bikes']}")
     st.write(
         f"Nombre d'emplacements disponibles estimé dans une heure : {station['prediction_spaces']}"
