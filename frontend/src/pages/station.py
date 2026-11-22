@@ -30,8 +30,13 @@ if id_station:  # display of the page with a query "id_station"
     st.title(f"Informations concernant la station {station['name']}")
 
     st.subheader("Informations en direct")
-    # st.write(f"Statut actuel de la station : {list(station['status'][-1].values())[0]}")
+    # status of the station
+    if station["status"] == "IN_SERVICE":
+        st.write("Statut actuel de la station : en service")
+    else:
+        st.write("Statut actuel de la station : hors service")
     st.write(f"Score de fiabilité de la station : {station['score']} / 100")
+    # Current availability : we get the latest record of the station in 'availability_bikes/spaces' which is a list of dict
     st.write(
         f"Nombre de vélos actuellement disponibles : {list(station['availability_bikes'][-1].values())[0]}"
     )

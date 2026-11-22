@@ -9,7 +9,7 @@ class StationDataModel(BaseModel):
     lat: float
     lon: float
     capacity: int | None
-    #status: str
+    status: str
     fill_rate: float | None
     shortage_rate: float | None
     saturation_rate: float | None
