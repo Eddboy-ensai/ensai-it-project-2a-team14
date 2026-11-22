@@ -48,7 +48,6 @@ Rapport
 - (Eddy) faire les modifications demandées au rapport intermédiaire par retour de mail
 - (Eddy) revoir les cas d'utilisation du rapport ainsi que le diagramme d'activité, à mettre à jour
 - incorporer des images de l'appli ? peut-être en annexe ?
-- (Eliot) revoir la description des endpoints, vérifier leur cohérence
 - nettoyer le code (supprimer les bouts de code inutile, commenter les parties difficiles en anglais, écrire la documentation de chaque classe, vérifier la documentation des méthodes ainsi que le typage)
 - vérifier si on a mis assez de code erreur HTTP sur les fonctionnalités "basiques"
 - (Alix) afficher des messages claires lorsqu'on a une error HTTP, sur la page, plutôt que le code
@@ -57,9 +56,8 @@ Prioritaires :
 - écrire README en anglais (un peu frontend, un pour back, un pour le général ?)
 - ajouter des images de l'appli au rapport
 - ajouter à l'appli les fonctionnalités qui manquent en obligatoire
-- vérifier la cohérence entre ce qu'à écrit Eliot et le fonctionnement de l'appli sur la gestion des admins
+- vérifier la cohérence entre ce qu'à écrit Eliot et le fonctionnement de l'appli sur la gestion des admins (actuellement, le rôle de superadmin n'est pas mis en place)
 - commenter et nettoyer le code
-- vérifier cohérence endpoints entre le rapport et l'implémentation
 
 
 Questions en suspens :

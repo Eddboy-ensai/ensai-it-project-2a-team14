@@ -126,7 +126,7 @@ L'application permet de prédire, pour une station donnée, le nombre de vélos 
 
 La @fig-activite présente un diagramme d'activité résumant l'implémentation des fonctionnalités et les étapes de navigation dans l'application.  
 
-![Diagramme d'activité](img/diag_activite.png){#fig-activite width="98%"}   
+![Diagramme d'activité](img/diag_activite.png){#fig-activite width="93%"}   
 
 {{< pagebreak >}}
 
@@ -150,8 +150,6 @@ Le code de l'application a été séparé en plusieurs couches afin de respecter
 
 <!-- I)	Objectifs généraux --> 
 L'interface utilisateur de l'application, dont l'implémentation est appelée frontend, est la partie visible et interactive de celle-ci. Elle a pour objectif d'optimiser l'expérience des utilisateurs en leur fournissant un accès intuitif aux données fournies par l'API. Nous avons essayé de rendre la navigation intuitive et interactive, avec de nombreux éléments graphiques (cartes et graphiques interactifs, tableaux récapitulatifs). Nous détaillons dans la suite les choix de conception concernant le frontend.  
-
-#### Streamlit  
 
 L'outil utilisé pour développer le frontend a été la bibliothèque `streamlit`. Il fournit des commandes et des composants d'interface adaptés à nos besoins. De plus, `streamlit` se concentre uniquement sur l'interface graphique (envoi de requêtes et mise en forme des réponses), ce qui permet de respecter la « séparation des préoccupations » (« separation of concerns ») faisant partie des bonnes pratiques de programmation.  
 <!-- De plus, en cas de modification du chemin, seul « api_client » sera a changer et il n'y aura pas à modifier toutes les pages individuellement. Cela respecte le principe DRY (« Don't Repeat yourself ») faisant également partie des bonnes pratiques.  -->
@@ -255,6 +253,126 @@ Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir 
 
 Notons pour finir que l'identifiant des stations est de type « chaîne de caractère » car nous le récupérons directement depuis les données fournies par l'API externe au standard GBFS et devons de le conserver tel quel afin de pouvoir adapter facilement notre application à une autre ville.  
 
+## Classes et implémentation du backend  
+
+### Généralités  
+
+L'architecture logicielle présentée en @fig-archi-log nécessite l'implémentation de nombreuses classes Python. Les classes modèles (*business object*) sont les suivantes : ```User```, ```Station```, ```StationRecord``` et ```Favorite``` qui modélisent respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre un utilisateur et ses stations favorites. Chacune de ces classes nécessite sa propre classe controller, service et DAO afin de pouvoir faire la liaison entre les différentes couches du backend. Afin de faire le lien avec le frontend, nous avons été amenés à implémenter plusieurs schémas de type `BaseModel`, dont nous détaillerons les principaux.  
+
+**Remarque :** Afin de ne pas surcharger les diagrammes ci-dessous inutilement, noue ne ferons pas figurer les classes schémas de type `BaseModel`, utilisées par les controllers et qui permettent de faire la traduction entre les objets Python et les informations au format JSON envoyées ou reçues par le frontend.  
+
+### Classes liées aux utilisateurs  
+
+Les classes liées aux utilisateurs permettent de créer les comptes, de gérer la connexion et de distinguer deux rôles : utilisateur et administrateur. La classe modèle est `User`. Les autres classes sont fonctionnelles : `UserDao` assure les échanges avec la table de données `Users`, `UserService` regroupe les règles métier (création de compte, connexion, modification d'un profil, gestion des droits administrateur) et `UserController` expose les endpoints correspondants.  
+
+L'authentification repose sur des tokens. Lors de la connexion, l'application génère un token aléatoire, l'enregistre en base avec l'utilisateur et le renvoie au frontend, qui le joint ensuite à chacune de ses requêtes. Les endpoints protégés n'identifient donc pas l'utilisateur à partir d'un `id_user` fourni dans la requête, mais à partir de ce token : un utilisateur malveillant ne peut pas se faire passer pour un autre, notamment pour un administrateur, en modifiant simplement cet identifiant. Ces vérifications sont regroupées dans deux fonctions, `verify_token`, qui exige un utilisateur connecté, et `require_admin`, qui exige en plus un compte administrateur ; chaque endpoint de `UserController` fait appel à l'une ou l'autre selon le niveau d'accès requis.  
+
+Les droits sont ainsi répartis en trois niveaux. Un utilisateur connecté peut modifier son propre profil, à condition de confirmer son mot de passe actuel. Un administrateur peut en plus consulter la liste des comptes, modifier ou supprimer ceux des autres utilisateurs. Enfin, seul le premier administrateur créé peut attribuer ou retirer les droits administrateur, ce qui empêche un administrateur de promouvoir librement d'autres comptes.  
+
+Le diagramme de classes des utilisateurs est présenté en @fig-classes-users.  
+
+![Diagramme de classes des utilisateurs](img/diag_classes_users.png){#fig-classes-users}   
+
+### Classes liées aux stations   
+
+La classe modèle ```Station``` est la brique pour de nombreuses fonctionnalités de l'application. Cette classe modélise une station et ses attributs stockent les informations d'une station (nom et identifiant, localisation géographique, capacité). Le controller associé à cette classe permet de retourner les informations de la station avec toutes les statistiques calculées via la méthode ```station_by_id```. Comme les informations d'une station ne sont affichées par le frontend qu'après une sélection de la part de l'utilisateur, il a été fait le choix d'utiliser un modèle, nommé ```StationDataModel``` qui regroupe toutes les informations (aussi bien les informations intrinsèques de la station que les statistiques calculées sur les enregistrements).  
+
+La partie DAO de la classe possède, quant à elle, les méthodes ```create``` et ```update``` qui permettent de créer et mettre à jour la base de données des stations. Cette mise à jour est effectuée à partir des données collectées via l'API externe. Ces méthodes sont appelées par une autre partie du programme, dont nous détaillons l'implémentation dans le paragraphe suivant.  
+
+Le diagramme de classes pour les stations est présenté en @fig-classes-stations.  
+
+![Diagramme de classes des stations](img/diag_classes_stations.png){#fig-classes-stations width="97%"}  
+
+### Classes liées à la collecte de données liées aux stations  
+
+Les classes liées à la collecte constituent une pierre angulaire de l'application : ce sont elles qui alimentent la base de données à partir de l'API externe présentée dans le cahier des charges. Il s'agit de ```CollectService```, qui orchestre la collecte, de ```GbfsDao```, qui interroge l'API externe, et des classes ```StationDao``` et ```StationRecordDao```, qui enregistrent en base les objets ```Station``` et ```StationRecord```. Contrairement aux autres fonctionnalités, la collecte n'est pas déclenchée par une requête du frontend : elle est lancée par un script indépendant, ```collector.py```, qui la répète toutes les cinq minutes tant qu'il est en fonctionnement. Le diagramme de classe implémenté, que nous détaillons dans la suite, est présenté en @fig-classes-record.  
+
+![Diagramme de classes de la collecte de données](img/diag_classes_record.png){#fig-classes-record width="80%"}    
+
+**L'accès à l'API externe.** La classe `GbfsDao` récupère les deux fichiers JSON que nous avons décrits dans le cahier des charges (`station_information.json` et `station_status.json`). Bien qu'elle n'exécute aucune requête SQL, elle appartient à la couche DAO : son rôle est le même que celui des autres DAO, à savoir fournir des données à la couche service, qui n'a pas à savoir si elles proviennent d'une API ou de la base PostgreSQL.  
+
+**La mise à jour des stations.** À chaque passage, la méthode `refresh_stations` de `CollectService` transforme le fichier `station_information.json` en objets `Station` et les compare à ceux déjà enregistrés. Elle appelle alors les méthodes `create` et `update` de `StationDao` évoquées précédemment : les nouvelles stations sont ajoutées, et celles dont le nom, la position ou la capacité a changé sont mises à jour.  
+
+**L'enregistrement des relevés.** La méthode `collect_records` transforme ensuite le fichier `station_status.json` en objets `StationRecord`. Chaque relevé reçoit la date de collecte, en UTC et identique pour toutes les stations d'un même passage, ainsi qu'un statut calculé à partir de trois indicateurs du flux (`is_installed`, `is_renting` et `is_returning`) : `IN_SERVICE`, `NOT_INSTALLED`, `NOT_RENTING` ou `NOT_RETURNING`. La méthode `insert_all` de `StationRecordDao` enregistre ensuite l'ensemble des relevés ; un relevé déjà présent (même station, même date) est ignoré, ce qui évite les doublons.  
+
+**L'ordre des opérations.** La mise à jour des stations précède toujours l'enregistrement des relevés. En effet, la table `StationRecords` fait référence à la table `Stations` par une clé étrangère (voir @fig-modele_donnees) : un relevé ne peut être enregistré que si sa station existe déjà en base.  
+
+**La robustesse de la collecte.** Une erreur lors d'un passage, par exemple une indisponibilité temporaire de l'API, est enregistrée dans les journaux sans interrompre le script : la collecte reprend au passage suivant.  
+
+**Une limite identifiée.** Les relevés s'accumulent sans jamais être supprimés, à raison d'un relevé par station toutes les cinq minutes, et les stations retirées du réseau restent en base. Une évolution possible consisterait à supprimer automatiquement les relevés au-delà d'une certaine ancienneté afin de respecter un principe de minimisation du stockage des données (actuellement, notre application ne nécessite les données que des trente derniers jours).  
+
+### Classes liées au traitement des données liées aux stations  
+
+Les classes liées au traitement de données correspondent à la valeur ajoutée de l'application par rapport aux données récoltées sur l'API externe. Ces classes sont ```CalculationService``` et ```SuggestionService``` et correspondent respectivement à l'ensemble des méthodes de calcul de statistiques et de scores de fiabilité concernant la station demandée et les méthodes de recommandation d'une station. La @fig-classes-traitement présente le diagramme de classes retenu.  
+
+![Diagramme de classes du traitement des données](img/diag_classes_traitement.png){#fig-classes-traitement width="100%"}   
+
+La séparation en deux classes plutôt qu'une seule classe regroupant tous les calculs repose sur trois arguments. Le premier argument est que chacune donne une signification différente à l'attribut `Station`. Les deux classes reçoivent une `Station`, mais avec un rôle distinct. Dans `CalculationService`, elle désigne la station dont on veut obtenir des statistiques. Dans `SuggestionService`, elle représente la position présumée de l'utilisateur et traduit un besoin réel de sa part.  
+
+Le deuxième argument est que chaque classe possède des besoins en données différents. `CalculationService` nécessite l'ensemble des `StationRecord` de la station (via `list_all_by_id` du DAO) pour calculer ses indicateurs statistiques. `SuggestionService`, lui, ne manipule directement que le dernier enregistrement pour déterminer le nombre de places ou de vélos disponibles, et délègue à `CalculationService` les calculs qui exigent l'historique complet.  
+
+Le troisième argument est de fournir une dépendance à sens unique et une meilleure maintenabilité. `SuggestionService` s'appuie sur `CalculationService`, mais l'inverse n'est pas vrai. Cette séparation respecte le principe de responsabilité unique : chaque classe a une seule raison d'être. Elle facilite aussi les tests, puisqu'on peut isoler `SuggestionService` en simulant `CalculationService`, et évite une classe unique trop volumineuse.  
+
+Voici la façon dont nous avons conçu la classe `CalculationService`. Tout d'abord une méthode `latest_record` permet de sélectionner uniquement le dernier enregistrement qui sera utile dans certaines méthodes des deux classes de calcul. La classe possède ensuite toutes les méthodes relatives au calcul de score de fiabilité. Les premières méthodes correspondent à la création de variables et les dernières leur utilisation pour arriver aux scores de fiabilité. Enfin, les méthodes d'évolution de disponibilité et de prédiction sont aussi dans cette classe de par leur nature similaire de traitement statistique des données.  
+
+Décrivons maintenant la classe `SuggestionService`, qui dispose de trois types de méthodes (`station_pick/drop_suggestion_score`, `compute_distance`, `get_suggestion_pick/drop`). Rappelons que l'utilisateur sélectionne initialement une station à laquelle il souhaite se rendre. Les méthodes `get_suggestion_pick/drop` permettent, dans un premier temps, de vérifier si la station sélectionnée passe des critères d'éligibilité. Si c'est le cas, c'est cette station qui est suggérée. Sinon, ces méthodes appellent les méthodes `station_pick/drop_suggestion_score` qui vérifie l'éligibilité de toutes les autres stations. Enfin la méthode `compute_distance` calcule la distance entre deux points en utilisant leurs coordonnées géographiques, ce qui permet de ne pas suggérer de stations trop éloignées. Cette méthode permet notamment de ne pas dupliquer du code et améliore la lisibilité des autres méthodes qui sont déjà de taille conséquente.  
+
+<!-- La première correspond au calcul du score de recommandation de la station séléctionnée tandis que la dernière calcule celui de toutes les autres stations dans le cas où l'on ne retient pas la station choisie. Ce choix a été fait en présupposant que l'utilisateur avait une localisation très proche de la station qu'il choisit. N'ayant pas la possibilité de récupérer directement la localisation de son appareil, on utiliserait ainsi la localisation de la station comme tel. De plus ces conditions vérifiées, l'utilisateur aurait tout intérêt à aller dans cette station si elle s'avère recommandable. Ainsi les méthodes `get_suggestion_pick/drop` vérifient dans un premier temps si la station est éligible avant de faire le calcul des scores de recommandation des autres stations. On renvoit donc que la station séléctionnée avec son score si elle est éligible puisque l'utilisateur n'a pas besoin de savoir si d'autres station sont recommandables du moment quelle celle-ci l'est. Enfin la méthode `compute_distance` calcule la distance entre deux points en utilisant leur coordonnées géographique. Ce calcul aurait lui aussi pu être inclut dans les dernière méthode mais il aurait du être fait deux fois (une dans chaque `get_suggestion`) et aurait impacter la lisibilité des dernières méthodes qui sont déjà de taille conséquente. -->
+
+L'implémentation de ces classes pourrait être nettement améliorée. En effet, actuellement, `SuggestionService` instancie systématiquement `CalculationService`, ce qui charge l'ensemble des `StationRecord` même lorsque seul le dernier enregistrement est utile. Une évolution possible consisterait à n'obtenir de la couche DAO que le dernier enregistrement (par exemple via `find_latest_by_id`) et à n'instancier `CalculationService` que pour les méthodes qui en ont réellement besoin. De plus, plusieurs méthodes de calcul de scores sont dupliquées (une fois pour l'état de saturation une fois pour la pénurie). Ceci ne respecte pas les bonnes pratiques, mais le temps nous a manqué pour concevoir un *design pattern* adapté.  
+
+### Classes de gestion des stations favorites  
+
+La nécessité d'une table de liaison ```Favorites``` dans la base de données nous a amenés à implémenter une classe ```Favorite``` dont les attributs sont un identifiant station et un identifiant utilisateur. Les classes associées (controller, service et DAO) sont essentiellement techniques et permettent à l'utilisateur d'ajouter et de supprimer ses stations favorites dans la base de données. La @fig-classes-favorite présente le diagramme de classes associé à ces classes.  
+
+![Diagramme de classes des stations favorites](img/diag_classes_favorite.png){#fig-classes-favorite width="50%"}   
+
+La classe FavoriteController possède notamment la méthode `favorite_by_token`, qui permet de renvoyer la liste des stations favorites d'un utilisateur connecté en utilisant son token.  
+
+### Description des endpoints  
+
+Les tableaux suivants décrivent les différents endpoints de l'application. Les sorties sont gérées par des schémas `pydantic`.  
+
+#### Comptes et authentification  
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Description |
+| :---- | :---- | :---- | :---- | :---- |
+| `/user` | POST | `username`, `password` | `User` | Crée un compte |
+| `/user` | GET | token d'admin | Retourne la liste des utilisateurs |
+| `/user/{id_user}` | GET | token admin | `User` | Informations de l'utilisateur |
+| `/user/{id_user}` | DELETE | token admin | - | Supprime un compte |  
+| `/user/{id_user}` | PUT | `username`, `password`, token admin | `User` | Modifie un utilisateur (admin) |
+| `/user/{id_user}/me` | PUT | `username`, `password`, token | `User` | Modifie un utilisateur |
+| `/user/{id_user}/admin` | PUT | `username`, `password`, token admin | `User` | Donne droits admin |
+| `/login` | POST | `username`, `password` | jeton d'accès | Authentifie et renvoie un jeton |
+
+#### Stations  
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Description |
+| :---- | :---- | :---- | :---- | :---- |
+| `/station` | GET | - | `liste[Station]` | Liste les stations |
+| `/station/{id_station}` | GET | période | données | Renvoie toutes les informations de la station |
+| `/station/suggestions/{id_station}` | GET | dépôt/retrait vélos | `liste[Station]` | Retourne les stations recommandées |
+| `/station/{id_station}/latest` | GET | - | `StationRecord` | Retourne le dernier relevé |
+
+#### Gestion des stations favorites  
+
+| Chemin | Méthode | Entrée | Sortie (succès) | Description |
+| :---- | :---- | :---- | :---- | :---- |
+| `/favorite` | POST | `Favorite` | `Favorite` | Ajoute une station favorite |
+| `/favorite` | GET | token | `liste[Favorite]` | Retourne la liste des favoris de l'utilisateur |
+| `/favorite/{id_user}` | `id_station` | - | - | Retire une station des favoris |  
+
+{{< pagebreak >}}
+
+### Diagramme de séquence d'une fonctionnalité  
+
+Nous venons de présenter l'architecture de notre application. Afin de résumer toutes ces informations, la @fig-sequence présente le diagramme de séquence de la fonctionnalité «ajouter une station favorite» lorsque la station n'est pas déjà en favori.  
+
+![Diagramme de séquence de la fonctionnalité «ajouter une station favorite»](img/diag_sequence.png){#fig-sequence}  
+
+{{< pagebreak >}}
+
 ### Gestion de la sécurité de l'application  
 
 La sécurisation d'une application est un enjeu important. Nous avons identifié plusieurs risques, auxquels nous avons tenté d'apporter des réponses.  
@@ -288,127 +406,6 @@ Toutes les requêtes SQL des classes DAO sont paramétrées : les valeurs fourni
 Les administrateurs sont des utilisateurs de la table ```Users``` dont l'attribut ```admin``` est vrai. Ils peuvent consulter la liste des comptes, ainsi que modifier ou supprimer ceux des autres utilisateurs.  
 
 En revanche, seul le premier administrateur, défini comme l'administrateur ayant le plus petit identifiant, peut attribuer ou retirer les droits administrateur. Cela évite une propagation incontrôlée des droits et empêche un administrateur de retirer ceux des autres. Ce premier administrateur est lui-même protégé : il ne peut ni perdre ses droits, ni voir son profil modifié ou son compte supprimé par un autre administrateur.  
-
-### Classes et implémentation du backend  
-
-#### Généralités  
-
-L'architecture logicielle présentée en @fig-archi-log nécessite l'implémentation de nombreuses classes Python. Les classes modèles (*business object*) sont les suivantes : ```User```, ```Station```, ```StationRecord``` et ```Favorite``` qui modélisent respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre un utilisateur et ses stations favorites. Chacune de ces classes nécessite sa propre classe controller, service et DAO afin de pouvoir faire la liaison entre les différentes couches du backend. Afin de faire le lien avec le frontend, nous avons été amenés à implémenter plusieurs schémas de type `BaseModel`, dont nous détaillerons les principaux.  
-
-**Remarque :** Afin de ne pas surcharger les diagrammes ci-dessous inutilement, noue ne ferons pas figurer les classes schémas de type `BaseModel`, utilisées par les controllers et qui permettent de faire la traduction entre les objets Python et les informations au format JSON envoyées ou reçues par le frontend.  
-
-#### Classes liées aux utilisateurs  
-
-Les classes liées aux utilisateurs permettent de créer les comptes, de gérer la connexion et de distinguer deux rôles : utilisateur et administrateur. La classe modèle est `User`. Les autres classes sont fonctionnelles : `UserDao` assure les échanges avec la table de données `Users`, `UserService` regroupe les règles métier (création de compte, connexion, modification d'un profil, gestion des droits administrateur) et `UserController` expose les endpoints correspondants.  
-
-L'authentification repose sur des tokens. Lors de la connexion, l'application génère un token aléatoire, l'enregistre en base avec l'utilisateur et le renvoie au frontend, qui le joint ensuite à chacune de ses requêtes. Les endpoints protégés n'identifient donc pas l'utilisateur à partir d'un `id_user` fourni dans la requête, mais à partir de ce token : un utilisateur malveillant ne peut pas se faire passer pour un autre, notamment pour un administrateur, en modifiant simplement cet identifiant. Ces vérifications sont regroupées dans deux fonctions, `verify_token`, qui exige un utilisateur connecté, et `require_admin`, qui exige en plus un compte administrateur ; chaque endpoint de `UserController` fait appel à l'une ou l'autre selon le niveau d'accès requis.  
-
-Les droits sont ainsi répartis en trois niveaux. Un utilisateur connecté peut modifier son propre profil, à condition de confirmer son mot de passe actuel. Un administrateur peut en plus consulter la liste des comptes, modifier ou supprimer ceux des autres utilisateurs. Enfin, seul le premier administrateur créé peut attribuer ou retirer les droits administrateur, ce qui empêche un administrateur de promouvoir librement d'autres comptes.  
-
-Le diagramme de classes des utilisateurs est présenté en @fig-classes-users.  
-
-![Diagramme de classes des utilisateurs](img/diag_classes_users.png){#fig-classes-users}   
-
-#### Classes liées aux stations   
-
-La classe modèle ```Station``` est la brique pour de nombreuses fonctionnalités de l'application. Cette classe modélise une station et ses attributs stockent les informations d'une station (nom et identifiant, localisation géographique, capacité). Le controller associé à cette classe permet de retourner les informations de la station avec toutes les statistiques calculées via la méthode ```station_by_id```. Comme les informations d'une station ne sont affichées par le frontend qu'après une sélection de la part de l'utilisateur, il a été fait le choix d'utiliser un modèle, nommé ```StationDataModel``` qui regroupe toutes les informations (aussi bien les informations intrinsèques de la station que les statistiques calculées sur les enregistrements).  
-
-La partie DAO de la classe possède, quant à elle, les méthodes ```create``` et ```update``` qui permettent de créer et mettre à jour la base de données des stations. Cette mise à jour est effectuée à partir des données collectées via l'API externe. Ces méthodes sont appelées par une autre partie du programme, dont nous détaillons l'implémentation dans le paragraphe suivant.  
-
-Le diagramme de classes pour les stations est présenté en @fig-classes-stations.  
-
-![Diagramme de classes des stations](img/diag_classes_stations.png){#fig-classes-stations width="97%"}  
-
-#### Classes liées à la collecte de données liées aux stations  
-
-Les classes liées à la collecte constituent une pierre angulaire de l'application : ce sont elles qui alimentent la base de données à partir de l'API externe présentée dans le cahier des charges. Il s'agit de ```CollectService```, qui orchestre la collecte, de ```GbfsDao```, qui interroge l'API externe, et des classes ```StationDao``` et ```StationRecordDao```, qui enregistrent en base les objets ```Station``` et ```StationRecord```. Contrairement aux autres fonctionnalités, la collecte n'est pas déclenchée par une requête du frontend : elle est lancée par un script indépendant, ```collector.py```, qui la répète toutes les cinq minutes tant qu'il est en fonctionnement. Le diagramme de classe implémenté, que nous détaillons dans la suite, est présenté en @fig-classes-record.  
-
-![Diagramme de classes de la collecte de données](img/diag_classes_record.png){#fig-classes-record width="80%"}    
-
-**L'accès à l'API externe.** La classe `GbfsDao` récupère les deux fichiers JSON que nous avons décrits dans le cahier des charges (`station_information.json` et `station_status.json`). Bien qu'elle n'exécute aucune requête SQL, elle appartient à la couche DAO : son rôle est le même que celui des autres DAO, à savoir fournir des données à la couche service, qui n'a pas à savoir si elles proviennent d'une API ou de la base PostgreSQL.  
-
-**La mise à jour des stations.** À chaque passage, la méthode `refresh_stations` de `CollectService` transforme le fichier `station_information.json` en objets `Station` et les compare à ceux déjà enregistrés. Elle appelle alors les méthodes `create` et `update` de `StationDao` évoquées précédemment : les nouvelles stations sont ajoutées, et celles dont le nom, la position ou la capacité a changé sont mises à jour.  
-
-**L'enregistrement des relevés.** La méthode `collect_records` transforme ensuite le fichier `station_status.json` en objets `StationRecord`. Chaque relevé reçoit la date de collecte, en UTC et identique pour toutes les stations d'un même passage, ainsi qu'un statut calculé à partir de trois indicateurs du flux (`is_installed`, `is_renting` et `is_returning`) : `IN_SERVICE`, `NOT_INSTALLED`, `NOT_RENTING` ou `NOT_RETURNING`. La méthode `insert_all` de `StationRecordDao` enregistre ensuite l'ensemble des relevés ; un relevé déjà présent (même station, même date) est ignoré, ce qui évite les doublons.  
-
-**L'ordre des opérations.** La mise à jour des stations précède toujours l'enregistrement des relevés. En effet, la table `StationRecords` fait référence à la table `Stations` par une clé étrangère (voir @fig-modele_donnees) : un relevé ne peut être enregistré que si sa station existe déjà en base.  
-
-**La robustesse de la collecte.** Une erreur lors d'un passage, par exemple une indisponibilité temporaire de l'API, est enregistrée dans les journaux sans interrompre le script : la collecte reprend au passage suivant.  
-
-**Une limite identifiée.** Les relevés s'accumulent sans jamais être supprimés, à raison d'un relevé par station toutes les cinq minutes, et les stations retirées du réseau restent en base. Une évolution possible consisterait à supprimer automatiquement les relevés au-delà d'une certaine ancienneté afin de respecter un principe de minimisation du stockage des données (actuellement, notre application ne nécessite les données que des trente derniers jours).  
-
-#### Classes liées au traitement des données liées aux stations  
-
-Les classes liées au traitement de données correspondent à la valeur ajoutée de l'application par rapport aux données récoltées sur l'API externe. Ces classes sont ```CalculationService``` et ```SuggestionService``` et correspondent respectivement à l'ensemble des méthodes de calcul de statistiques et de scores de fiabilité concernant la station demandée et les méthodes de recommandation d'une station. La @fig-classes-traitement présente le diagramme de classes retenu.  
-
-![Diagramme de classes du traitement des données](img/diag_classes_traitement.png){#fig-classes-traitement width="100%"}   
-
-La séparation en deux classes plutôt qu'une seule classe regroupant tous les calculs repose sur trois arguments. Le premier argument est que chacune donne une signification différente à l'attribut `Station`. Les deux classes reçoivent une `Station`, mais avec un rôle distinct. Dans `CalculationService`, elle désigne la station dont on veut obtenir des statistiques. Dans `SuggestionService`, elle représente la position présumée de l'utilisateur et traduit un besoin réel de sa part.  
-
-Le deuxième argument est que chaque classe possède des besoins en données différents. `CalculationService` nécessite l'ensemble des `StationRecord` de la station (via `list_all_by_id` du DAO) pour calculer ses indicateurs statistiques. `SuggestionService`, lui, ne manipule directement que le dernier enregistrement pour déterminer le nombre de places ou de vélos disponibles, et délègue à `CalculationService` les calculs qui exigent l'historique complet.  
-
-Le troisième argument est de fournir une dépendance à sens unique et une meilleure maintenabilité. `SuggestionService` s'appuie sur `CalculationService`, mais l'inverse n'est pas vrai. Cette séparation respecte le principe de responsabilité unique : chaque classe a une seule raison d'être. Elle facilite aussi les tests, puisqu'on peut isoler `SuggestionService` en simulant `CalculationService`, et évite une classe unique trop volumineuse.  
-
-Voici la façon dont nous avons conçu la classe `CalculationService`. Tout d'abord une méthode `latest_record` permet de sélectionner uniquement le dernier enregistrement qui sera utile dans certaines méthodes des deux classes de calcul. La classe possède ensuite toutes les méthodes relatives au calcul de score de fiabilité. Les premières méthodes correspondent à la création de variables et les dernières leur utilisation pour arriver aux scores de fiabilité. Enfin, les méthodes d'évolution de disponibilité et de prédiction sont aussi dans cette classe de par leur nature similaire de traitement statistique des données.  
-
-Décrivons maintenant la classe `SuggestionService`, qui dispose de trois types de méthodes (`station_pick/drop_suggestion_score`, `compute_distance`, `get_suggestion_pick/drop`). Rappelons que l'utilisateur sélectionne initialement une station à laquelle il souhaite se rendre. Les méthodes `get_suggestion_pick/drop` permettent, dans un premier temps, de vérifier si la station sélectionnée passe des critères d'éligibilité. Si c'est le cas, c'est cette station qui est suggérée. Sinon, ces méthodes appellent les méthodes `station_pick/drop_suggestion_score` qui vérifie l'éligibilité de toutes les autres stations. Enfin la méthode `compute_distance` calcule la distance entre deux points en utilisant leurs coordonnées géographiques, ce qui permet de ne pas suggérer de stations trop éloignées. Cette méthode permet notamment de ne pas dupliquer du code et améliore la lisibilité des autres méthodes qui sont déjà de taille conséquente.  
-
-<!-- La première correspond au calcul du score de recommandation de la station séléctionnée tandis que la dernière calcule celui de toutes les autres stations dans le cas où l'on ne retient pas la station choisie. Ce choix a été fait en présupposant que l'utilisateur avait une localisation très proche de la station qu'il choisit. N'ayant pas la possibilité de récupérer directement la localisation de son appareil, on utiliserait ainsi la localisation de la station comme tel. De plus ces conditions vérifiées, l'utilisateur aurait tout intérêt à aller dans cette station si elle s'avère recommandable. Ainsi les méthodes `get_suggestion_pick/drop` vérifient dans un premier temps si la station est éligible avant de faire le calcul des scores de recommandation des autres stations. On renvoit donc que la station séléctionnée avec son score si elle est éligible puisque l'utilisateur n'a pas besoin de savoir si d'autres station sont recommandables du moment quelle celle-ci l'est. Enfin la méthode `compute_distance` calcule la distance entre deux points en utilisant leur coordonnées géographique. Ce calcul aurait lui aussi pu être inclut dans les dernière méthode mais il aurait du être fait deux fois (une dans chaque `get_suggestion`) et aurait impacter la lisibilité des dernières méthodes qui sont déjà de taille conséquente. -->
-
-L'implémentation de ces classes pourrait être nettement améliorée. En effet, actuellement, `SuggestionService` instancie systématiquement `CalculationService`, ce qui charge l'ensemble des `StationRecord` même lorsque seul le dernier enregistrement est utile. Une évolution possible consisterait à n'obtenir de la couche DAO que le dernier enregistrement (par exemple via `find_latest_by_id`) et à n'instancier `CalculationService` que pour les méthodes qui en ont réellement besoin. De plus, plusieurs méthodes de calcul de scores sont dupliquées (une fois pour l'état de saturation une fois pour la pénurie). Ceci ne respecte pas les bonnes pratiques, mais le temps nous a manqué pour concevoir un *design pattern* adapté.  
-
-#### Classes de gestion des stations favorites  
-
-La nécessité d'une table de liaison ```Favorites``` dans la base de données nous a amenés à implémenter une classe ```Favorite``` dont les attributs sont un identifiant station et un identifiant utilisateur. Les classes associées (controller, service et DAO) sont essentiellement techniques et permettent à l'utilisateur d'ajouter et de supprimer ses stations favorites dans la base de données. La @fig-classes-favorite présente le diagramme de classes associé à ces classes.  
-
-![Diagramme de classes des stations favorites](img/diag_classes_favorite.png){#fig-classes-favorite width="60%"}   
-
-La classe FavoriteController possède notamment la méthode `favorite_by_token`, qui permet de renvoyer la liste des stations favorites d'un utilisateur connecté en utilisant son token.  
-
-### Description des endpoints  
-
-Les tableaux suivants décrivent les différents endpoints de l'application.  
-
-#### Comptes et authentification  
-
-| Chemin | Méthode | Entrée | Sortie (succès) | Description |
-| :---- | :---- | :---- | :---- | :---- |
-| `/create_user` | POST | `username`, `password`, `email` | `User` | Crée un compte |
-| `/login` | POST | `username`, `password` | jeton d'accès | Authentifie et renvoie un jeton |
-| `/users` | GET | - | `liste[User]` | Liste les comptes |
-| `/users/{id_user}` | PATCH | `username` et/ou `password` | `User` | Modifie un compte |
-| `/users/{id_user}` | DELETE | - | - | Supprime un compte |  
-
-**Remarques :**  
-- les trois derniers endpoints du tableau précédent ne seront accessibles qu'aux comptes administrateurs ;  
-- chaque traitement renverra également un code HTTP au client afin de l'informer de l'état de sa requête (par exemple, le code ```201``` pour la création d'un utilisateur pour signifier que l'utilisateur a bien été créé).  
-
-#### Stations  
-
-| Chemin | Méthode | Entrée | Sortie (succès) | Description |
-| :---- | :---- | :---- | :---- | :---- |
-| `/stations` | GET | - | `liste[Station]` | Liste les stations |
-| `/stations/{id_station}` | GET | - | `Station` | État actuel d'une station + indicateurs statistiques + score |
-| `/stations/{id_station}/history` | GET | période (24h/7j/30j) | `liste[Releve]` | Évolution de la disponibilité |
-| `/suggestions` | GET | position géographique | `liste[Station]` | Stations recommandées en fonction des critères |  
-
-#### Gestion des stations favorites  
-
-| Chemin | Méthode | Entrée | Sortie (succès) | Description |
-| :---- | :---- | :---- | :---- | :---- |
-| `/favorites` | GET | - | `liste[Station]` | Favoris de l'utilisateur courant |
-| `/favorites/{station_id}` | PUT | - | - | Ajoute une station aux favoris |
-| `/favorites/{station_id}` | DELETE | - | - | Retire une station des favoris |  
-
-{{< pagebreak >}}
-
-### Diagramme de séquence d'une fonctionnalité  
-
-Nous venons de présenter l'architecture de notre application. Afin de résumer toutes ces informations, la @fig-sequence présente le diagramme de séquence de la fonctionnalité «ajouter une station favorite» lorsque la station n'est pas déjà en favori.  
-
-![Diagramme de séquence de la fonctionnalité «ajouter une station favorite»](img/diag_sequence.png){#fig-sequence}  
-
-{{< pagebreak >}}
 
 ## Organisation du projet  
 
