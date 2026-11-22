@@ -454,15 +454,15 @@ Conscients que ce projet était pour nous l'occasion de développer nos connaiss
 
 ### Conclusion et pistes d'améliorations  
 
-Ce projet a été l'occasion de découvrir le développement complet d'une application, de la conception au développement. Nous avons ainsi eu l'occasion de construire un modèle de données et l'architecture logicielle permettant de l'exploiter. Nous avons dû réfléchir et mettre en œuvre des solutions techniques aux demandes du cahier des charges. Ce projet nous a également initié aux questions de sécurité intrinsèque au développement d'une API.  
+L'application VeloScope est devenue réalité au cours de ce projet. Ce dernier a été l'occasion de découvrir le développement complet d'une application, de la conception au développement, du backend au frontend. Nous avons ainsi eu l'occasion de construire un modèle de données et l'architecture logicielle permettant de l'exploiter. Nous avons dû réfléchir et mettre en œuvre des solutions techniques aux demandes du cahier des charges. Ce projet nous a également initié aux questions de sécurisation intrinsèque au développement d'une API.  
 
-Nous avons également pu nous rendre compte des contraintes qui s'appliquent à un tel projet. Ainsi, les technologies employées n'ont pas toujours permis de répondre exactement au cahier des charges, notamment pour la suggestion des stations. En effet, nous n'avons pas trouvé de moyen pertinent et aisé à mettre en œuvre afin de récupérer la position géographique de l'utilisateur. Nous avons cependant tenté de répondre aux besoins client en fournissant une solution techniquement réalisable avec les technologies utilisées et dans le temps imparti.  
+Durant ce projet, nous nous sommes rendus compte des contraintes qui s'appliquent à la production d'une application. Ainsi, les technologies employées n'ont pas toujours permis de répondre exactement au cahier des charges, notamment pour la suggestion des stations. En effet, nous n'avons pas trouvé de moyen pertinent et aisé à mettre en œuvre afin de récupérer la position géographique de l'utilisateur. Nous avons cependant tenté de répondre aux besoins client en fournissant une solution techniquement réalisable avec les technologies utilisées et dans le temps imparti.  
 
 Au cours de ce rapport, nous avons eu l'occasion de discuter des différentes pistes d'amélioration techniques et localisées. Il y a également des améliorations plus profondes ou qui nécessiteraient la mise en place de nouvelles fonctionnalités. Par exemple, les graphiques de disponibilités des stations montrent parfois des chutes brutales durant une période de collecte. Après étude des bases de données, nous nous sommes rendu compte que cela est dû à des anomalies de l'API externe qui considère la station comme « hors service », la situation revenant à la normale à la collecte suivante. Nous pourrions donc tenter de relever ces anomalies en repérant les changements éphémères de statut de la station. Cela nécessiterait alors une estimation du nombre de disponibilités durant ce défaut de fonctionnement.  
 
 De plus, ce projet ayant été développé par différents membres et alors que nous étions encore en cours d'apprentissage, les techniques employés ne sont pas nécessairement harmonisées. Par exemple, les appels des classes controller aux classes de services pourraient être améliorés en harmonisant les pratiques d'instanciation des classes services.  
 
-Ce projet a été pour nous riche en apprentissages et en développement de compétences. Nous souhaitons remercier notre tuteur pour nous avoir permis de le mener à bien.  
+Pour conclure, ce projet a été pour nous riche en apprentissages et en développement de compétences. Il nous a ainsi permis de développer aussi bien nos compétences techniques et que nos compétences organisationnelles. Enfin, nous souhaitons remercier notre tuteur pour nous avoir permis de le mener à bien.  
 
 {{< pagebreak >}}
 
@@ -486,26 +486,28 @@ Ce projet a été pour nous riche en apprentissages et en développement de comp
 
 
 {{< pagebreak >}} 
+
 ### Retour d'expérience : Eddy BOYCE  
 
-Durant ce projet, j'ai endossé le rôle de chef de projet. Ce choix a été naturel puisque j'avais l'habitude de gérer des projets de par mon expérience professionnelle antérieure. Ce rôle a été particulièrement agréable à gérer puisque mes camarades étaient réactifs aux demandes. L'entente du groupe a été bonne et a permis d'avancer régulièrement sur le projet dans une ambiance sereine.  
+Durant ce projet, j'ai endossé le rôle de chef de projet. Ce choix a été naturel puisque j'avais l'habitude de gérer des projets de par mon expérience professionnelle antérieure. J'ai apprécié ce rôle car mes camarades étaient réactifs aux demandes. L'entente du groupe a été bonne et a permis d'avancer régulièrement sur le projet dans une ambiance sereine.  
 
 Ce rôle m'a permis d'aborder tous les sujets du projet. Je me suis tout d'abord consacré à l'architecture logicielle. Cette part du projet a été gratifiante car elle m'a permis de découvrir l'univers des API, tout en consolidant mes compétences en architecture logicielle acquises lors du projet informatique de première année. Cela m'a permis d'avoir une vision d'ensemble du projet et de pouvoir coordonner la rédaction des rapports ainsi que la production des différents diagrammes.  
 
-J'ai ensuite participé à l'implémentation de certaines parties (gestion des utilisateurs, les classes concernant les stations favorites et leurs tests, mise en place du frontend). J'ai donc eu l'occasion d'assimiler beaucoup de connaissances concernant l'implémentation d'une application, de l'interface utilisateur aux bases de données en passant par le backend.  
-
-Ce rôle a donc été pour moi un plaisir double. Celui de la gestion de l'humain avec une équipe motivée et facile à encadrer d'une part. Celui d'assouvir ma curiosité en découvrant de nombreux aspects techniques et en relevant des défis informatiques d'autre part.  
+J'ai également eu l'occasion de participer à l'implémentation de certaines parties (une partie de la gestion des utilisateurs, les classes concernant les stations favorites et leurs tests, la mise en place du frontend et son articulation avec le backend). Ce rôle a donc été très riche et m'a permis de développer de nombre J'ai donc eu l'occasion d'assimiler beaucoup de connaissances concernant l'implémentation d'une application, de l'interface utilisateur aux bases de données en passant par le backend.  
 
 {{< pagebreak >}} 
+
 ### Retour d'expérience : Eliot CHATONNIER  
 
 
 
 {{< pagebreak >}} 
+
 ### Retour d'expérience : Samuel LEJARS  
 
 
 {{< pagebreak >}} 
+
 ### Retour d'expérience : Alix MOINERAUD--DOUCET
 
 
