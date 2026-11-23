@@ -1,36 +1,17 @@
 
 # Backend - Engine API
 
-This is the core engine of the application. It is a layered REST API built with [FastAPI](https://fastapi.tiangolo.com/), responsible for game logic, player management, and data persistence.
+This is the core engine of the application. It is a layered REST API built with [FastAPI](https://fastapi.tiangolo.com/), responsible for collecting bike station data from and external GBFS API, computing statistics, reliability scores and recomandations and managing users and their favorite stations.
 
 ## 🚀 Run the application
 
-Command to run from the repository's root directory (step 1 from 4 are optional if you already have a dataset):
+The full installation procedure (PostgreSQL service, .env file and frontend) is described in the [main README](../README.md). All commands below are run from the repository's root directory.
 
-1) Create a PostgreSQL service  
-2) Create a .env file in the root of the project and complete the following variables :  
+- `init_db.py` (`uv run --project backend python backend/src/init_db.py`) : creates the tables and the first administrator (from `ADMIN_USERNAME` and `ADMIN_PASSWORD`)
+- `collector.py` (`uv run --project backend python backend/src/collector.py`) : collects station data every 5 minutes, must be kept running
+- `main.py` (`uv run --project backend python backend/src/main.py`) : starts the API on port 5000. The swagger is available on `/docs`.
+- `export_db.py` (`uv run --project backend python backend/src/export_db.py`) : saves the content of the database in `data/backup_db.sql` (while backup_db.sql is in the gitignore it musn't be published as it contains the hashed passwords and connexion tokens)
 
-```default
-POSTGRES_HOST=postgresql-cnpg-<suffixe>
-POSTGRES_PORT=5432
-POSTGRES_DATABASE=defaultdb
-POSTGRES_USER=user-<username>
-POSTGRES_PASSWORD=<password>
-POSTGRES_SCHEMA=project
-
-UVICORN_HOST=0.0.0.0
-UVICORN_PORT=5000
-
-BACKEND_URL=http://localhost:5000
-BACKEND_TIMEOUT=5
-```
-
- 
-3) Create empty schemas by running : `uv run --project backend python backend/src/init_db.py`  
-4) Run in a new terminal to collect data : `uv run --project backend python backend/src/collector.py`  
-5) Install dependencies by executing `uv sync --project backend`  
-6) In a terminal, execute `uv run --project backend python backend/src/main.py`  
-7) Go to the swagger (Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 5000")
 
 ## 🏛️ Architecture
 
@@ -41,6 +22,7 @@ The backend follows a **Layered Architecture** to ensure separation of concerns 
 - **Service** (`service/`) : Contains the core business logic
 - **DAO** (`dao/`) : Manages database interactions
 - **Schema** (`schema/`) : Data contract via [Pydantic](https://pydantic.dev/docs/validation/latest/get-started/) to ensure API requests and responses follow a strict structure
+- **Utils** (`utils/`): security (password hashing, token verification), logging, environment variables and the `Singleton` metaclass used by the DAO classes
 
 
 ## ⚒️ Development toolkit
@@ -49,9 +31,12 @@ The backend follows a **Layered Architecture** to ensure separation of concerns 
 
 The application uses a structured logging system. Logs are written to the `backend/logs/` directory and follow the format defined in `logging_config.yml`.
 
-A custom `@log` decorator is available to automatically log method inputs and outputs, making it much easier to trace the flow of data through the services.
+A custom `@log` decorator is available to automatically log method inputs and outputs, making it easier to trace the flow of data through the services.
 
 ### Unit tests
+
+The tests cover the service layer. They require a reachable database: a valid `.env` file and the tables created with `init_db.py`.
+
 
 Command to run from the repository's root directory:  
 
