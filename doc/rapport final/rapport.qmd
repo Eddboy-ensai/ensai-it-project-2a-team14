@@ -443,7 +443,8 @@ Ce calendrier a été respecté durant la majeure partie du développement. Cepe
 Le projet a été réalisé en Python. Durant la phase de développement, nous avons utilisé plusieurs outils et bibliothèques fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  
 - le framework ```Streamlit``` pour le frontend,  
 - le framework ```FastAPI``` pour le backend,  
-- la bibliothèque ```psycopg2``` pour la couche DAO (afin de convertir les instructions Python en requêtes lisibles par les tables PostgreSQL),  
+- la bibliothèque ```psycopg2``` pour la couche DAO (afin de convertir les instructions Python en requêtes lisibles par les tables PostgreSQL),
+- la bibliothèque ```requests``` pour l'envoi de requêtes HTTP, utilisée à la fois par le frontend pour communiquer avec le backend et par la classe ```GbfsDao``` pour récupérer les fichiers JSON de l'API externe,  
 - la bibliothèque ```pydantic``` pour les classes schéma.  
 
 
