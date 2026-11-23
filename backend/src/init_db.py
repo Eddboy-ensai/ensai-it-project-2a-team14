@@ -6,9 +6,12 @@ Usage (from the root of the repository):
 The script can be run several times: existing tables are kept, with their data.
 """
 
+import os
+
 from dao.db_connection import DBConnection
 from utils.env_variables import load_environment_variables
 from utils.log_utils import get_logger, initialize_logs
+from utils.security import hash_password
 
 SQL_INIT = """
 CREATE SCHEMA IF NOT EXISTS project;
@@ -50,6 +53,38 @@ CREATE TABLE IF NOT EXISTS project.Favorites (
 """
 
 
+def create_first_admin() -> str:
+    """Creates the first administrator from ADMIN_USERNAME and ADMIN_PASSWORD (.env).
+
+    Nothing is done if these variables are missing or if an administrator already exists.
+    """
+    username = os.getenv("ADMIN_USERNAME")
+    password = os.getenv("ADMIN_PASSWORD")
+    if not username or not password:
+        return "No first administrator created: ADMIN_USERNAME / ADMIN_PASSWORD not set"
+
+    with DBConnection().connection as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) AS nb FROM project.Users WHERE admin;")
+            if cursor.fetchone()["nb"] > 0:
+                return "An administrator already exists: nothing to do"
+            cursor.execute(
+                "SELECT COUNT(*) AS nb FROM project.Users WHERE username = %(username)s;",
+                {"username": username},
+            )
+            if cursor.fetchone()["nb"] > 0:
+                return (
+                    f"No first administrator created: the username '{username}' "
+                    "is already used, choose another ADMIN_USERNAME"
+                )
+            cursor.execute(
+                "INSERT INTO project.Users(username, pwdh, admin) "
+                "VALUES (%(username)s, %(pwdh)s, TRUE);",
+                {"username": username, "pwdh": hash_password(password, username)},
+            )
+    return f"First administrator created: {username}"
+
+
 def init_db() -> None:
     """Executes the SQL script that creates the schema and the tables."""
     with DBConnection().connection as connection:
@@ -66,6 +101,9 @@ if __name__ == "__main__":
         init_db()
         logger.info("Database initialized: schema project and tables created")
         print("Database initialized: Users, Stations, StationRecords, Favorites")
+        message = create_first_admin()
+        logger.info(message)
+        print(message)
     except Exception:
         logger.exception("Database initialization failed")
         raise
