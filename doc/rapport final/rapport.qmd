@@ -258,9 +258,11 @@ Notons pour finir que l'identifiant des stations est de type « chaîne de carac
 
 ### Généralités  
 
-L'architecture logicielle présentée en @fig-archi-log nécessite l'implémentation de nombreuses classes Python. Les classes modèles (*business object*) sont les suivantes : ```User```, ```Station```, ```StationRecord``` et ```Favorite``` qui modélisent respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre un utilisateur et ses stations favorites. Chacune de ces classes nécessite sa propre classe controller, service et DAO afin de pouvoir faire la liaison entre les différentes couches du backend. Afin de faire le lien avec le frontend, nous avons été amenés à implémenter plusieurs schémas de type `BaseModel`, dont nous détaillerons les principaux.  
+L'architecture logicielle présentée en @fig-archi-log nécessite l'implémentation de nombreuses classes Python. Les classes modèles (*business object*) sont les suivantes : ```User```, ```Station```, ```StationRecord``` et ```Favorite``` qui modélisent respectivement un utilisateur, une station, un enregistrement de station à une date précise et la liaison entre un utilisateur et ses stations favorites. Chacune de ces classes nécessite sa propre classe controller, service et DAO afin de pouvoir faire la liaison entre les différentes couches du backend. Nous présentons dans cette section l'ensemble des classes implémentées.  
 
-**Remarque :** Afin de ne pas surcharger les diagrammes ci-dessous inutilement, noue ne ferons pas figurer les classes schémas de type `BaseModel`, utilisées par les controllers et qui permettent de faire la traduction entre les objets Python et les informations au format JSON envoyées ou reçues par le frontend.  
+Nous avons également implémenté plusieurs schémas de type `BaseModel`. Ceux-ci sont utilisés par les controllers et permettent de faire la conversion des objets Python (utilisés par le backend) en données au format JSON (utilisées par le frontend), et inversement. Afin de ne pas surcharger les diagrammes de classes, les schémas n'y figureront pas.  
+
+Enfin, plusieurs éléments nous ont été fournis au début du projet. Parmi ceux-ci figurent notamment la classe `DBConnection`, permettant de se connecter à la base de données grâce à la bibliothèque `psycopg2`, ainsi qu'un ensemble d'utilitaires permettant de gérer l'authentification des utilisateurs, les variables d'environnement et des journaux de logs.  
 
 ### Classes liées aux utilisateurs  
 
