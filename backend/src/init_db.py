@@ -1,4 +1,4 @@
-"""Create the database schema and tables of the project.
+"""Create the database schema and tables of the project and the first administrator.
 
 Usage (from the root of the repository):
     uv run --project backend python backend/src/init_db.py
