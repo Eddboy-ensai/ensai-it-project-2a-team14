@@ -26,8 +26,7 @@ BACKEND_TIMEOUT=5
 4) Run in a new terminal to collect data (do not stop it): `uv run --project backend python backend/src/collector.py`  
 5) Install dependencies by executing `uv sync --project backend`  
 6) In a terminal, execute `uv run --project backend python backend/src/main.py`  
-7) You can then use the application with the swagger  
-8) In order to use the webservice :  
+7) In order to use the webservice :  
 - run the following commands `cd frontend` and `uv run --project . streamlit run src/app.py`  
 - Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 8000"  
 
