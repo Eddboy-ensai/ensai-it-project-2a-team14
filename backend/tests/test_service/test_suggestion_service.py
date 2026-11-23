@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from business_object.station import Station
 from business_object.station_record import StationRecord
@@ -16,11 +16,11 @@ def d(heure: str) -> datetime:
 
 # Table Stations
 stations = [
-    Station(5501, "République", 48.110026, -1.678037, 45),
-    Station(5502, "Mairie-Opéra", 48.111624, -1.678757, 24),
-    Station(5504, "Place Hoche", 48.115074, -1.677073, 39),
-    Station(5505, "Sainte-Anne", 48.114219, -1.680534, 24),
-    Station(5509, "Saint-Georges Piscine", 48.112385, -1.674417, 18),
+    Station("5501", "République", 48.110026, -1.678037, 45),
+    Station("5502", "Mairie-Opéra", 48.111624, -1.678757, 24),
+    Station("5504", "Place Hoche", 48.115074, -1.677073, 39),
+    Station("5505", "Sainte-Anne", 48.114219, -1.680534, 24),
+    Station("5509", "Saint-Georges Piscine", 48.112385, -1.674417, 18),
 ]
 
 
@@ -33,11 +33,11 @@ suggestion_service_pis = SuggestionService(station=stations[4])
 
 # Table latest_records
 latest_records = [
-    StationRecord(5501, d("10:00"), "IN_SERVICE", 0, 35, 10),
-    StationRecord(5502, d("10:00"), "IN_SERVICE", 11, 13, 0),
-    StationRecord(5504, d("10:00"), "IN_SERVICE", 31, 5, 3),
-    StationRecord(5505, d("10:00"), "NOT_INSTALLED", 0, 0, 0),
-    StationRecord(5509, d("10:00"), "IN_SERVICE", 18, 0, 0),
+    StationRecord("5501", d("10:00"), "IN_SERVICE", 0, 35, 10),
+    StationRecord("5502", d("10:00"), "IN_SERVICE", 11, 13, 0),
+    StationRecord("5504", d("10:00"), "IN_SERVICE", 31, 5, 3),
+    StationRecord("5505", d("10:00"), "NOT_INSTALLED", 0, 0, 0),
+    StationRecord("5509", d("10:00"), "IN_SERVICE", 18, 0, 0),
 ]
 
 suggestion_service_rep.latest_record = latest_records[0]
