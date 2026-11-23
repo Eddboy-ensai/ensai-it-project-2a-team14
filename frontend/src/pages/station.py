@@ -10,15 +10,31 @@ from utils.api_client import api_client
 from utils.auth_guard import check_authentification
 from utils.log_init import get_page_logger
 
-st.set_page_config(layout="wide")
-
 logger = get_page_logger("station")
 
-st.set_page_config(page_title="Informations sur les stations")
+st.set_page_config(page_title="Informations sur les stations", layout="wide")
 
 check_authentification()
 
 id_station = st.query_params.get("id_station")
+
+#Couleur des containers 
+st.html(
+    """
+    <style>
+        [class*="st-key-container_even_"] {background-color: #ccdfe9;
+        border: 2px solid #000000;}
+    </style>
+    """
+)
+st.html(
+    """
+    <style>
+        [class*="st-key-container_odd_"] {background-color: #b2d1e1;
+        border: 2px solid #000000;}
+    </style>
+    """
+)
 
 if id_station:  # display of the page with a query "id_station"
     API_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
@@ -31,7 +47,7 @@ if id_station:  # display of the page with a query "id_station"
 
     st.subheader("Informations en direct")
 
-    top_cell = st.container(border=True, height="stretch", vertical_alignment="center")
+    top_cell = st.container(key="container_even_1", border=True, height="stretch", vertical_alignment="center")
     # status of the station
     with top_cell:
 
@@ -55,7 +71,7 @@ if id_station:  # display of the page with a query "id_station"
 
     st.subheader("Evolutions temporelles des disponibilités")
 
-    mid_cell = st.container(border=True, height="stretch", vertical_alignment="center")
+    mid_cell = st.container(key="container_even_2", border=True, height="stretch", vertical_alignment="center")
     with mid_cell: 
 
         range = None
@@ -76,7 +92,7 @@ if id_station:  # display of the page with a query "id_station"
                 st.query_params["selected_range"] = range
                 st.rerun()
 
-        top_mid_cell = st.container(border=True, height="stretch", vertical_alignment="center")
+        top_mid_cell = st.container(key="container_odd_1", border=True, height="stretch", vertical_alignment="center")
         with top_mid_cell:
             st.write("Evolution temporelle du nombre d'emplacements libres disponibles dans la station")
 
@@ -94,7 +110,7 @@ if id_station:  # display of the page with a query "id_station"
             else:
                 st.info("Pas d'informations disponible")
 
-        bot_mid_cell = st.container(border=True, height="stretch", vertical_alignment="center")
+        bot_mid_cell = st.container(key="container_odd_2", border=True, height="stretch", vertical_alignment="center")
         with bot_mid_cell:
             st.write("Evolution temporelle du nombre de vélos disponibles dans la station")
             bikes = [
