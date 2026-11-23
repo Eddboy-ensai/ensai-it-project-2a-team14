@@ -7,7 +7,7 @@ font="Calibri"
 headingFont= "serif"
 
 primaryColor="#1963a0"
-backgroundColor="hsl(201, 44%, 79%)"
+backgroundColor="#b2d1e1"
 secondaryBackgroundColor="#ffffff"
 
 redTextColor="#8b0303"
