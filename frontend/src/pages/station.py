@@ -30,76 +30,90 @@ if id_station:  # display of the page with a query "id_station"
     st.title(f"Informations concernant la station {station['name']}")
 
     st.subheader("Informations en direct")
+
+    top_cell = st.container(border=True, height="stretch", vertical_alignment="center")
     # status of the station
-    if station["status"] == "IN_SERVICE":
-        st.write("Statut actuel de la station : en service")
-    else:
-        st.write("Statut actuel de la station : hors service")
-    st.write(f"Score de fiabilité de la station : {station['score']} / 100")
-    # Current availability : we get the latest record of the station in 'availability_bikes/spaces' which is a list of dict
-    st.write(
-        f"Nombre de vélos actuellement disponibles : {list(station['availability_bikes'][-1].values())[0]}"
-    )
-    st.write(
-        f"Nombre d'emplacements actuellement disponibles : {list(station['availability_spaces'][-1].values())[0]}"
-    )
-    st.write(f"Taux de remplissage de la station : {round(station['fill_rate'] * 100)}%")
-    st.write(f"Nombre de vélos disponibles estimé dans une heure : {station['prediction_bikes']}")
-    st.write(
-        f"Nombre d'emplacements disponibles estimé dans une heure : {station['prediction_spaces']}"
-    )
-    st.subheader("Evolutions temporelles des disponibilités")
-    range = None
-    selected_range = st.selectbox(
-        "Veuillez choisir une période",
-        ["1 jour", "7 jours", "30 jours"],
-        index=None,
-        placeholder="Choisir une période",
-    )
-    if selected_range:
-        if selected_range == "1 jour":
-            range = "1"
-        elif selected_range == "7 jours":
-            range = "7"
+    with top_cell:
+
+        if station["status"] == "IN_SERVICE":
+            st.write("Statut actuel de la station : en service")
         else:
-            range = "30"
-        if st.query_params.get("selected_range") != range:
-            st.query_params["selected_range"] = range
+            st.write("Statut actuel de la station : hors service")
+        st.write(f"Score de fiabilité de la station : {station['score']} / 100")
+        # Current availability : we get the latest record of the station in 'availability_bikes/spaces' which is a list of dict
+        st.write(
+            f"Nombre de vélos actuellement disponibles : {list(station['availability_bikes'][-1].values())[0]}"
+        )
+        st.write(
+            f"Nombre d'emplacements actuellement disponibles : {list(station['availability_spaces'][-1].values())[0]}"
+        )
+        st.write(f"Taux de remplissage de la station : {round(station['fill_rate'] * 100)}%")
+        st.write(f"Nombre de vélos disponibles estimé dans une heure : {station['prediction_bikes']}")
+        st.write(
+            f"Nombre d'emplacements disponibles estimé dans une heure : {station['prediction_spaces']}"
+        )
+
+    st.subheader("Evolutions temporelles des disponibilités")
+
+    mid_cell = st.container(border=True, height="stretch", vertical_alignment="center")
+    with mid_cell: 
+
+        range = None
+        selected_range = st.selectbox(
+            "Veuillez choisir une période",
+            ["1 jour", "7 jours", "30 jours"],
+            index=None,
+            placeholder="Choisir une période",
+        )
+        if selected_range:
+            if selected_range == "1 jour":
+                range = "1"
+            elif selected_range == "7 jours":
+                range = "7"
+            else:
+                range = "30"
+            if st.query_params.get("selected_range") != range:
+                st.query_params["selected_range"] = range
+                st.rerun()
+
+        top_mid_cell = st.container(border=True, height="stretch", vertical_alignment="center")
+        with top_mid_cell:
+            st.write("Evolution temporelle du nombre d'emplacements libres disponibles dans la station")
+
+            spaces = [
+                {"date": date, "places disponibles": nb}
+                for element in station.get("availability_spaces")
+                for date, nb in element.items()
+            ]
+
+            if spaces:
+                df = pd.DataFrame(spaces)
+                df["date"] = pd.to_datetime(df["date"])
+                df = df.sort_values("date")
+                st.line_chart(df, x="date", y="places disponibles")
+            else:
+                st.info("Pas d'informations disponible")
+
+        bot_mid_cell = st.container(border=True, height="stretch", vertical_alignment="center")
+        with bot_mid_cell:
+            st.write("Evolution temporelle du nombre de vélos disponibles dans la station")
+            bikes = [
+                {"date": date, "vélos disponibles": nb}
+                for element in station.get("availability_bikes")
+                for date, nb in element.items()
+            ]
+
+            if bikes:
+                df = pd.DataFrame(bikes)
+                df["date"] = pd.to_datetime(df["date"])
+                df = df.sort_values("date")
+                st.line_chart(df, x="date", y="vélos disponibles")
+            else:
+                st.info("Pas d'informations disponible")
+
+        if st.button("Retour"):
+            st.query_params.clear()
             st.rerun()
-
-    st.write("Evolution temporelle du nombre d'emplacements libres disponibles dans la station")
-    spaces = [
-        {"date": date, "places disponibles": nb}
-        for element in station.get("availability_spaces")
-        for date, nb in element.items()
-    ]
-
-    if spaces:
-        df = pd.DataFrame(spaces)
-        df["date"] = pd.to_datetime(df["date"])
-        df = df.sort_values("date")
-        st.line_chart(df, x="date", y="places disponibles")
-    else:
-        st.info("Pas d'informations disponible")
-
-    st.write("Evolution temporelle du nombre de vélos disponibles dans la station")
-    bikes = [
-        {"date": date, "vélos disponibles": nb}
-        for element in station.get("availability_bikes")
-        for date, nb in element.items()
-    ]
-
-    if bikes:
-        df = pd.DataFrame(bikes)
-        df["date"] = pd.to_datetime(df["date"])
-        df = df.sort_values("date")
-        st.line_chart(df, x="date", y="vélos disponibles")
-    else:
-        st.info("Pas d'informations disponible")
-
-    if st.button("Retour"):
-        st.query_params.clear()
-        st.rerun()
 
 else:  # display the page without query
     col1, col2 = st.columns([6, 1])
