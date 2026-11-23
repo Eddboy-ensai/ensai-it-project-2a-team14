@@ -502,6 +502,11 @@ Les autres fonctionnalités optionnelles proposées par le sujet n'ont pas été
 
 ### Note individuelle : Méline BONAVERO  
 
+J'ai particulièrement apprécié travailler sur le projet VeloScope, qui s'est révélé aussi intéressant que formateur. Je suis très contente d'avoir eu l'occasion d'évoluer au sein de ce groupe, dans lequel j'ai rapidement trouvé ma place et où je me suis sentie soutenue tout au long des différentes étapes. La bonne entente et la communication fluide au sein de l'équipe ont permis de mener le projet sereinement et d'avancer de manière régulière.
+
+Je me suis plus spécifiquement investie sur la partie frontend. N'ayant pas d'appétence particulière pour le développement informatique pur à la base, j'ai trouvé cette partie très gratifiante : elle m'a permis de produire rapidement des résultats concrets et visuels à partir du code. J'ai notamment travaillé sur la conception de la carte interactive des stations de Rennes, qui m'a directement confrontée à des contraintes techniques réelles, comme l'adaptation de la cartographie aux restrictions réseau de l'environnement de déploiement ou l'articulation avec les endpoints du backend.
+
+Au final, ce projet m'a permis d'acquérir de nombreuses compétences techniques et de les mettre en pratique au fil des semaines. Il m'a surtout permis de mieux comprendre le fonctionnement global d'une application complète et de prendre davantage confiance en mes capacités en développement.
 
 {{< pagebreak >}} 
 
