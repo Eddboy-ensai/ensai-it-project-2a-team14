@@ -42,3 +42,8 @@ Command to run from the repository's root directory:
 
 - Install dependencies : `uv sync --project backend --extra dev`  
 - Execute the tests : `uv run --project backend pytest -v`
+
+It is possible to check test coverage by executing:
+
+- `uv run --project backend coverage run -m pytest backend`
+- `uv run --project backend coverage report -m`

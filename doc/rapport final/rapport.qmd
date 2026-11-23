@@ -461,6 +461,8 @@ Afin de tester le bon fonctionnement de notre application, nous avons implément
 
 Certaines fonctions ont été modifiées afin de permettre d'être testées plus facilement. Par exemple, dans `CalculationService`, les méthodes `get_availability_bikes/spaces_over_time` utilisent un paramètre `now` qui est initialisé à `None` par défaut. L'application en soi n'utilise pas ce paramètre et le laisse en `None`, puisqu'elle utilise l'heure actuelle (`datetime.now(UTC)`) comme date de référence pour obtenir l'historique des disponibilités. Cependant, les tests s'appuient sur des données figées ne se renouvelant pas, il n'était donc pas possible d'utiliser la date actuelle comme date de référence. Le paramètre `now` est donc appelé pour choisir une date adaptée à ces données de tests.  
 
+Au final, 21 tests unitaires portant sur la couche service ont été développés.  Ces tests vérifient le bon fonctionnement des différentes méthodes en couvrant les principaux scénarios d'utilisation, au moyen de plusieurs assertions lorsque cela est nécessaire. La couverture de tests du backend atteint ainsi 67 %.  
+
 ### Usage de l'IA  
 
 Conscients que ce projet était pour nous l'occasion de développer nos connaissances et nos compétences, nous avons tenu à encadrer notre utilisation de l'intelligence artificielle. Nous avons ainsi convenu de ne l'utiliser pour des tâches de production qu'à titre exceptionnel et après en avoir informé les autres membres du groupe. Elle nous a cependant été d'une grande aide lorsqu'il a fallu trouver des solutions techniques pertinentes, notamment lors du développement de la collecte de données via l'API externe et de l'implémentation du frontend. Elle a également été très utile afin de réduire le temps de débogage.  
@@ -502,16 +504,23 @@ Les autres fonctionnalités optionnelles proposées par le sujet n'ont pas été
 
 ### Note individuelle : Méline BONAVERO  
 
+J'ai particulièrement apprécié travailler sur le projet VeloScope, qui s'est révélé aussi intéressant que formateur. Je suis très contente d'avoir eu l'occasion d'évoluer au sein de ce groupe, dans lequel j'ai rapidement trouvé ma place et où je me suis sentie soutenue tout au long des différentes étapes. La bonne entente et la communication fluide au sein de l'équipe ont permis de mener le projet sereinement et d'avancer de manière régulière.
+
+Je me suis plus spécifiquement investie sur la partie frontend. N'ayant pas d'appétence particulière pour le développement informatique pur à la base, j'ai trouvé cette partie très gratifiante : elle m'a permis de produire rapidement des résultats concrets et visuels à partir du code. J'ai notamment travaillé sur la conception de la carte interactive des stations de Rennes, qui m'a directement confrontée à des contraintes techniques réelles, comme l'adaptation de la cartographie aux restrictions réseau de l'environnement de déploiement ou l'articulation avec les endpoints du backend.
+
+Au final, ce projet m'a permis d'acquérir de nombreuses compétences techniques et de les mettre en pratique au fil des semaines. Il m'a surtout permis de mieux comprendre le fonctionnement global d'une application complète et de prendre davantage confiance en mes capacités en développement.
 
 {{< pagebreak >}} 
 
 ### Note individuelle : Eddy BOYCE  
 
-Durant ce projet, j'ai endossé le rôle de chef de projet. Ce choix a été naturel puisque j'avais l'habitude de gérer des projets de par mon expérience professionnelle antérieure. J'ai apprécié ce rôle car mes camarades étaient réactifs aux demandes. L'entente du groupe a été bonne et a permis d'avancer régulièrement sur le projet dans une ambiance sereine.  
+Durant ce projet, j'ai endossé le rôle de chef de projet. Ce choix s'est fait naturellement grâce à mon expérience professionnelle antérieure. J'ai apprécié ce rôle, d'autant plus que mes camarades étaient impliqués et réactifs. La bonne entente du groupe a contribué à une progression régulière du projet, dans une ambiance de travail sereine.  
 
-Ce rôle m'a permis d'aborder tous les sujets du projet. Je me suis tout d'abord consacré à l'architecture logicielle. Cette part du projet a été gratifiante car elle m'a permis de découvrir l'univers des API, tout en consolidant mes compétences en architecture logicielle acquises lors du projet informatique de première année. Cela m'a permis d'avoir une vision d'ensemble du projet et de pouvoir coordonner la rédaction des rapports ainsi que la production des différents diagrammes.  
+Ce rôle m'a permis d'intervenir sur l'ensemble des phases du projet. Je me suis tout d'abord consacré à l'architecture logicielle. Ce travail a été gratifiant car il m'a permis de découvrir l'univers des API, tout en consolidant mes compétences en architecture logicielle acquises lors du projet informatique de première année. Cela m'a donné une vision d'ensemble du projet et m'a permis de coordonner la rédaction des rapports ainsi que la production des différents diagrammes.  
 
-J'ai également eu l'occasion de participer à l'implémentation de certaines parties (une partie de la gestion des utilisateurs, les classes concernant les stations favorites et leurs tests, la mise en place du frontend et son articulation avec le backend). Ce rôle a donc été très riche et m'a permis de développer de nombre J'ai donc eu l'occasion d'assimiler beaucoup de connaissances concernant l'implémentation d'une application, de l'interface utilisateur aux bases de données en passant par le backend.  
+J'ai également contribué à l'implémentation de plusieurs fonctionnalités (une partie de la gestion des utilisateurs, le backend relatif à la gestion des stations favorites, la mise en place du frontend et des controllers). Ce rôle a donc été très riche et m'a permis de consolider mes compétences en informatique.  
+
+Malgré un bilan très positif, ce rendu me laisse un léger sentiment d'inachevé. Le développement ayant été réalisé parallèlement à l'acquisition des connaissances nécessaires à la conception d'une API, certaines décisions d'implémentation et certaines parties du code me paraissent aujourd'hui perfectibles.  
 
 {{< pagebreak >}} 
 
