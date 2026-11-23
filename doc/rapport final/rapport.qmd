@@ -77,12 +77,22 @@ Nous avons fait le choix de travailler avec l'API externe de la métropole de Re
 
 ### Consultation d'une station   
 
-Une fois connecté, l'utilisateur est automatiquement redirigé vers la page des stations. Cette page permet de connaître l'emplacement des stations sur une carte (la pastille de la station se colore). Sur cette page, l'utilisateur peut utiliser le tableau afin de cocher ses stations favorites qu'il peut ensuite enregistrer via le bouton en dessous du tableau. L'utilisateur pourra alors, par la suite, accéder directement à la disponibilité en terme de vélos ou d'emplacements libres dans la page "Mes informations". Enfin, l'utilisateur peut choisir d'obtenir des informations supplémentaires en sélectionnant une station via une boîte de sélection. La page se recharge et affiche différentes statistiques et informations :  
+Une fois connecté, l'utilisateur est automatiquement redirigé vers la page des stations. Cette page permet de connaître l'emplacement des stations sur une carte (la pastille de la station se colore).  
+
+![Page des stations](img/stations.png){#fig-stations width="93%"}  
+
+Sur cette page, l'utilisateur peut utiliser le tableau afin de cocher ses stations favorites qu'il peut ensuite enregistrer via le bouton en dessous du tableau. L'utilisateur pourra alors, par la suite, accéder directement à la disponibilité en terme de vélos ou d'emplacements libres dans la page "Mes informations".  
+
+![Page "Mes informations"](img/mesinfos.png){#fig-mesinfos width="93%"}  
+
+Enfin, l'utilisateur peut choisir d'obtenir des informations supplémentaires en sélectionnant une station via une boîte de sélection. La page se recharge et affiche différentes statistiques et informations :  
 - le statut et le taux de remplissage de la station,  
 - disponibilités actuelles en termes de vélos et d'emplacements,  
 - score de fiabilité (voir la section [Score de fiabilité des stations](#score-de-fiabilité-des-stations)),  
 - évolution temporelle des disponibilités avec le choix de la fenêtre de temps (dernier jour, dernière semaine ou trente derniers jours),  
 - nombre de vélos et d'emplacements estimés dans une heure (voir la section [Prévision de disponibilité](#prévision-de-disponibilité)).  
+
+![Page de la station Sainte-Anne à Rennes](img/infosstation.png){#fig-infosstation width="93%"}  
 
 ### Score de fiabilité des stations  
 
@@ -106,6 +116,8 @@ Il est de la forme $(1 - a) \times x + a \times y$ où $a = 0.5$ ici pour donner
 ### Recommandation de station  
 
 La page "Suggestions de stations" permet de répondre à la demande du cahier des charges de fournir des recommandations de stations à proximité de l'utilisateur. Nous n'avons pas trouvé de moyen permettant de déterminer la localisation de l'utilisateur avec la technologie utilisée. Afin de répondre au cahier des charges, nous avons donc fait le choix de donner à l'utilisateur la possibilité de choisir la station qu'il souhaite utiliser en cliquant sur une carte interactive. Il est ensuite invité à préciser son besoin (prendre où déposer un vélo). Nous détaillons dans la suite le fonctionnement de la méthode ```suggestion_pick``` permettant de retourner les stations suggérées lorsque l'utilisateur souhaite emprunter un vélo.  
+
+![Page de suggestions de stations](img/suggestions.png){#fig-suggestions width="93%"}  
 
 Tout d'abord, nous construisons un score de recommandation d'une station qui se base à la fois sur la distance à la station sélectionnée ($D$), sur son score de fiabilité de vélos disponibles ($Spick$) et sur le nombre de vélos disponibles lors du dernier relevé ($N$). Voici la formule retenue :  
 $Score = 100 \times (d ^ 0.3 \times n ^ 0.5 \times Spick ^ 0.2)$  
@@ -254,6 +266,8 @@ Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir 
 
 Notons pour finir que l'identifiant des stations est de type « chaîne de caractère » car nous le récupérons directement depuis les données fournies par l'API externe au standard GBFS et devons de le conserver tel quel afin de pouvoir adapter facilement notre application à une autre ville.  
 
+{{< pagebreak >}}
+
 ## Classes et implémentation du backend  
 
 ### Généralités  
@@ -308,13 +322,13 @@ Les classes liées à la collecte constituent une pierre angulaire de l'applicat
 
 Les classes liées au traitement de données correspondent à la valeur ajoutée de l'application par rapport aux données récoltées sur l'API externe. Ces classes sont ```CalculationService``` et ```SuggestionService``` et correspondent respectivement à l'ensemble des méthodes de calcul de statistiques et de scores de fiabilité concernant la station demandée et les méthodes de recommandation d'une station. La @fig-classes-traitement présente le diagramme de classes retenu.  
 
-![Diagramme de classes du traitement des données](img/diag_classes_traitement.png){#fig-classes-traitement width="100%"}   
-
 La séparation en deux classes plutôt qu'une seule classe regroupant tous les calculs repose sur trois arguments. Le premier argument est que chacune donne une signification différente à l'attribut `Station`. Les deux classes reçoivent une `Station`, mais avec un rôle distinct. Dans `CalculationService`, elle désigne la station dont on veut obtenir des statistiques. Dans `SuggestionService`, elle représente la position présumée de l'utilisateur et traduit un besoin réel de sa part.  
 
 Le deuxième argument est que chaque classe possède des besoins en données différents. `CalculationService` nécessite l'ensemble des `StationRecord` de la station (via `list_all_by_id` du DAO) pour calculer ses indicateurs statistiques. `SuggestionService`, lui, ne manipule directement que le dernier enregistrement pour déterminer le nombre de places ou de vélos disponibles, et délègue à `CalculationService` les calculs qui exigent l'historique complet.  
 
 Le troisième argument est de fournir une dépendance à sens unique et une meilleure maintenabilité. `SuggestionService` s'appuie sur `CalculationService`, mais l'inverse n'est pas vrai. Cette séparation respecte le principe de responsabilité unique : chaque classe a une seule raison d'être. Elle facilite aussi les tests, puisqu'on peut isoler `SuggestionService` en simulant `CalculationService`, et évite une classe unique trop volumineuse.  
+
+![Diagramme de classes du traitement des données](img/diag_classes_traitement.png){#fig-classes-traitement width="100%"}   
 
 Voici la façon dont nous avons conçu la classe `CalculationService`. Tout d'abord une méthode `latest_record` permet de sélectionner uniquement le dernier enregistrement qui sera utile dans certaines méthodes des deux classes de calcul. La classe possède ensuite toutes les méthodes relatives au calcul de score de fiabilité. Les premières méthodes correspondent à la création de variables et les dernières leur utilisation pour arriver aux scores de fiabilité. Enfin, les méthodes d'évolution de disponibilité et de prédiction sont aussi dans cette classe de par leur nature similaire de traitement statistique des données.  
 
@@ -326,11 +340,11 @@ L'implémentation de ces classes pourrait être nettement améliorée. En effet,
 
 ### Classes de gestion des stations favorites  
 
-La nécessité d'une table de liaison ```Favorites``` dans la base de données nous a amenés à implémenter une classe ```Favorite``` dont les attributs sont un identifiant station et un identifiant utilisateur. Les classes associées (controller, service et DAO) sont essentiellement techniques et permettent à l'utilisateur d'ajouter et de supprimer ses stations favorites dans la base de données. La @fig-classes-favorite présente le diagramme de classes associé à ces classes.  
+La nécessité d'une table de liaison ```Favorites``` dans la base de données nous a amenés à implémenter une classe ```Favorite``` dont les attributs sont un identifiant station et un identifiant utilisateur. Les classes associées (controller, service et DAO) sont essentiellement techniques et permettent à l'utilisateur d'ajouter et de supprimer ses stations favorites dans la base de données. La classe FavoriteController possède notamment la méthode `favorite_by_token`, qui permet de renvoyer la liste des stations favorites d'un utilisateur connecté en utilisant son token. La @fig-classes-favorite présente le diagramme de classes associé à ces classes.  
 
-![Diagramme de classes des stations favorites](img/diag_classes_favorite.png){#fig-classes-favorite width="50%"}   
+![Diagramme de classes des stations favorites](img/diag_classes_favorite.png){#fig-classes-favorite width="45%"}   
 
-La classe FavoriteController possède notamment la méthode `favorite_by_token`, qui permet de renvoyer la liste des stations favorites d'un utilisateur connecté en utilisant son token.  
+{{< pagebreak >}}
 
 ### Description des endpoints  
 
@@ -342,9 +356,9 @@ Les tableaux suivants décrivent les différents endpoints de l'application. Les
 | :---- | :---- | :---- | :---- | :---- |
 | `/user` | POST | `username`, `password` | `User` | Crée un compte |
 | `/user` | GET | token d'admin | Retourne la liste des utilisateurs |
-| `/user/{id_user}` | GET | token admin | `User` | Informations de l'utilisateur |
-| `/user/{id_user}` | DELETE | token admin | - | Supprime un compte |  
-| `/user/{id_user}` | PUT | `username`, `password`, token admin | `User` | Modifie un utilisateur (admin) |
+| `/user/   {id_user}` | GET | token admin | `User` | Informations de l'utilisateur |
+| `/user/   {id_user}` | DELETE | token admin | - | Supprime un compte |  
+| `/user/   {id_user}` | PUT | `username`, `password`, token admin | `User` | Modifie un utilisateur (admin) |
 | `/user/{id_user}/me` | PUT | `username`, `password`, token | `User` | Modifie un utilisateur |
 | `/user/{id_user}/admin` | PUT | `username`, `password`, token admin | `User` | Donne droits admin |
 | `/login` | POST | `username`, `password` | jeton d'accès | Authentifie et renvoie un jeton |
@@ -364,17 +378,13 @@ Les tableaux suivants décrivent les différents endpoints de l'application. Les
 | :---- | :---- | :---- | :---- | :---- |
 | `/favorite` | POST | `Favorite` | `Favorite` | Ajoute une station favorite |
 | `/favorite` | GET | token | `liste[Favorite]` | Retourne la liste des favoris de l'utilisateur |
-| `/favorite/{id_user}` | `id_station` | - | - | Retire une station des favoris |  
-
-{{< pagebreak >}}
+| `/favorite/{id_user}` | DELETE | `id_station` | - | - | Retire une station des favoris |  
 
 ### Diagramme de séquence d'une fonctionnalité  
 
 Nous venons de présenter l'architecture de notre application. Afin de résumer toutes ces informations, la @fig-sequence présente le diagramme de séquence de la fonctionnalité «ajouter une station favorite» lorsque la station n'est pas déjà en favori.  
 
 ![Diagramme de séquence de la fonctionnalité «ajouter une station favorite»](img/diag_sequence.png){#fig-sequence}  
-
-{{< pagebreak >}}
 
 ### Gestion de la sécurité de l'application  
 
@@ -410,6 +420,8 @@ Les administrateurs sont des utilisateurs de la table ```Users``` dont l'attribu
 
 En revanche, seul le premier administrateur, défini comme l'administrateur ayant le plus petit identifiant, peut attribuer ou retirer les droits administrateur. Cela évite une propagation incontrôlée des droits et empêche un administrateur de retirer ceux des autres. Ce premier administrateur est lui-même protégé : il ne peut ni perdre ses droits, ni voir son profil modifié ou son compte supprimé par un autre administrateur.  
 
+{{< pagebreak >}}
+
 ## Organisation du projet  
 
 ### Organisation du groupe  
@@ -422,9 +434,9 @@ Concernant la répartition des tâches, nous avons communiqué assez tôt sur no
 
 Le calendrier prévisionnel communiqué lors du rapport intermédiaire est donné ci-dessous par le diagramme de Gantt en @fig-diag_gantt.  
 
-![Diagramme de Gantt](img/diag_gantt.png){#fig-diag_gantt width="92%"}  
+Ce calendrier a été respecté durant la majeure partie du développement. Cependant, un léger retard dans la rédaction du rapport et une accumulation de contraintes scolaires après la semaine des vacances d'octobre nous a amenés à précipiter la fin du projet et à ne pas peaufiner le code autant que nous l'aurions souhaité. Cela a été pour nous d'autant plus frustrant que nous n'avons pas pu profiter du temps que nous avions en début de projet car nous n'avions pas encore acquis les connaissances nécessaires pour avancer le développement.  
 
-Ce calendrier a été respecté durant la majeure partie du développement. Cependant, un léger retard dans la rédaction du rapport et une accumulation de contraintes scolaires après la semaine des vacances d'octobre nous a amenés à précipiter la fin du projet et à ne pas peaufiner le code autant que nous l'aurions souhaité. Cela a été pour nous d'autant plus frustrant que nous n'avons pas pu profiter du temps que nous avions en début de projet car nous n'avions pas encore acquis les connaissances nécessaires pour avancer le développement.    
+![Diagramme de Gantt](img/diag_gantt.png){#fig-diag_gantt width="92%"}  
 
 ### Outils de développement  
 
@@ -452,7 +464,7 @@ Certaines fonctions ont été modifiées afin de permettre d'être testées plus
 
 Conscients que ce projet était pour nous l'occasion de développer nos connaissances et nos compétences, nous avons tenu à encadrer notre utilisation de l'intelligence artificielle. Nous avons ainsi convenu de ne l'utiliser pour des tâches de production qu'à titre exceptionnel et après en avoir informé les autres membres du groupe. Elle nous a cependant été d'une grande aide lorsqu'il a fallu trouver des solutions techniques pertinentes, notamment lors du développement de la collecte de données via l'API externe et de l'implémentation du frontend. Elle a également été très utile afin de réduire le temps de débogage.  
 
-### Conclusion et pistes d'améliorations  
+## Conclusion et pistes d'améliorations  
 
 L'application VeloScope est devenue réalité au cours de ce projet. Ce dernier a été l'occasion de découvrir le développement complet d'une application, de la conception au développement, du backend au frontend. Nous avons ainsi eu l'occasion de construire un modèle de données et l'architecture logicielle permettant de l'exploiter. Nous avons dû réfléchir et mettre en œuvre des solutions techniques aux demandes du cahier des charges. Ce projet nous a également initié aux questions de sécurisation intrinsèque au développement d'une API.  
 
@@ -466,9 +478,12 @@ Pour conclure, ce projet a été pour nous riche en apprentissages et en dévelo
 
 {{< pagebreak >}}
 
-## Annexes {.unnumbered}
+## Annexes  
 
 ### Cahier des charges détaillé  
+
+*Présentation du sujet*  
+Les vélos en libre-service sont disponibles en temps réel dans de nombreuses villes. Pourtant, une simple carte des stations ne permet pas vraiment de répondre à des questions utiles : À quelle heure vais-je réellement trouver un vélo ? Quelles stations sont souvent pleines ? Quels trajets sont les plus fiables ? Est-ce qu’une station est régulièrement vide le matin mais pleine le soir ? Le projet VeloScope consiste à développer une API permettant de collecter, historiser et analyser les données de vélos en libre-service d’une ville. L’application récupère périodiquement les informations d’une API de vélos en libre-service compatible avec le standard GBFS : stations, nombre de vélos disponibles, nombre de places libres, vélos électriques, etc. Contrairement à une simple application de consultation, VeloScope doit construire son propre historique afin de permettre des analyses temporelles et de produire des indicateurs de fiabilité des stations.  
 
 *Fonctionnalités obligatoires implémentées*  
 - F1 : Gestion des utilisateurs. Un utilisateur peut : créer un compte, se connecter, consulter les données et statistiques, gérer ses stations favorites. Un compte ADMIN peut gérer les utilisateurs.  
@@ -479,6 +494,8 @@ Pour conclure, ce projet a été pour nous riche en apprentissages et en dévelo
 
 *Fonctionnalités optionnelles implémentée*  
 - FO1 : Prévision de disponibilité. À partir de l’historique, tenter d’estimer la probabilité qu’une station soit vide ou saturée dans les prochaines heures. Il est possible de commencer avec un modèle statistique très simple avant d’utiliser une approche plus avancée.  
+
+Les autres fonctionnalités optionnelles proposées par le sujet n'ont pas été implémentées.  
 
 {{< pagebreak >}} 
 
@@ -508,8 +525,4 @@ J'ai également eu l'occasion de participer à l'implémentation de certaines pa
 
 {{< pagebreak >}} 
 
-### Retour d'expérience : Alix MOINERAUD--DOUCET
-
-
-
-{{< pagebreak >}} 
+### Retour d'expérience : Alix MOINERAUD--DOUCET  
