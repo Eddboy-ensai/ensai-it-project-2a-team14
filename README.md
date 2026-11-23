@@ -1,7 +1,15 @@
-# ensai-it-project-2a-team14
+# VeloScope  
+
+VeloScope is an application that provides services related to bike stations in a city. It allows users to access real-time information, historical data and predictions. Using this application requires creating an account.  
+
+# Run the application  
+
+The following steps are described to ensure its deployment on SSP cloud services.
+
+Command to run from the repository's root directory (step 1 from 4 are optional if you already have a dataset):
 
 1) Create a PostgreSQL service  
-2) Create a .env file in the root of the project and complete the following variables :  
+2) Create a .env file in the root of the project and complete the following variables (marked with <...>):  
 
 ```default
 POSTGRES_HOST=postgresql-cnpg-<suffixe>
@@ -18,12 +26,11 @@ BACKEND_URL=http://localhost:5000
 BACKEND_TIMEOUT=5
 ```
 
- 
-3) Create empty schemas by running : `uv run --project backend python backend/src/init_db.py`  
-4) Run in a new terminal to collect data : `uv run --project backend python backend/src/collector.py`  
+3) Create empty schemas by running: `uv run --project backend python backend/src/init_db.py`  
+4) Run in a new terminal to collect data (do not stop it): `uv run --project backend python backend/src/collector.py`  
 5) Install dependencies by executing `uv sync --project backend`  
 6) In a terminal, execute `uv run --project backend python backend/src/main.py`  
-7) Go to the swagger (Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 5000") or use the webservice ("port 8000" after executing, in a terminal the commands `cd frontend` and `uv run --project . streamlit run src/app.py`)  
-8) To execute the test :  
-`uv sync --project backend --extra dev` (to install dependencies)  
-`uv run --project backend pytest -v`(to execute the tests)  
+7) You can then use the application with the swagger  
+8) In order to use the webservice :  
+- run the following commands `cd frontend` and `uv run --project . streamlit run src/app.py`  
+- Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 8000"  

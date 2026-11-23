@@ -54,7 +54,6 @@ Rapport
 
 Prioritaires :
 - écrire README en anglais (un peu frontend, un pour back, un pour le général ?)
-- ajouter des images de l'appli au rapport
 - ajouter à l'appli les fonctionnalités qui manquent en obligatoire
 - commenter et nettoyer le code
 
