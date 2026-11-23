@@ -55,11 +55,12 @@ async def station_by_id(id_station: str, range: int, station_service=Depends(get
     if not station:
         raise HTTPException(status_code=404, detail=f"Station (id={id_station}) not found.")
     stats = station_service.get_stats(station)
-    status = CalculationService(station).latest_record().status
-    availability_spaces = CalculationService(station).get_availability_spaces_over_time(range)
-    availability_bikes = CalculationService(station).get_availability_bikes_over_time(range)
-    prediction_spaces = CalculationService(station).prediction_spaces_in_an_hour()
-    prediction_bikes = CalculationService(station).prediction_bikes_in_an_hour()
+    calculation_service = CalculationService(station)
+    status = calculation_service.latest_record().status
+    availability_spaces = calculation_service.get_availability_spaces_over_time(range)
+    availability_bikes = calculation_service.get_availability_bikes_over_time(range)
+    prediction_spaces = calculation_service.prediction_spaces_in_an_hour()
+    prediction_bikes = calculation_service.prediction_bikes_in_an_hour()
     data = {
         "id_station": station.id_station,
         "name": station.name,
@@ -68,7 +69,7 @@ async def station_by_id(id_station: str, range: int, station_service=Depends(get
         "capacity": station.capacity,
         "status": status,
     }
-    score = CalculationService(station).compute_score()
+    score = calculation_service.compute_score()
     return (
         data
         | stats
