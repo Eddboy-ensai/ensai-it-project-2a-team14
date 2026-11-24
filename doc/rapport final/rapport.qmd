@@ -532,6 +532,13 @@ Malgré un bilan très positif, ce rendu me laisse un léger sentiment d'inachev
 
 ### Note individuelle : Samuel LEJARS  
 
+Je me suis principalement occupé de la partie backend lors de ce projet, et plus précisément des services liés aux différents calculs. C'était la partie qui m'avait le plus intéressé lors de la présentation du projet et des différentes couches. J'ai le sentiment que cette partie de l'application constitue l'essentiel de la valeur ajoutée par l'application aux données récoltées.
+
+Travailler sur cette partie m'a permis, en plus des compétences de codage et de test, de faire des recherches sur les différentes manières de créer des formules qui répondent aux exigences du cahier des charges. Cela m'a donné l'expérience des contraintes d'un cahier des charges et de la manière d'articuler son travail pour le respecter au maximum.
+
+La nature de ce rôle m'a aussi permis de travailler en accord avec le frontend, qui pouvait parfois m'imposer des contraintes techniques telles que le format de ce que renvoyaient mes fonctions, ainsi qu'avec le chef de projet. À de nombreuses reprises, j'ai pu proposer aux membres du groupe des formules et des statistiques qui me paraissaient pertinentes à ajouter à l'application. L'ensemble de mes travaux m'a ainsi permis de travailler avec tous les membres du groupe.
+
+Je suis très satisfait du travail accompli par le groupe et par moi-même, malgré la forte restriction que nous nous sommes imposée sur l'utilisation de code généré par IA. Les pistes d'amélioration éventuelles concerneraient l'ajout de fonctionnalités optionnelles et le codage de fonctions de test, notamment celles portant sur les dernières méthodes de la partie recommandation, que je n'aurais pas réussi à implémenter seul sans IA et que j'ai donc abandonnées.
 
 {{< pagebreak >}} 
 
