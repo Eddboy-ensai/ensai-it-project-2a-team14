@@ -43,7 +43,7 @@ Pour rendre compte de cette démarche, ce rapport s'articule autour de trois gra
 
 ## Cahier des charges et solutions apportées  
 
-L'objectif du projet a été de produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application devait également fournir d'autres services, tels que des indicateurs temporels et un score de qualité. Voici les fonctionnalités attendues par le *product owner* (pour le détail concernant ces fonctionnalités, voir l'annexe [Cahier des charges détaillé](#cahier-des-charges-détaillé)):  
+L'objectif du projet a été de produire une application donnant des informations sur la disponibilité des vélos dans une ville. Au-delà de la seule disponibilité en temps réel par station, l'application devait également fournir d'autres services, tels que des indicateurs temporels et un score de qualité. Voici les fonctionnalités attendues par le *product owner* (pour le détail concernant ces fonctionnalités, voir l'annexe [Cahier des charges détaillé](#cahier-des-charges-détaillé)) :  
 - F1 : Gestion des utilisateurs  
 - F2 : Collecte des données de l'API externe d'une ville  
 - F3 : Consultation d'une station  
@@ -63,7 +63,7 @@ Nous détaillons dans les sections suivantes ces fonctionnalités et nos choix d
 
 Deux types d'utilisateurs sont à distinguer. Il y a tout d'abord les utilisateurs «réguliers» de l'application. Un nouvel utilisateur de l'application est invité à créer un compte afin de pouvoir profiter des autres fonctionnalités. Une fois connecté, il peut accéder aux différentes données de l'application, gérer ses identifiants et gérer ses stations favorites en naviguant à travers les différentes pages de l'application.  
 
-Ensuite, il y a des comptes «administrateurs» qui peuvent gérer les comptes des autres utilisateurs. Ils peuvent ainsi supprimer un compte utilisateur ou élever un utilisateur au rang d'administrateur. Afin d'éviter tout conflit, il a été décidé que la création du premier administrateur se fasse directement dans la base de données sans passer par l'API. Celui-ci doit posséder le plus petit identifiant afin de conserver ses prérogatives sur les autres administrateurs (nous détaillerons ce point dans la section [Classes liées aux utilisateurs](#classes-liées-aux-utilisateurs)).  
+Ensuite, il y a des comptes « administrateurs » qui peuvent gérer les comptes des autres utilisateurs. Ils peuvent ainsi supprimer un compte utilisateur ou élever un utilisateur au rang d'administrateur. Afin d'éviter tout conflit, il a été décidé que la création du premier administrateur se fasse directement dans la base de données sans passer par l'API. Celui-ci doit posséder le plus petit identifiant afin de conserver ses prérogatives sur les autres administrateurs (nous détaillerons ce point dans la section [Classes liées aux utilisateurs](#classes-liées-aux-utilisateurs)).  
 
 ### Collecte des données de l'API externe d'une ville  
 
@@ -81,12 +81,12 @@ Une fois connecté, l'utilisateur est automatiquement redirigé vers la page des
 
 ![Page des stations](img/stations.png){#fig-stations width="93%"}  
 
-Sur cette page, l'utilisateur peut utiliser le tableau afin de cocher ses stations favorites qu'il peut ensuite enregistrer via le bouton en dessous du tableau. L'utilisateur pourra alors, par la suite, accéder directement à la disponibilité en terme de vélos ou d'emplacements libres dans la page "Mes informations".  
+Sur cette page, l'utilisateur peut utiliser le tableau afin de cocher ses stations favorites qu'il peut ensuite enregistrer via le bouton en dessous du tableau. L'utilisateur pourra alors, par la suite, accéder directement à la disponibilité en terme de vélos ou d'emplacements libres dans la page « Mes informations ».  
 
-![Page "Mes informations"](img/mesinfos.png){#fig-mesinfos width="93%"}  
+![Page « Mes informations »](img/mesinfos.png){#fig-mesinfos width="93%"}  
 
 Enfin, l'utilisateur peut choisir d'obtenir des informations supplémentaires en sélectionnant une station via une boîte de sélection. La page se recharge et affiche différentes statistiques et informations :  
-- le statut et le taux de remplissage de la station,  
+- statut et le taux de remplissage de la station,  
 - disponibilités actuelles en termes de vélos et d'emplacements,  
 - score de fiabilité (voir la section [Score de fiabilité des stations](#score-de-fiabilité-des-stations)),  
 - évolution temporelle des disponibilités avec le choix de la fenêtre de temps (dernier jour, dernière semaine ou trente derniers jours),  
@@ -104,18 +104,18 @@ La formule de la création des sous-scores tient donc compte des variables suiva
 - la proportion du temps durant lequel la station a été vide ($Pshort$) et pleine ($Pdrop$),  
 - les durées moyennes des épisodes de pénurie ($Dshort$) et de saturation ($Dprop$), en secondes.  
 
-La formule d'un sous-score est la suivante (ici appliquée à la pénurie mais similaire au cas de saturation):  
+La formule d'un sous-score est la suivante (ici appliquée à la pénurie mais similaire au cas de saturation) :  
 $Spick = (1 - Pshort) ^ 0.5 \times dshort ^ 0.5$  
 où $dshort = \exp(-\frac{Dshort}{3600})$ permet de transformer $Dshort$ qui est un temps en secondes en un score sans dimension compris entre 0 et 1, et où 3600 est choisi arbitrairement.  
 La formule est de la forme $x ^{(1 - a)} \times y ^ a$ où $a = 0.5$ est choisi afin de pondérer équitablement la proportion du temps d'un épisode à sa durée moyenne. Une formule géométrique a été préférée à une formule arithmétique afin qu'une bonne variable ne puisse pas compenser l'autre si elle est très mauvaise.  
 
-Enfin la formule générale du score de fiabilité est la suivante :  
+Enfin, la formule générale du score de fiabilité est la suivante :  
 $S = 100 \times (0.5 \times Spick + 0.5 \times Sdrop)$  
-Il est de la forme $(1 - a) \times x + a \times y$ où $a = 0.5$ ici pour donner autant d'importance aux épisodes de pénurie qu'à ceux de saturation.  
+Elle est de la forme $(1 - a) \times x + a \times y$ où $a = 0.5$ ici pour donner autant d'importance aux épisodes de pénurie qu'à ceux de saturation.  
 
 ### Recommandation de station  
 
-La page "Suggestions de stations" permet de répondre à la demande du cahier des charges de fournir des recommandations de stations à proximité de l'utilisateur. Nous n'avons pas trouvé de moyen permettant de déterminer la localisation de l'utilisateur avec la technologie utilisée. Afin de répondre au cahier des charges, nous avons donc fait le choix de donner à l'utilisateur la possibilité de choisir la station qu'il souhaite utiliser en cliquant sur une carte interactive. Il est ensuite invité à préciser son besoin (prendre où déposer un vélo). Nous détaillons dans la suite le fonctionnement de la méthode ```suggestion_pick``` permettant de retourner les stations suggérées lorsque l'utilisateur souhaite emprunter un vélo.  
+La page « Suggestions de stations » permet, à la demande du cahier des charges, de fournir des recommandations de stations à proximité de l'utilisateur. Nous n'avons pas trouvé de moyen permettant de déterminer la localisation de l'utilisateur avec la technologie utilisée. Afin de répondre au cahier des charges, nous avons donc fait le choix de donner à l'utilisateur la possibilité de choisir la station qu'il souhaite utiliser en cliquant sur une carte interactive. Il est ensuite invité à préciser son besoin (prendre où déposer un vélo). Nous détaillons dans la suite le fonctionnement de la méthode ```suggestion_pick``` permettant de retourner les stations suggérées lorsque l'utilisateur souhaite emprunter un vélo.  
 
 ![Page de suggestions de stations](img/suggestions.png){#fig-suggestions width="93%"}  
 
@@ -123,9 +123,9 @@ Tout d'abord, nous construisons un score de recommandation d'une station qui se 
 $Score = 100 \times (d ^ 0.3 \times n ^ 0.5 \times Spick ^ 0.2)$  
 où $d = \exp(- \frac{D}{800})$ et $n = 1 - \exp(- \frac{N}{3})$ sont des transformations qui permettent d'obtenir des scores entre 0 et 1 sans unité. Cette formule a nécessité plusieurs choix de conception, les seuils de référence et la valeur des exposants, que nous détaillons ci-dessous.  
 
-Nous avons dû, dans un premier temps, choisir des seuils de référence. Nous avons considéré qu'un nombre de vélos inférieur ou égal à 3 peut poser problème si l'utilisateur ne peut se rendre dans la station que d'ici plusieurs minutes. Une distance trop grande (ici supérieure à 800m) pose un problème similaire.  
+Nous avons dû, dans un premier temps, choisir des seuils de référence. Nous avons considéré qu'un nombre de vélos inférieur ou égal à 3 peut poser problème si l'utilisateur ne peut se rendre dans la station que d'ici plusieurs minutes. Une distance trop grande (ici supérieure à 800 m) pose un problème similaire.  
 
-Les exposants dans la formule permettent quant à eux de hiérarchiser les paramètres selon l'importance qu'on leur accorde. Nous avons fait le choix de privilégier la possibilité d'obtenir un vélo, au détriment de la nécessité de parcourir une faible distance et du score de fiabilité. Ce choix est justifié par le fait qu'une station ayant de nombreux vélos n'a pas besoin d'avoir un bon score de fiabilité pour répondre aux besoins de l'utilisateur dans un futur proche.  
+Les exposants dans la formule permettent, quant à eux, de hiérarchiser les paramètres selon l'importance qu'on leur accorde. Nous avons fait le choix de privilégier la possibilité d'obtenir un vélo, au détriment de la nécessité de parcourir une faible distance et du score de fiabilité. Ce choix est justifié par le fait qu'une station ayant de nombreux vélos n'a pas besoin d'avoir un bon score de fiabilité pour répondre aux besoins de l'utilisateur dans un futur proche.  
 
 Pour revenir à l'interface utilisateur, lorsque l'utilisateur sélectionne une station, l'application cherche tout d'abord à déterminer si la station sélectionnée est recommandable. Elle vérifie si elle n'est pas vide et si, dans le cas où elle ne compte qu'un seul vélo, $Spick$ est supérieur à 80. Ce premier filtre cherche à limiter la possibilité de recommander une station vide à l'utilisateur. Si ces deux contraintes sont respectées et si son score de recommandation dépasse 70, elle est alors l'unique station recommandée. Si la station choisie n'est pas recommandable, l'application suggère alors les stations à moins d'un kilomètre de l'utilisateur, possédant au moins deux vélos lors du dernier relevé et un score de recommandation supérieur à 70. Les différentes stations recommandées sont ensuite classées grâce à leur score de recommandation respectif puis affichées dans un tableau.  
 
@@ -202,7 +202,7 @@ Des fonctionnalités transversales ont été implémentés sur les différentes 
 
 #### Informations sur les stations  
 
-Plusieurs pages permettent d'accéder aux informations des stations fournies par l'application. Initialement, la page de suggestions des stations n'était pas prévue. Les suggestions devaient apparaître directement dans la page «Informations sur les stations». Cependant, cette page aurait nécessité un grand nombre de requêtes au backend, ce qui aurait pu ralentir son chargement. Cela aurait également produit une page lourde en informations et peu ergonomique. Avoir une page de suggestions autonome permet également de faciliter la navigation de l'utilisateur.  
+Plusieurs pages permettent d'accéder aux informations des stations fournies par l'application. Initialement, la page de suggestions des stations n'était pas prévue. Les suggestions devaient apparaître directement dans la page « Informations sur les stations ». Cependant, cette page aurait nécessité un grand nombre de requêtes au backend, ce qui aurait pu ralentir son chargement. Cela aurait également produit une page lourde en informations et peu ergonomique. Avoir une page de suggestions autonome permet également de faciliter la navigation de l'utilisateur.  
 
 La page contenant les informations des stations a nécessité la mise en place de plusieurs outils graphiques complexes, notamment des cartes et tableaux interactifs, ainsi que des graphiques d'historique. Concernant l'affichage, il était initialement prévu pour être vertical, mais cela ne s'est pas révélé satisfaisant puisque les contenus de la page « Information des stations » sont complémentaires. Nous avons donc retenu un affichage horizontal des composants graphiques, permettant d'avoir accès simultanément aux cartes et au tableau récapitulant les informations.  
 
@@ -213,7 +213,7 @@ L'affichage vertical initialement pensé ne s'est pas révélée être satisfais
 Pourquoi avoir géré les query de cette manière ? 
 -->
 
-Concernant l'accès aux données spécifiques d'une station, nous souhaitions initialement pouvoir y accéder par des liens cliquables dans le tableau listant les stations. Cependant, le fonctionnement de Streamlit pour de tels liens entraîne le rafraîchissement de la page, et donc une perte de token (et donc une déconnexion). Nous ne souhaitions pas modifier ce comportement pour des raisons de sécurité (voir la section [La génération et le stockage des tokens](#la-génération-et-le-stockage-des-tokens) pour plus de détails). Nous avons donc décidé de gérer l'affichage des données d'une station en particulier à l'aide de paramètres de requête. Ainsi, la page « Informations sur les stations » possède deux affichages complètement différents, selon qu'elle reçoit un paramètre de requête ou non. Sans paramètre, elle affiche la page générique avec les informations concernant toutes les stations. Cependant, si l'utilisateur choisit une station dans une liste déroulante, l'identifiant de la station est récupéré et envoyé en tant que paramètre de requête tout en relançant la page. La page qui s'affiche est alors celle des données spécifiques à la station. Pour revenir à la page précédente, un bouton « Retour » est prévu.  
+Concernant l'accès aux données spécifiques d'une station, nous souhaitions initialement pouvoir y accéder par des liens cliquables dans le tableau listant les stations. Cependant, le fonctionnement de Streamlit pour de tels liens entraîne le rafraîchissement de la page, et donc une perte de token (et donc une déconnexion). Nous ne souhaitions pas modifier ce comportement pour des raisons de sécurité (voir la section [La génération et le stockage des tokens](#la-génération-et-le-stockage-des-tokens) pour plus de détails). Nous avons donc décidé de gérer l'affichage des données d'une station, en particulier à l'aide de paramètres de requête. Ainsi, la page « Informations sur les stations » possède deux affichages complètement différents, selon qu'elle reçoit un paramètre de requête ou non. Sans paramètre, elle affiche la page générique avec les informations concernant toutes les stations. Cependant, si l'utilisateur choisit une station dans une liste déroulante, l'identifiant de la station est récupéré et envoyé en tant que paramètre de requête tout en relançant la page. La page qui s'affiche est alors celle des données spécifiques à la station. Pour revenir à la page précédente, un bouton « Retour » est prévu.  
 
 
 <!-- , l'affichage de pages de stations individuelles aurait nécessité de faire 57 pages différentes, cette solution étant loin d'être optimale puisque, dans un premier temps, elle ne respecte pas la bonne pratique « Don't Repeat Yourself », et ensuite, elle rendait toutes modification bien plus complexe. L'ajout d'un graphique, une redirection de page ou encore le changement d'un nom nécessiterait de répercuter cela sur toutes les pages. De plus, puisque les stations peuvent être amenée à évoluer, notre code se doit d'être modulaire afin de s'adapter au mieux à ce qu'est transmis par l'API. Dans le cas où il y aurait de nouvelles stations ou qu'une station fermerait, cela aurait nécessité une maintenance manuelle. Nous avons alors préféré coder une seule page dont le contenu dépendrait d'un paramètre URL qui serait ajusté selon les choix de l'utilisateur (identifiant d'une station et période d'étude des disponibilités). -->
@@ -242,7 +242,7 @@ Le frontend envoie des requêtes HTTP au backend, qui est chargé de traiter ces
 
 Tout d'abord, une couche controller reçoit les requêtes fournies par le frontend lors de l'utilisation de l'application par un usager. Cette couche a pour but de convertir et transférer ces requêtes à la couche suivante, celle des services.  
 
-La couche service est le cœur de l'application, c'est dans cette couche que sont regroupées les fonctions apportant une valeur ajoutée. Il s'agit par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche service a besoin de données. Ces services font donc appel à une couche DAO (Data Access Object) afin de communiquer avec les bases de données.  
+La couche service est le cœur de l'application, c'est dans cette couche que sont regroupées les fonctions apportant une valeur ajoutée. Il s'agit par exemple des fonctions permettant de calculer les indicateurs souhaités et le score de fiabilité pour chaque station de vélos. Pour cela, la couche service a besoin de données. Ces services font donc appel à une couche Data Access Object (DAO) afin de communiquer avec les bases de données.  
 
 La couche DAO reçoit les demandes de données de la part de la couche service. Elle est chargée de convertir ces demandes en requêtes SQL. Ces requêtes sont alors traitées par la couche persistante : celle des bases de données. La couche DAO a alors pour mission de convertir les données renvoyées par les bases de données en objets Python (par exemple en objet `User` ou `Station`, voir la section correspondante pour plus de détails). Ces objets sont ensuite utilisés par la couche service afin de calculer les indicateurs. Les résultats obtenus sont transmis à la couche controller puis au frontend pour affichage à l'utilisateur.  
 
@@ -264,7 +264,7 @@ Pour respecter les trois formes normales, le projet nécessite donc deux tables.
 
 Enfin, l'un des attendus du projet est de permettre aux utilisateurs de pouvoir gérer leurs stations favorites. Cela se fera via une table d'association ```Favorites``` qui permettra de lier un utilisateur à ses stations favorites.  
 
-Notons pour finir que l'identifiant des stations est de type « chaîne de caractère » car nous le récupérons directement depuis les données fournies par l'API externe au standard GBFS et devons de le conserver tel quel afin de pouvoir adapter facilement notre application à une autre ville.  
+Notons pour finir que l'identifiant des stations est de type « chaîne de caractère » car nous le récupérons directement depuis les données fournies par l'API externe au standard GBFS et devons le conserver tel quel afin de pouvoir adapter facilement notre application à une autre ville.  
 
 {{< pagebreak >}}
 
@@ -330,13 +330,13 @@ Le troisième argument est de fournir une dépendance à sens unique et une meil
 
 ![Diagramme de classes du traitement des données](img/diag_classes_traitement.png){#fig-classes-traitement width="100%"}   
 
-Voici la façon dont nous avons conçu la classe `CalculationService`. Tout d'abord une méthode `latest_record` permet de sélectionner uniquement le dernier enregistrement qui sera utile dans certaines méthodes des deux classes de calcul. La classe possède ensuite toutes les méthodes relatives au calcul de score de fiabilité. Les premières méthodes correspondent à la création de variables et les dernières leur utilisation pour arriver aux scores de fiabilité. Enfin, les méthodes d'évolution de disponibilité et de prédiction sont aussi dans cette classe de par leur nature similaire de traitement statistique des données.  
+Voici la façon dont nous avons conçu la classe `CalculationService`. Tout d'abord, une méthode `latest_record` permet de sélectionner uniquement le dernier enregistrement qui sera utile dans certaines méthodes des deux classes de calcul. La classe possède ensuite toutes les méthodes relatives au calcul de score de fiabilité. Les premières méthodes correspondent à la création de variables et les dernières leur utilisation pour arriver aux scores de fiabilité. Enfin, les méthodes d'évolution de disponibilité et de prédiction sont aussi dans cette classe, de par leur nature similaire de traitement statistique des données.  
 
 Décrivons maintenant la classe `SuggestionService`, qui dispose de trois types de méthodes (`station_pick/drop_suggestion_score`, `compute_distance`, `get_suggestion_pick/drop`). Rappelons que l'utilisateur sélectionne initialement une station à laquelle il souhaite se rendre. Les méthodes `get_suggestion_pick/drop` permettent, dans un premier temps, de vérifier si la station sélectionnée passe des critères d'éligibilité. Si c'est le cas, c'est cette station qui est suggérée. Sinon, ces méthodes appellent les méthodes `station_pick/drop_suggestion_score` qui vérifie l'éligibilité de toutes les autres stations. Enfin la méthode `compute_distance` calcule la distance entre deux points en utilisant leurs coordonnées géographiques, ce qui permet de ne pas suggérer de stations trop éloignées. Cette méthode permet notamment de ne pas dupliquer du code et améliore la lisibilité des autres méthodes qui sont déjà de taille conséquente.  
 
 <!-- La première correspond au calcul du score de recommandation de la station séléctionnée tandis que la dernière calcule celui de toutes les autres stations dans le cas où l'on ne retient pas la station choisie. Ce choix a été fait en présupposant que l'utilisateur avait une localisation très proche de la station qu'il choisit. N'ayant pas la possibilité de récupérer directement la localisation de son appareil, on utiliserait ainsi la localisation de la station comme tel. De plus ces conditions vérifiées, l'utilisateur aurait tout intérêt à aller dans cette station si elle s'avère recommandable. Ainsi les méthodes `get_suggestion_pick/drop` vérifient dans un premier temps si la station est éligible avant de faire le calcul des scores de recommandation des autres stations. On renvoit donc que la station séléctionnée avec son score si elle est éligible puisque l'utilisateur n'a pas besoin de savoir si d'autres station sont recommandables du moment quelle celle-ci l'est. Enfin la méthode `compute_distance` calcule la distance entre deux points en utilisant leur coordonnées géographique. Ce calcul aurait lui aussi pu être inclut dans les dernière méthode mais il aurait du être fait deux fois (une dans chaque `get_suggestion`) et aurait impacter la lisibilité des dernières méthodes qui sont déjà de taille conséquente. -->
 
-L'implémentation de ces classes pourrait être nettement améliorée. En effet, actuellement, `SuggestionService` instancie systématiquement `CalculationService`, ce qui charge l'ensemble des `StationRecord` même lorsque seul le dernier enregistrement est utile. Une évolution possible consisterait à n'obtenir de la couche DAO que le dernier enregistrement (par exemple via `find_latest_by_id`) et à n'instancier `CalculationService` que pour les méthodes qui en ont réellement besoin. De plus, plusieurs méthodes de calcul de scores sont dupliquées (une fois pour l'état de saturation une fois pour la pénurie). Ceci ne respecte pas les bonnes pratiques, mais le temps nous a manqué pour concevoir un *design pattern* adapté.  
+L'implémentation de ces classes pourrait être nettement améliorée. En effet, actuellement, `SuggestionService` instancie systématiquement `CalculationService`, ce qui charge l'ensemble des `StationRecord` même lorsque seul le dernier enregistrement est utile. Une évolution possible consisterait à n'obtenir de la couche DAO que le dernier enregistrement (par exemple via `find_latest_by_id`) et à n'instancier `CalculationService` que pour les méthodes qui en ont réellement besoin. De plus, plusieurs méthodes de calcul de scores sont dupliquées (une fois pour l'état de saturation, une fois pour la pénurie). Ceci ne respecte pas les bonnes pratiques, mais le temps nous a manqué pour concevoir un *design pattern* adapté.  
 
 ### Classes de gestion des stations favorites  
 
@@ -382,7 +382,7 @@ Les tableaux suivants décrivent les différents endpoints de l'application. Les
 
 ### Diagramme de séquence d'une fonctionnalité  
 
-Nous venons de présenter l'architecture de notre application. Afin de résumer toutes ces informations, la @fig-sequence présente le diagramme de séquence de la fonctionnalité «ajouter une station favorite» lorsque la station n'est pas déjà en favori.  
+Nous venons de présenter l'architecture de notre application. Afin de résumer toutes ces informations, la @fig-sequence présente le diagramme de séquence de la fonctionnalité « ajouter une station favorite » lorsque la station n'est pas déjà en favori.  
 
 ![Diagramme de séquence de la fonctionnalité «ajouter une station favorite»](img/diag_sequence.png){#fig-sequence}  
 
@@ -428,7 +428,7 @@ En revanche, seul le premier administrateur, défini comme l'administrateur ayan
 
 Dès la première séance, nous avons décidé de créer un groupe sur l'application WhatsApp qui nous a permis de communiquer de manière réactive durant tout le projet. C'est également durant cette séance que nous avons mis en place le dépôt GitHub. Nous avons également mis en place des règles basiques afin d'éviter les conflits sur le dépôt. Par exemple, chaque membre du groupe n'avait le droit de modifier que les fichiers qui lui étaient attribués. Pour les fichiers communs, nous devions prévenir lorsque l'on travaillait dessus. Cette organisation nous a été bénéfique car nous n'avons pas relevé de conflits majeurs durant toute la phase de développement du projet.  
 
-Concernant la répartition des tâches, nous avons communiqué assez tôt sur nos appétences respectives mais nous avons décidé d'attendre quelques séances pour distribuer les rôles. Cette distribution s'est faite naturellement lors des premières séances. Ainsi, Eddy est devenu chef de projet tandis que l'appétence d'Eliot pour les sujets techniques et la cybersécurité l'ont amené à prendre le rôle de *technical leader*. Samuel s'est montré très vite intéressé pour devenir développeur backend, notamment sur la partie service du traitement des données. Enfin, Alix et Méline ont souhaité s'orienter vers le rôle de développeur frontend. Cependant, ces rôles n'étaient pas figés et nous nous sommes laissé la possibilité d'intervenir sur différentes parties en fonction des intérêts du moment.  
+Concernant la répartition des tâches, nous avons communiqué assez tôt sur nos appétences respectives mais nous avons décidé d'attendre quelques séances pour distribuer les rôles. Cette distribution s'est faite naturellement lors des premières séances. Ainsi, Eddy est devenu chef de projet tandis que l'appétence d'Eliot pour les sujets techniques et la cybersécurité l'ont amené à prendre le rôle de *technical leader*. Samuel s'est montré très vite intéressé pour devenir développeur backend, notamment sur la partie service du traitement des données. Enfin, Alix et Méline ont souhaité s'orienter vers le rôle de développeur frontend. Cependant, ces rôles n'étaient pas figés et nous nous sommes laissés la possibilité d'intervenir sur différentes parties en fonction des intérêts du moment.  
 
 ### Organisation temporelle  
 
@@ -443,7 +443,8 @@ Ce calendrier a été respecté durant la majeure partie du développement. Cepe
 Le projet a été réalisé en Python. Durant la phase de développement, nous avons utilisé plusieurs outils et bibliothèques fournis pour ce langage. Voici le détail de ces outils pour chaque couche :  
 - le framework ```Streamlit``` pour le frontend,  
 - le framework ```FastAPI``` pour le backend,  
-- la bibliothèque ```psycopg2``` pour la couche DAO (afin de convertir les instructions Python en requêtes lisibles par les tables PostgreSQL),  
+- la bibliothèque ```psycopg2``` pour la couche DAO (afin de convertir les instructions Python en requêtes lisibles par les tables PostgreSQL),
+- la bibliothèque ```requests``` pour l'envoi de requêtes HTTP, utilisée à la fois par le frontend pour communiquer avec le backend et par la classe ```GbfsDao``` pour récupérer les fichiers JSON de l'API externe,  
 - la bibliothèque ```pydantic``` pour les classes schéma.  
 
 
@@ -460,6 +461,8 @@ Afin de tester le bon fonctionnement de notre application, nous avons implément
 
 Certaines fonctions ont été modifiées afin de permettre d'être testées plus facilement. Par exemple, dans `CalculationService`, les méthodes `get_availability_bikes/spaces_over_time` utilisent un paramètre `now` qui est initialisé à `None` par défaut. L'application en soi n'utilise pas ce paramètre et le laisse en `None`, puisqu'elle utilise l'heure actuelle (`datetime.now(UTC)`) comme date de référence pour obtenir l'historique des disponibilités. Cependant, les tests s'appuient sur des données figées ne se renouvelant pas, il n'était donc pas possible d'utiliser la date actuelle comme date de référence. Le paramètre `now` est donc appelé pour choisir une date adaptée à ces données de tests.  
 
+Au final, 21 tests unitaires portant sur la couche service ont été développés.  Ces tests vérifient le bon fonctionnement des différentes méthodes en couvrant les principaux scénarios d'utilisation, au moyen de plusieurs assertions lorsque cela est nécessaire. La couverture de tests du backend atteint ainsi 67 %.  
+
 ### Usage de l'IA  
 
 Conscients que ce projet était pour nous l'occasion de développer nos connaissances et nos compétences, nous avons tenu à encadrer notre utilisation de l'intelligence artificielle. Nous avons ainsi convenu de ne l'utiliser pour des tâches de production qu'à titre exceptionnel et après en avoir informé les autres membres du groupe. Elle nous a cependant été d'une grande aide lorsqu'il a fallu trouver des solutions techniques pertinentes, notamment lors du développement de la collecte de données via l'API externe et de l'implémentation du frontend. Elle a également été très utile afin de réduire le temps de débogage.  
@@ -474,7 +477,7 @@ Au cours de ce rapport, nous avons eu l'occasion de discuter des différentes pi
 
 De plus, ce projet ayant été développé par différents membres et alors que nous étions encore en cours d'apprentissage, les techniques employés ne sont pas nécessairement harmonisées. Par exemple, les appels des classes controller aux classes de services pourraient être améliorés en harmonisant les pratiques d'instanciation des classes services.  
 
-Pour conclure, ce projet a été pour nous riche en apprentissages et en développement de compétences. Il nous a ainsi permis de développer aussi bien nos compétences techniques et que nos compétences organisationnelles. Enfin, nous souhaitons remercier notre tuteur pour nous avoir permis de le mener à bien.  
+Pour conclure, ce projet a été pour nous riche en apprentissages et en développement de compétences. Il nous a ainsi permis de développer aussi bien nos compétences techniques que nos compétences organisationnelles. Enfin, nous souhaitons remercier notre tuteur pour nous avoir permis de le mener à bien.  
 
 {{< pagebreak >}}
 
@@ -489,8 +492,8 @@ Les vélos en libre-service sont disponibles en temps réel dans de nombreuses v
 - F1 : Gestion des utilisateurs. Un utilisateur peut : créer un compte, se connecter, consulter les données et statistiques, gérer ses stations favorites. Un compte ADMIN peut gérer les utilisateurs.  
 - F2 : Collecte des données. L’application doit interroger régulièrement l’API GBFS choisie et récupérer les informations des stations. Pour chaque relevé, on stockera notamment : station, date et heure, nombre de vélos disponibles, nombre de places disponibles, nombre de vélos électriques, état de la station. Les données récupérées doivent être historisées en base PostgreSQL. L’application ne doit pas simplement remplacer les valeurs précédentes : elle doit permettre de reconstruire l’état du réseau à différents instants.  
 - F3 : Consultation d’une station. L’utilisateur peut rechercher une station et consulter : son état actuel, son nombre de vélos disponibles, sa capacité, son taux de remplissage, l’évolution de sa disponibilité sur une période donnée. L’utilisateur doit notamment pouvoir choisir une période : dernières 24 heures, 7 derniers jours, 30 derniers jours.  
-- F4 : Score de fiabilité des stations. C’est la fonctionnalité métier principale. Pour chaque station, l’application calcule un score de fiabilité. Par exemple, une station est considérée comme : vide lorsqu’il n’y a plus de vélo disponible, saturée lorsqu’il ne reste plus de place, fonctionnelle dans les autres cas. À partir de l’historique, l’application calcule notamment : pourcentage du temps passé vide, pourcentage du temps passé saturé, durée moyenne des épisodes de saturation, durée moyenne des épisodes de pénurie, évolution du score au cours du temps. Le score global est défini par les étudiants à partir d’une formule documentée.  
-- F5 : Recommandation de station. Lorsqu’un utilisateur demande : « Je veux prendre un vélo à proximité » l’API doit être capable de lui proposer plusieurs stations pertinentes. La recommandation doit prendre en compte plusieurs critères, par exemple : distance, nombre de vélos actuellement disponibles, fiabilité historique de la station, disponibilité de vélos électriques, tendance récente de la station. Deux stations à distance équivalente ne doivent donc pas nécessairement être classées de la même manière. La formule de classement devra être justifiée et testée.  
+- F4 : Score de fiabilité des stations. C’est la fonctionnalité métier principale. Pour chaque station, l’application calcule un score de fiabilité. Par exemple, une station est considérée comme : vide lorsqu’il n’y a plus de vélo disponible, saturée lorsqu’il ne reste plus de place, fonctionnelle dans les autres cas. À partir de l’historique, l’application calcule notamment : le pourcentage du temps passé vide, le pourcentage du temps passé saturé, la durée moyenne des épisodes de saturation, la durée moyenne des épisodes de pénurie, l'évolution du score au cours du temps. Le score global est défini par les étudiants à partir d’une formule documentée.  
+- F5 : Recommandation de station. Lorsqu’un utilisateur demande : « Je veux prendre un vélo à proximité », l’API doit être capable de lui proposer plusieurs stations pertinentes. La recommandation doit prendre en compte plusieurs critères, par exemple : distance, nombre de vélos actuellement disponibles, fiabilité historique de la station, disponibilité de vélos électriques, tendance récente de la station. Deux stations à distance équivalente ne doivent donc pas nécessairement être classées de la même manière. La formule de classement devra être justifiée et testée.  
 
 *Fonctionnalités optionnelles implémentée*  
 - FO1 : Prévision de disponibilité. À partir de l’historique, tenter d’estimer la probabilité qu’une station soit vide ou saturée dans les prochaines heures. Il est possible de commencer avec un modèle statistique très simple avant d’utiliser une approche plus avancée.  
@@ -501,16 +504,23 @@ Les autres fonctionnalités optionnelles proposées par le sujet n'ont pas été
 
 ### Note individuelle : Méline BONAVERO  
 
+J'ai particulièrement apprécié travailler sur le projet VeloScope, qui s'est révélé aussi intéressant que formateur. Je suis très contente d'avoir eu l'occasion d'évoluer au sein de ce groupe, dans lequel j'ai rapidement trouvé ma place et où je me suis sentie soutenue tout au long des différentes étapes. La bonne entente et la communication fluide au sein de l'équipe ont permis de mener le projet sereinement et d'avancer de manière régulière.
+
+Je me suis plus spécifiquement investie sur la partie frontend. N'ayant pas d'appétence particulière pour le développement informatique pur à la base, j'ai trouvé cette partie très gratifiante : elle m'a permis de produire rapidement des résultats concrets et visuels à partir du code. J'ai notamment travaillé sur la conception de la carte interactive des stations de Rennes, qui m'a directement confrontée à des contraintes techniques réelles, comme l'adaptation de la cartographie aux restrictions réseau de l'environnement de déploiement ou l'articulation avec les endpoints du backend.
+
+Au final, ce projet m'a permis d'acquérir de nombreuses compétences techniques et de les mettre en pratique au fil des semaines. Il m'a surtout permis de mieux comprendre le fonctionnement global d'une application complète et de prendre davantage confiance en mes capacités en développement.
 
 {{< pagebreak >}} 
 
 ### Note individuelle : Eddy BOYCE  
 
-Durant ce projet, j'ai endossé le rôle de chef de projet. Ce choix a été naturel puisque j'avais l'habitude de gérer des projets de par mon expérience professionnelle antérieure. J'ai apprécié ce rôle car mes camarades étaient réactifs aux demandes. L'entente du groupe a été bonne et a permis d'avancer régulièrement sur le projet dans une ambiance sereine.  
+Durant ce projet, j'ai endossé le rôle de chef de projet. Ce choix s'est fait naturellement grâce à mon expérience professionnelle antérieure. J'ai apprécié ce rôle, d'autant plus que mes camarades étaient impliqués et réactifs. La bonne entente du groupe a contribué à une progression régulière du projet, dans une ambiance de travail sereine.  
 
-Ce rôle m'a permis d'aborder tous les sujets du projet. Je me suis tout d'abord consacré à l'architecture logicielle. Cette part du projet a été gratifiante car elle m'a permis de découvrir l'univers des API, tout en consolidant mes compétences en architecture logicielle acquises lors du projet informatique de première année. Cela m'a permis d'avoir une vision d'ensemble du projet et de pouvoir coordonner la rédaction des rapports ainsi que la production des différents diagrammes.  
+Ce rôle m'a permis d'intervenir sur l'ensemble des phases du projet. Je me suis tout d'abord consacré à l'architecture logicielle. Ce travail a été gratifiant car il m'a permis de découvrir l'univers des API, tout en consolidant mes compétences en architecture logicielle acquises lors du projet informatique de première année. Cela m'a donné une vision d'ensemble du projet et m'a permis de coordonner la rédaction des rapports ainsi que la production des différents diagrammes.  
 
-J'ai également eu l'occasion de participer à l'implémentation de certaines parties (une partie de la gestion des utilisateurs, les classes concernant les stations favorites et leurs tests, la mise en place du frontend et son articulation avec le backend). Ce rôle a donc été très riche et m'a permis de développer de nombre J'ai donc eu l'occasion d'assimiler beaucoup de connaissances concernant l'implémentation d'une application, de l'interface utilisateur aux bases de données en passant par le backend.  
+J'ai également contribué à l'implémentation de plusieurs fonctionnalités (une partie de la gestion des utilisateurs, le backend relatif à la gestion des stations favorites, la mise en place du frontend et des controllers). Ce rôle a donc été très riche et m'a permis de consolider mes compétences en informatique.  
+
+Malgré un bilan très positif, ce rendu me laisse un léger sentiment d'inachevé. Le développement ayant été réalisé parallèlement à l'acquisition des connaissances nécessaires à la conception d'une API, certaines décisions d'implémentation et certaines parties du code me paraissent aujourd'hui perfectibles.  
 
 {{< pagebreak >}} 
 
@@ -522,6 +532,13 @@ J'ai également eu l'occasion de participer à l'implémentation de certaines pa
 
 ### Note individuelle : Samuel LEJARS  
 
+Je me suis principalement occupé de la partie backend lors de ce projet, et plus précisément des services liés aux différents calculs. C'était la partie qui m'avait le plus intéressé lors de la présentation du projet et des différentes couches. J'ai le sentiment que cette partie de l'application constitue l'essentiel de la valeur ajoutée par l'application aux données récoltées.
+
+Travailler sur cette partie m'a permis, en plus des compétences de codage et de test, de faire des recherches sur les différentes manières de créer des formules qui répondent aux exigences du cahier des charges. Cela m'a donné l'expérience des contraintes d'un cahier des charges et de la manière d'articuler son travail pour le respecter au maximum.
+
+La nature de ce rôle m'a aussi permis de travailler en accord avec le frontend, qui pouvait parfois m'imposer des contraintes techniques telles que le format de ce que renvoyaient mes fonctions, ainsi qu'avec le chef de projet. À de nombreuses reprises, j'ai pu proposer aux membres du groupe des formules et des statistiques qui me paraissaient pertinentes à ajouter à l'application. L'ensemble de mes travaux m'a ainsi permis de travailler avec tous les membres du groupe.
+
+Je suis très satisfait du travail accompli par le groupe et par moi-même, malgré la forte restriction que nous nous sommes imposée sur l'utilisation de code généré par IA. Les pistes d'amélioration éventuelles concerneraient l'ajout de fonctionnalités optionnelles et le codage de fonctions de test, notamment celles portant sur les dernières méthodes de la partie recommandation, que je n'aurais pas réussi à implémenter seul sans IA et que j'ai donc abandonnées.
 
 {{< pagebreak >}} 
 
