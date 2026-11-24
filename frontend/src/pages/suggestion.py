@@ -56,7 +56,7 @@ with col_choice:
     )
 
 with col_map:
-    st.subheader("Cliquez sur la station à laquelle vous souhaitez vous rendre")
+    st.subheader("Cliquez sur la station d'intérêt :")
 
     layer = pdk.Layer(
         "ScatterplotLayer",

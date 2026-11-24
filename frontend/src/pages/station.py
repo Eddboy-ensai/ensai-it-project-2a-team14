@@ -18,11 +18,11 @@ check_authentification()
 
 id_station = st.query_params.get("id_station")
 
-#Couleur des containers 
+# Couleur des containers
 st.html(
     """
     <style>
-        [class*="st-key-container_even_"] {background-color: #ccdfe9;
+        [class*="st-key-container_even_"] {background-color: #dcecf5;
         border: 2px solid #000000;}
     </style>
     """
@@ -30,7 +30,7 @@ st.html(
 st.html(
     """
     <style>
-        [class*="st-key-container_odd_"] {background-color: #b2d1e1;
+        [class*="st-key-container_odd_"] {background-color: #c5d9e3;
         border: 2px solid #000000;}
     </style>
     """
@@ -47,10 +47,11 @@ if id_station:  # display of the page with a query "id_station"
 
     st.subheader("Informations en direct")
 
-    top_cell = st.container(key="container_even_1", border=True, height="stretch", vertical_alignment="center")
+    top_cell = st.container(
+        key="container_even_1", border=True, height="stretch", vertical_alignment="center"
+    )
     # status of the station
     with top_cell:
-
         if station["status"] == "IN_SERVICE":
             st.write("Statut actuel de la station : en service")
         else:
@@ -64,16 +65,19 @@ if id_station:  # display of the page with a query "id_station"
             f"Nombre d'emplacements actuellement disponibles : {list(station['availability_spaces'][-1].values())[0]}"
         )
         st.write(f"Taux de remplissage de la station : {round(station['fill_rate'] * 100)}%")
-        st.write(f"Nombre de vélos disponibles estimé dans une heure : {station['prediction_bikes']}")
+        st.write(
+            f"Nombre de vélos disponibles estimé dans une heure : {station['prediction_bikes']}"
+        )
         st.write(
             f"Nombre d'emplacements disponibles estimé dans une heure : {station['prediction_spaces']}"
         )
 
     st.subheader("Evolutions temporelles des disponibilités")
 
-    mid_cell = st.container(key="container_even_2", border=True, height="stretch", vertical_alignment="center")
-    with mid_cell: 
-
+    mid_cell = st.container(
+        key="container_even_2", border=True, height="stretch", vertical_alignment="center"
+    )
+    with mid_cell:
         range = None
         selected_range = st.selectbox(
             "Veuillez choisir une période",
@@ -92,9 +96,13 @@ if id_station:  # display of the page with a query "id_station"
                 st.query_params["selected_range"] = range
                 st.rerun()
 
-        top_mid_cell = st.container(key="container_odd_1", border=True, height="stretch", vertical_alignment="center")
+        top_mid_cell = st.container(
+            key="container_odd_1", border=True, height="stretch", vertical_alignment="center"
+        )
         with top_mid_cell:
-            st.write("Evolution temporelle du nombre d'emplacements libres disponibles dans la station")
+            st.write(
+                "Evolution temporelle du nombre d'emplacements libres disponibles dans la station"
+            )
 
             spaces = [
                 {"date": date, "places disponibles": nb}
@@ -110,7 +118,9 @@ if id_station:  # display of the page with a query "id_station"
             else:
                 st.info("Pas d'informations disponible")
 
-        bot_mid_cell = st.container(key="container_odd_2", border=True, height="stretch", vertical_alignment="center")
+        bot_mid_cell = st.container(
+            key="container_odd_2", border=True, height="stretch", vertical_alignment="center"
+        )
         with bot_mid_cell:
             st.write("Evolution temporelle du nombre de vélos disponibles dans la station")
             bikes = [
@@ -175,69 +185,79 @@ else:  # display the page without query
     with col_carte:
         st.subheader("Carte des stations")
 
-        liste_noms = ["Toutes les stations"] + df_stations["name"].tolist()
-        station_recherchee = st.selectbox("Trouver une station :", liste_noms)
+        left_cell = st.container(
+        key="container_even_3", border=True, height="stretch", vertical_alignment="center"
+    )
+        with left_cell:
 
-        if station_recherchee == "Toutes les stations":
-            df_stations["marker_color"] = "#1f77b4"
-        else:
-            df_stations["marker_color"] = df_stations["name"].apply(
-                lambda x: "#ff4b4b" if x == station_recherchee else "#1f77b4"
+            liste_noms = ["Toutes les stations"] + df_stations["name"].tolist()
+            station_recherchee = st.selectbox("Trouver une station :", liste_noms)
+
+            if station_recherchee == "Toutes les stations":
+                df_stations["marker_color"] = "#1f77b4"
+            else:
+                df_stations["marker_color"] = df_stations["name"].apply(
+                    lambda x: "#ff4b4b" if x == station_recherchee else "#1f77b4"
+                )
+
+            st.map(
+                df_stations,
+                latitude="lat",
+                longitude="lon",
+                size="capacity",
+                color="marker_color",
             )
-
-        st.map(
-            df_stations,
-            latitude="lat",
-            longitude="lon",
-            size="capacity",
-            color="marker_color",
-        )
 
     with col_tableau:
         st.subheader("Informations sur les stations")
 
-        stations_names = [station["name"] for station in stations]
-        selected_station = st.selectbox(
-            "Choisissez une station pour plus d'informations",
-            stations_names,
-            index=None,
-            placeholder="Choisir votre station",
-        )
-        if selected_station:
-            for station in stations:
-                if station["name"] == selected_station:
-                    id_station_selected = str(station["id_station"])
-                    break
-            if id_station != id_station_selected:
-                st.query_params["id_station"] = id_station_selected
+        right_cell = st.container(
+        key="container_even_4", border=True, height="stretch", vertical_alignment="center"
+    )
+        with right_cell:
+
+            stations_names = [station["name"] for station in stations]
+            selected_station = st.selectbox(
+                "Choisissez une station pour plus d'informations",
+                stations_names,
+                index=None,
+                placeholder="Choisir votre station",
+            )
+            if selected_station:
+                for station in stations:
+                    if station["name"] == selected_station:
+                        id_station_selected = str(station["id_station"])
+                        break
+                if id_station != id_station_selected:
+                    st.query_params["id_station"] = id_station_selected
+                    st.rerun()
+
+            edited_df = st.data_editor(
+                df_stations,
+                hide_index=True,
+                column_order=["name", "Favorite"],
+                column_config={
+                    "name": "Nom",
+                    "capacity": "Capacité",
+                    "Favorite": st.column_config.CheckboxColumn(
+                        "Favori", help="Cocher pour ajouter à vos favoris", default=False
+                    ),
+                },
+                disabled=["id_station", "name", "lat", "lon", "capacity"],
+                key="station_editor",
+            )
+
+            if st.button("Enregister mes favoris"):
+                nouvelles_favorites = edited_df[edited_df["Favorite"]]["id_station"].tolist()
+
+                to_add = set(nouvelles_favorites) - set(favoris_ids)
+                to_delete = set(favoris_ids) - set(nouvelles_favorites)
+
+                for s_id in to_add:
+                    api_client.post("/favorite/", json={"id_user": user_id, "id_station": s_id})
+
+                for s_id in to_delete:
+                    api_client.delete(f"/favorite/{user_id}", json={"id_station": s_id})
+
+                st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
                 st.rerun()
-
-        edited_df = st.data_editor(
-            df_stations,
-            hide_index=True,
-            column_order=["name", "capacity", "Favorite"],
-            column_config={
-                "name": "Nom",
-                "capacity": "Capacité",
-                "Favorite": st.column_config.CheckboxColumn(
-                    "Favori", help="Cocher pour ajouter à vos favoris", default=False
-                ),
-            },
-            disabled=["id_station", "name", "lat", "lon", "capacity"],
-            key="station_editor",
-        )
-
-        if st.button("Enregister mes favoris"):
-            nouvelles_favorites = edited_df[edited_df["Favorite"]]["id_station"].tolist()
-
-            to_add = set(nouvelles_favorites) - set(favoris_ids)
-            to_delete = set(favoris_ids) - set(nouvelles_favorites)
-
-            for s_id in to_add:
-                api_client.post("/favorite/", json={"id_user": user_id, "id_station": s_id})
-
-            for s_id in to_delete:
-                api_client.delete(f"/favorite/{user_id}", json={"id_station": s_id})
-
-            st.session_state["message_fav"] = "Votre liste de favoris a bien été mise à jour"
-            st.rerun()
