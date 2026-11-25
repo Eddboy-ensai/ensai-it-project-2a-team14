@@ -154,3 +154,6 @@ if event.selection and event.selection["objects"].get("stations"):
             st.dataframe(pd.DataFrame(col), hide_index=True)
         else:
             st.error(f"Erreur {response['status_code']} : {response['data']}")
+
+if st.button("Retour"):
+    st.switch_page("pages/station.py")

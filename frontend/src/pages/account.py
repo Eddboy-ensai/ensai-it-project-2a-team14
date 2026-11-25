@@ -25,15 +25,20 @@ st.html(
 )
 
 st.title("Mon compte")
-st.write(f"Identifiant : {user['username']}")
-
-st.subheader("Stations favorites")
 
 top_cell = st.container(
         key="container_even_1", border=True, height="stretch", vertical_alignment="center"
     )
-
 with top_cell:
+    st.write(f"Identifiant : {user['username']}")
+
+st.subheader("Stations favorites")
+
+mid_cell = st.container(
+        key="container_even_2", border=True, height="stretch", vertical_alignment="center"
+    )
+
+with mid_cell:
 
     res_fav = api_client.get("/favorite/")
     favoris = res_fav["data"]["favorites"] if res_fav["status_code"] == 200 else []
@@ -56,7 +61,7 @@ st.divider()
 st.subheader("Modifier son profil")
 
 bot_cell = st.container(
-        key="container_even_2", border=True, height="stretch", vertical_alignment="center"
+        key="container_even_3", border=True, height="stretch", vertical_alignment="center"
     )
 
 with bot_cell:
