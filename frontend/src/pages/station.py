@@ -24,12 +24,7 @@ st.html(
     <style>
         [class*="st-key-container_even_"] {background-color: #dcecf5;
         border: 2px solid #000000;}
-    </style>
-    """
-)
-st.html(
-    """
-    <style>
+
         [class*="st-key-container_odd_"] {background-color: #c5d9e3;
         border: 2px solid #000000;}
     </style>

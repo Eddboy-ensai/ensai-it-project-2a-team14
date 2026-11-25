@@ -17,6 +17,15 @@ st.set_page_config(page_title="Suggestions de stations")
 
 check_authentification()
 
+st.html(
+    """
+    <style>
+        [class*="st-key-container_even_"] {background-color: #dcecf5;
+        border: 2px solid #000000;}
+    </style>
+    """
+)
+
 col1, col2 = st.columns([6, 1])
 col1.title("Suggestion de stations")
 
@@ -47,80 +56,101 @@ df_stations["lon"] = pd.to_numeric(df_stations["lon"])
 
 
 st.subheader("1 - Que souhaitez-vous faire ?")
-choice = st.segmented_control(
-    label="Choisissez l'option adéquate",
-    options=["Prendre un vélo", "Déposer un vélo"],
-    default="Prendre un vélo",
-    selection_mode="single",
-)
+
+top_cell = st.container(
+        key="container_even_1", border=True, height="stretch", vertical_alignment="center"
+    )
+with top_cell:
+    choice = st.segmented_control(
+        label="Choisissez l'option adéquate",
+        options=["Prendre un vélo", "Déposer un vélo"],
+        default="Prendre un vélo",
+        selection_mode="single",
+    )
 
 st.subheader("2 - Cliquez sur la station d'intérêt :")
 
-st.write(
+text_cell = st.container(
+        key="container_even_2", border=True, height="stretch", vertical_alignment="center"
+    )
+
+with text_cell:
+    st.write(
     "Si seule la station demandée apparait, c'est qu'elle est disponible. Sinon, une liste de station vous sera recommandé."
 )
 
-layer = pdk.Layer(
-    "ScatterplotLayer",
-    id="stations",
-    data=df_stations,
-    get_position="[lon, lat]",
-    get_radius="capacity * 3",
-    get_fill_color="marker_color",
-    get_line_color=[255, 255, 255],
-    pickable=True,
-    auto_highlight=True,
-)
+mid_cell = st.container(
+        key="container_even_3", border=True, height="stretch", vertical_alignment="center"
+    )
 
-view_state = pdk.ViewState(
-    latitude=df_stations["lat"].mean(),
-    longitude=df_stations["lon"].mean(),
-    zoom=12,
-    pitch=0,
-)
+with mid_cell:
+    layer = pdk.Layer(
+        "ScatterplotLayer",
+        id="stations",
+        data=df_stations,
+        get_position="[lon, lat]",
+        get_radius="capacity * 3",
+        get_fill_color="marker_color",
+        get_line_color=[255, 255, 255],
+        pickable=True,
+        auto_highlight=True,
+    )
 
-tooltip = {
-    "html": """
-    <b>{name}</b><br/>
-    Capacité : {capacity}<br/>
-    """,
-    "style": {"backgroundColor": "#222", "color": "white"},
-}
+    view_state = pdk.ViewState(
+        latitude=df_stations["lat"].mean(),
+        longitude=df_stations["lon"].mean(),
+        zoom=12,
+        pitch=0,
+    )
 
-deck = pdk.Deck(
-    layers=[layer],
-    initial_view_state=view_state,
-    tooltip=tooltip,
-    map_style="light",
-)
+    tooltip = {
+        "html": """
+        <b>{name}</b><br/>
+        Capacité : {capacity}<br/>
+        """,
+        "style": {"backgroundColor": "#222", "color": "white"},
+    }
 
-event = st.pydeck_chart(
-    deck,
-    on_select="rerun",
-    selection_mode="single-object",
-)
+    deck = pdk.Deck(
+        layers=[layer],
+        initial_view_state=view_state,
+        tooltip=tooltip,
+        map_style="light",
+    )
+
+    event = st.pydeck_chart(
+        deck,
+        on_select="rerun",
+        selection_mode="single-object",
+    )
 
 if event.selection and event.selection["objects"].get("stations"):
-    st.subheader("3 - Recommandation de station(s) :")
-    station = event.selection["objects"]["stations"][0]
-    id_station = station["id_station"]
-    choice_bool = choice == "Prendre un vélo"
-    response = api_client.get(
-        f"/station/suggestions/{id_station}", params={"choice_bool": choice_bool}
-    )
-    if response["status_code"] == 200:
-        col = []
-        for station in response["data"]:
-            latest_record = api_client.get(
-                f"/station/{station['station']['id_station']}/latest"
-            )
-            col.append({
-                "Station": station["station"]["name"],
-                "Score de fiabilité": station["score"],
-                "Vélos dispo": latest_record["data"]["nb_available_bikes"],
-                "Emplacements libres": latest_record["data"]["nb_available_spaces"],
-            })
 
-        st.dataframe(pd.DataFrame(col), hide_index=True)
-    else:
-        st.error(f"Erreur {response['status_code']} : {response['data']}")
+    st.subheader("3 - Recommandation de station(s) :")
+
+    bot_cell = st.container(
+        key="container_even_4", border=True, height="stretch", vertical_alignment="center"
+    )
+    with bot_cell:
+        station = event.selection["objects"]["stations"][0]
+        id_station = station["id_station"]
+        choice_bool = choice == "Prendre un vélo"
+        response = api_client.get(
+            f"/station/suggestions/{id_station}", params={"choice_bool": choice_bool}
+        )
+        if response["status_code"] == 200:
+            col = []
+            for station in response["data"]:
+                latest_record = api_client.get(
+                    f"/station/{station['station']['id_station']}/latest"
+                )
+                col.append({
+                    "Station": station["station"]["name"],
+                    "Score de fiabilité": station["score"],
+                    "Vélos dispo": latest_record["data"]["nb_available_bikes"],
+                    "Emplacements libres": latest_record["data"]["nb_available_spaces"],
+                })
+
+            st.dataframe(pd.DataFrame(col), hide_index=True)
+        else:
+            st.error(f"Erreur {response['status_code']} : {response['data']}")
