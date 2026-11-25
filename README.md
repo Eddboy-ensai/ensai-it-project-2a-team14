@@ -4,7 +4,7 @@ VeloScope is an application that provides services related to bike stations in a
 
 ## Run the application  
 
-The following steps are described to ensure its deployment on SSP cloud (Onyxia).
+The following steps are described to ensure its deployment on SSP Cloud (Onyxia).
 
 Commands are to be run from the repository's root directory (steps 1 and 4 are optional if you already have a database):
 
@@ -36,11 +36,11 @@ ADMIN_PASSWORD=<admin password>
 5) Run in a new terminal to collect data (do not stop it): `uv run --project backend python backend/src/collector.py`  
 6) In a new terminal, execute `uv run --project backend python backend/src/main.py` (Must be kept running.)
 7) You can then use the application with the Swagger through port 5000 on Onyxia 
-- Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 5000"
+- Onyxia -> Mes services -> click on "Ouvrir" on the project VS Code service -> click on "port 5000"
 8) In order to use the webservice:  
 - run the following commands in a new terminal `cd frontend` and `uv run --project . streamlit run src/app.py`  
-- Onyxia -> Mes services -> click on "ouvrir" on the project vscode service -> click on "port 8000"
-9) You can then create an account or login as the super Administrator with the login credentials you used.
+- Onyxia -> Mes services -> click on "Ouvrir" on the project VS Code service -> click on "port 8000"
+9) You can then create an account or log in as the first administrator with the login credentials you used.
 
 
 ## Back up the database
