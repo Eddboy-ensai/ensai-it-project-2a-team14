@@ -3,11 +3,11 @@ port = 8000
 
 [theme]
 textColor="#1a1a1a"
-font="Calibri"
+font="serif"
 headingFont= "serif"
 
-primaryColor="#1963a0"
-backgroundColor="#b2d1e1"
+primaryColor="#1f272e"
+backgroundColor="#c3deec"
 secondaryBackgroundColor="#ffffff"
 
 redTextColor="#8b0303"

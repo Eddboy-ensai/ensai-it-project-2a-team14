@@ -77,11 +77,11 @@ Nous avons fait le choix de travailler avec l'API externe de la métropole de Re
 
 ### Consultation d'une station   
 
-Une fois connecté, l'utilisateur est automatiquement redirigé vers la page des stations. Cette page permet de connaître l'emplacement des stations sur une carte (la pastille de la station se colore).  
+Une fois connecté, l'utilisateur est automatiquement redirigé vers la page des stations. Cette page permet de connaître l'emplacement des stations sur une carte en affichant une pastille de couleur au niveau de la postion de chacune. Il y a également un sélecteur permettant de choisir une station précise pour la repérer plus facilement sur la carte (la pastille de la station se colore différemment).  
 
 ![Page des stations](img/stations.png){#fig-stations width="93%"}  
 
-Sur cette page, l'utilisateur peut utiliser le tableau afin de cocher ses stations favorites qu'il peut ensuite enregistrer via le bouton en dessous du tableau. L'utilisateur pourra alors, par la suite, accéder directement à la disponibilité en terme de vélos ou d'emplacements libres dans la page « Mes informations ».  
+Toujours sur cette page, l'utilisateur peut utiliser le tableau afin de cocher ses stations favorites qu'il peut ensuite enregistrer via le bouton en dessous du tableau. L'utilisateur pourra alors, par la suite, accéder directement à la disponibilité en terme de vélos ou d'emplacements libres de ces stations dites "favorites" dans la page « Mes informations ».  
 
 ![Page « Mes informations »](img/mesinfos.png){#fig-mesinfos width="93%"}  
 
@@ -115,7 +115,7 @@ Elle est de la forme $(1 - a) \times x + a \times y$ où $a = 0.5$ ici pour donn
 
 ### Recommandation de station  
 
-La page « Suggestions de stations » permet, à la demande du cahier des charges, de fournir des recommandations de stations à proximité de l'utilisateur. Nous n'avons pas trouvé de moyen permettant de déterminer la localisation de l'utilisateur avec la technologie utilisée. Afin de répondre au cahier des charges, nous avons donc fait le choix de donner à l'utilisateur la possibilité de choisir la station qu'il souhaite utiliser en cliquant sur une carte interactive. Il est ensuite invité à préciser son besoin (prendre où déposer un vélo). Nous détaillons dans la suite le fonctionnement de la méthode ```suggestion_pick``` permettant de retourner les stations suggérées lorsque l'utilisateur souhaite emprunter un vélo.  
+La page « Suggestions de stations » permet, à la demande du cahier des charges, de fournir des recommandations de stations à proximité de l'utilisateur. Nous n'avons pas trouvé de moyen permettant de déterminer la localisation de l'utilisateur avec la technologie utilisée. Afin de répondre au cahier des charges, nous avons donc fait le choix de donner à l'utilisateur la possibilité de préciser son besoin (prendre ou déposer un vélo), puis il est invité à choisir la station qu'il souhaite utiliser en cliquant sur une carte interactive. Nous détaillons dans la suite le fonctionnement de la méthode ```suggestion_pick``` permettant de retourner les stations suggérées lorsque l'utilisateur souhaite emprunter un vélo.  
 
 ![Page de suggestions de stations](img/suggestions.png){#fig-suggestions width="93%"}  
 
@@ -180,11 +180,11 @@ Ainsi, dans le cadre de notre projet, les objectifs associés à la partie front
 
 #### Connexion et gestion de compte  
 
-Les utilisateurs doivent se connecter à l'application pour accéder aux différentes pages. La création de compte ne se faisant qu'une seule fois, il est donc naturel de choisir la page de connexion comme page d'accueil. Ainsi, les utilisateurs n'ayant pas déjà un compte sont invités à changer de page, se créer un compte, puis revenir sur la page de connexion.  
+Les utilisateurs doivent se connecter à l'application pour accéder aux différentes pages. La création de compte ne se faisant qu'une seule fois, il est donc naturel de choisir la page de connexion comme page d'accueil. Ainsi, les utilisateurs n'ayant pas déjà un compte sont invités à changer de page, se créer un compte, puis en cas de succès dans la création du compte ils sont redirigés sur la page de connexion.  
 
 Des choix élémentaires ont été faits au sujet des fonctionnalités de création d'un compte et de connexion. L'utilisateur est amené à rentrer manuellement son identifiant et le mot de passe souhaité. Streamlit permet notamment, via un paramètre « type="password" », de masquer les caractères saisis dans un champ de formulaire sensible. Un bouton cliquable permet d'envoyer la requête qui permettra d'enregistrer le compte ou de vérifier l'authentification.  
 
-Afin que l'utilisateur puisse naviguer entre les pages sans perdre son accréditation, Streamlit propose un outil, nommé « session_state », permettant de conserver des informations lors d'un changement de page (notamment son token d'accès). Il est alors possible pour les utilisateurs d'interagir avec les boutons pour être redirigé vers d'autres pages sans rencontrer de problèmes d'accès. Lors de la déconnexion, les informations contenues dans « session_state » sont supprimées.  
+Afin que l'utilisateur puisse naviguer entre les pages sans perdre son accréditation, Streamlit propose un outil, nommé « session_state », permettant de conserver des informations lors d'un changement de page (notamment son token d'accès). Il est alors possible pour les utilisateurs d'interagir avec les boutons qui redirigent vers d'autres pages sans rencontrer de problèmes d'accès. Lors de la déconnexion, les informations contenues dans « session_state » sont supprimées.  
 
 L'application permet également, via la page « Mes informations », de modifier les informations saisies lors de la création du compte par un système de zones de saisie.  
 
@@ -202,7 +202,7 @@ Des fonctionnalités transversales ont été implémentés sur les différentes 
 
 #### Informations sur les stations  
 
-Plusieurs pages permettent d'accéder aux informations des stations fournies par l'application. Initialement, la page de suggestions des stations n'était pas prévue. Les suggestions devaient apparaître directement dans la page « Informations sur les stations ». Cependant, cette page aurait nécessité un grand nombre de requêtes au backend, ce qui aurait pu ralentir son chargement. Cela aurait également produit une page lourde en informations et peu ergonomique. Avoir une page de suggestions autonome permet également de faciliter la navigation de l'utilisateur.  
+Plusieurs pages permettent d'accéder aux informations des stations fournies par l'application. Initialement, la page de suggestions des stations n'était pas prévue. Les suggestions devaient apparaître directement dans la page « Informations sur les stations ». Cependant, cette page aurait nécessité un grand nombre de requêtes au backend, ce qui aurait pu ralentir son chargement. Cela aurait également produit une page lourde en informations et peu ergonomique. Avoir une page de suggestions autonome permet de faciliter la navigation de l'utilisateur.  
 
 La page contenant les informations des stations a nécessité la mise en place de plusieurs outils graphiques complexes, notamment des cartes et tableaux interactifs, ainsi que des graphiques d'historique. Concernant l'affichage, il était initialement prévu pour être vertical, mais cela ne s'est pas révélé satisfaisant puisque les contenus de la page « Information des stations » sont complémentaires. Nous avons donc retenu un affichage horizontal des composants graphiques, permettant d'avoir accès simultanément aux cartes et au tableau récapitulant les informations.  
 
