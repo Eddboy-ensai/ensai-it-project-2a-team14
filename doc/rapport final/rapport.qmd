@@ -117,7 +117,9 @@ Elle est de la forme $(1 - a) \times x + a \times y$ où $a = 0.5$ ici pour donn
 
 La page « Suggestions de stations » permet, à la demande du cahier des charges, de fournir des recommandations de stations à proximité de l'utilisateur. Nous n'avons pas trouvé de moyen permettant de déterminer la localisation de l'utilisateur avec la technologie utilisée. Afin de répondre au cahier des charges, nous avons donc fait le choix de donner à l'utilisateur la possibilité de préciser son besoin (prendre ou déposer un vélo), puis il est invité à choisir la station qu'il souhaite utiliser en cliquant sur une carte interactive. Nous détaillons dans la suite le fonctionnement de la méthode ```suggestion_pick``` permettant de retourner les stations suggérées lorsque l'utilisateur souhaite emprunter un vélo.  
 
-![Page de suggestions de stations](img/suggestions.png){#fig-suggestions width="93%"}  
+![Page de suggestions de stations](img/suggestions1.png){#fig-suggestions1 width="93%"}  
+
+![Résultats d'une suggestion](img/suggestions2.png){#fig-suggestions2 width="93%"} 
 
 Tout d'abord, nous construisons un score de recommandation d'une station qui se base à la fois sur la distance à la station sélectionnée ($D$), sur son score de fiabilité de vélos disponibles ($Spick$) et sur le nombre de vélos disponibles lors du dernier relevé ($N$). Voici la formule retenue :  
 $Score = 100 \times (d ^ 0.3 \times n ^ 0.5 \times Spick ^ 0.2)$  
