@@ -546,4 +546,12 @@ Je suis très satisfait du travail accompli par le groupe et par moi-même, malg
 
 {{< pagebreak >}} 
 
-### Note individuelle : Alix MOINERAUD--DOUCET  
+### Note individuelle : Alix MOINERAUD--DOUCET 
+
+Je me suis occupé d'une grande partie du frontend du projet Véloscope. Cette partie m'a beaucoup plu puisque j'ai pu transformer rapidement du code en résultats concrets et visibles, et travailler sur ce qui fait la qualité d'usage d'une application à savoir la mise en page, l'esthétique générale, ainsi que la facilité de navigation, afin de la rendre aussi intuitive que possible. Après expérience, je suis vraiment satisfait d'avoir pu travailler sur cette partie spécifique puisque c'est le domaine pour lequel j'ai le plus grand intérêt (partager et faire comprendre des données) et dans lequel je me sens le plus à l'aise. 
+
+J'ai notamment développé les pages de connexion, de compte, ainsi que la page des stations avec sa liste de favoris et ses graphiques d'évolution des disponibilités. Il m'a aussi été permis de produire tous les micros éléments tels que les boutons cliquables, les container, ou les changements de pages automatiques.
+
+Ce rôle m'a placé en tant qu'intermédiaire direct entre le backend et l'interface de l'application, cela m'a permis d'échanger régulièrement avec les autres membres du groupe pour savoir comment afficher leurs fonctionnalités. Ayant ainsi travaillé avec chacun d'eux, j'ai particulièrement apprécié la bonne entente de l'équipe tout au long du projet et les conseils de chacun lorsque j'en avais besoin. 
+
+Ce projet m'a surtout permis de mieux comprendre le fonctionnement global d'une application complète ; la façon dont le frontend, l'API et la base de données s'articulent, et ce qu'implique chaque choix technique pour les autres couches. J'en retire de nombreuses compétences techniques, davantage de confiance dans ma capacité à mener une partie d'un projet de bout en bout, et une grande satisfaction dans le fait de désormais comprendre ce qui, il y a quelque mois, m'intéressait autant que cela m'impressionnait. 
