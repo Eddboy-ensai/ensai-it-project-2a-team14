@@ -18,6 +18,7 @@ class SuggestionService:
     latest_record: StationRecord
         The last record of the choosen station
     """
+
     def __init__(self, station: Station):
         self.station = station
         self.latest_record = CalculationService(station).latest_record()
@@ -126,8 +127,12 @@ class SuggestionService:
                 Disp = 1 - math.exp(-nb_bikes / n0)
                 sugg_score = round(100 * d**a * Disp**b * Spick**c)
                 if sugg_score >= 70:  # 70 is arbitrary#
-                    station_sugg[station] = sugg_score  # add the station in the dicionary if his score is enough
-        sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)  # turn the dict into a sorted list by score
+                    station_sugg[station] = (
+                        sugg_score  # add the station in the dicionary if his score is enough
+                    )
+        sugg = sorted(
+            station_sugg.items(), key=lambda x: x[1], reverse=True
+        )  # turn the dict into a sorted list by score
         return sugg
 
     @log
@@ -161,6 +166,10 @@ class SuggestionService:
                 Disp = 1 - math.exp(-nb_spot / n0)
                 sugg_score = round(100 * d**a * Disp**b * Sdrop**c)
                 if sugg_score >= 70:  # 70 is arbitrary#
-                    station_sugg[station] = sugg_score  # add the station in the dicionary if his score is enough
-        sugg = sorted(station_sugg.items(), key=lambda x: x[1], reverse=True)  # turn the dict into a sorted list by score
+                    station_sugg[station] = (
+                        sugg_score  # add the station in the dicionary if his score is enough
+                    )
+        sugg = sorted(
+            station_sugg.items(), key=lambda x: x[1], reverse=True
+        )  # turn the dict into a sorted list by score
         return sugg

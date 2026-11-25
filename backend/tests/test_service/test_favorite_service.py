@@ -15,6 +15,13 @@ def test_add_favorite():
     assert favorite.id_station == favorite.id_station
 
 
+def test_add_favorite_None():
+    """Test for adding a favorite station (None return)"""
+    FavoriteDao().add_favorite = MagicMock(return_value=None)
+    response = FavoriteService().add_favorite(favorite)
+    assert response is None
+
+
 def test_delete_favorite_true():
     """Test for deleting a favorite station (case True)"""
     FavoriteDao().delete_favorite = MagicMock(return_value=True)

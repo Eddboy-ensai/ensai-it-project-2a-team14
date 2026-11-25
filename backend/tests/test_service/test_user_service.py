@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from business_object.user import User
 from dao.user_dao import UserDao
@@ -42,3 +42,17 @@ def test_list_all():
     UserDao().list_all = MagicMock(return_value=users_list)
     res = UserService().list_all()
     assert len(res) == 2
+
+
+def test_login():
+    """Test for loging"""
+    UserDao().login = MagicMock(return_value=users_list[0])
+    res = UserService().login("jojo", "123")
+    assert res.username == "jojo"
+
+
+def test_find_by_id():
+    """Test for find a user by its id"""
+    with patch.object(UserDao, "find_by_id", return_value=users_list[0]):
+        res = UserService().find_by_id(1)
+        assert res.username == "jojo"

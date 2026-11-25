@@ -1,7 +1,8 @@
 # Créer un user
 
-import streamlit as st
 import time
+
+import streamlit as st
 
 from utils.api_client import api_client
 from utils.log_init import get_page_logger

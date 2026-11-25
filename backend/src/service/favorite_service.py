@@ -5,6 +5,7 @@ from utils.log_utils import log
 
 class FavoriteService:
     """Manages the favorite stations of the users."""
+
     @log
     def favorite_already_exists(self, favorite: Favorite) -> bool:
         """Check if a favorite already exists in the databse.

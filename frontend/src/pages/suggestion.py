@@ -58,8 +58,8 @@ df_stations["lon"] = pd.to_numeric(df_stations["lon"])
 st.subheader("1 - Que souhaitez-vous faire ?")
 
 top_cell = st.container(
-        key="container_even_1", border=True, height="stretch", vertical_alignment="center"
-    )
+    key="container_even_1", border=True, height="stretch", vertical_alignment="center"
+)
 with top_cell:
     choice = st.segmented_control(
         label="Choisissez l'option adéquate",
@@ -71,17 +71,17 @@ with top_cell:
 st.subheader("2 - Choix de la station d'intérêt :")
 
 text_cell = st.container(
-        key="container_even_2", border=True, height="stretch", vertical_alignment="center"
-    )
+    key="container_even_2", border=True, height="stretch", vertical_alignment="center"
+)
 
 with text_cell:
     st.write(
-    "Cliquez sur la carte sur la station qui vous intéresse. Si seule la station demandée apparait, c'est qu'elle est disponible. Sinon, une liste de station vous sera recommandé pour répondre à votre besoin."
-)
+        "Cliquez sur la carte sur la station qui vous intéresse. Si seule la station demandée apparait, c'est qu'elle est disponible. Sinon, une liste de station vous sera recommandé pour répondre à votre besoin."
+    )
 
 mid_cell = st.container(
-        key="container_even_3", border=True, height="stretch", vertical_alignment="center"
-    )
+    key="container_even_3", border=True, height="stretch", vertical_alignment="center"
+)
 
 with mid_cell:
     layer = pdk.Layer(
@@ -125,7 +125,6 @@ with mid_cell:
     )
 
 if event.selection and event.selection["objects"].get("stations"):
-
     st.subheader("3 - Recommandation de station(s) :")
 
     bot_cell = st.container(

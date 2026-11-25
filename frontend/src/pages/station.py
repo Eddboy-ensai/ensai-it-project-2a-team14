@@ -181,10 +181,9 @@ else:  # display the page without query
         st.subheader("Carte des stations")
 
         left_cell = st.container(
-        key="container_even_3", border=True, height="stretch", vertical_alignment="center"
-    )
+            key="container_even_3", border=True, height="stretch", vertical_alignment="center"
+        )
         with left_cell:
-
             liste_noms = ["Toutes les stations"] + df_stations["name"].tolist()
             station_recherchee = st.selectbox("Trouver une station :", liste_noms)
 
@@ -211,10 +210,9 @@ else:  # display the page without query
         st.subheader("Informations sur les stations")
 
         right_cell = st.container(
-        key="container_even_4", border=True, height="stretch", vertical_alignment="center"
-    )
+            key="container_even_4", border=True, height="stretch", vertical_alignment="center"
+        )
         with right_cell:
-
             stations_names = [station["name"] for station in stations]
             selected_station = st.selectbox(
                 "Choisissez une station pour plus d'informations",

@@ -6,6 +6,7 @@ from utils.log_utils import log
 
 class StationService:
     """Provides access to the stations and their statistics."""
+
     @log
     def find_by_id(self, id_station: str) -> Station | None:
         """Finds a specific station by its unique id.

@@ -8,6 +8,7 @@ logger = get_logger(__name__)
 
 class UserDao(metaclass=Singleton):
     """Accesses the User table of the database."""
+
     @log
     def create(self, user: User) -> bool:
         """Create a user in the database
