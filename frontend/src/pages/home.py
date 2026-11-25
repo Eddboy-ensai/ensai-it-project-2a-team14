@@ -26,7 +26,7 @@ if st.button("Se connecter"):
         st.session_state["access_token"] = reponse["data"]["access_token"]
         st.switch_page("pages/station.py")
     else:
-        st.error(f"Erreur {reponse['status_code']} : {reponse['data']}")
+        st.error("Identifiant ou mot de passe incorrect.")
 
 if st.button("Créer un compte"):
     st.switch_page("pages/create_user.py")

@@ -461,7 +461,7 @@ Afin de tester le bon fonctionnement de notre application, nous avons implément
 
 Certaines fonctions ont été modifiées afin de permettre d'être testées plus facilement. Par exemple, dans `CalculationService`, les méthodes `get_availability_bikes/spaces_over_time` utilisent un paramètre `now` qui est initialisé à `None` par défaut. L'application en soi n'utilise pas ce paramètre et le laisse en `None`, puisqu'elle utilise l'heure actuelle (`datetime.now(UTC)`) comme date de référence pour obtenir l'historique des disponibilités. Cependant, les tests s'appuient sur des données figées ne se renouvelant pas, il n'était donc pas possible d'utiliser la date actuelle comme date de référence. Le paramètre `now` est donc appelé pour choisir une date adaptée à ces données de tests.  
 
-Au final, 21 tests unitaires portant sur la couche service ont été développés.  Ces tests vérifient le bon fonctionnement des différentes méthodes en couvrant les principaux scénarios d'utilisation, au moyen de plusieurs assertions lorsque cela est nécessaire. La couverture de tests du backend atteint ainsi 67 %.  
+Au final, 32 tests unitaires portant sur la couche service ont été développés. Ces tests vérifient le bon fonctionnement des différentes méthodes en couvrant les principaux scénarios d'utilisation, au moyen de plusieurs assertions lorsque cela est nécessaire. La couverture de tests du backend (hors DAO) atteint ainsi 82 %.  
 
 ### Usage de l'IA  
 

@@ -46,4 +46,4 @@ Command to run from the repository's root directory:
 It is possible to check test coverage by executing:
 
 - `uv run --project backend coverage run -m pytest backend`
-- `uv run --project backend coverage report -m`
+- `uv run --project backend coverage report -m --omit="*/dao/*,*/dao.py"`
