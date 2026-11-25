@@ -14,6 +14,7 @@ if "message" in st.session_state:
     del st.session_state["message"]
 
 st.title("Veloscope")
+st.subheader("Connexion")
 
 username = st.text_input("Identifiant")
 password = st.text_input("Mot de passe", type="password")
