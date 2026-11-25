@@ -1,6 +1,7 @@
 # Créer un user
 
 import streamlit as st
+import time
 
 from utils.api_client import api_client
 from utils.log_init import get_page_logger
@@ -18,6 +19,7 @@ if st.button("Créer"):
     reponse = api_client.post("/user/", json={"username": username, "pwd": password})
     if reponse["status_code"] == 200:
         st.success("Compte créé")
+        time.sleep(1)
         st.switch_page("pages/home.py")
     else:
         st.error(f"Erreur {reponse['status_code']}")

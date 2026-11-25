@@ -203,6 +203,10 @@ else:  # display the page without query
                 color="marker_color",
             )
 
+    st.subheader("Accéder à la suggestion de station :")
+    if st.button("Cliquez ici"):
+        st.switch_page("pages/suggestion.py")
+
     with col_tableau:
         st.subheader("Informations sur les stations")
 

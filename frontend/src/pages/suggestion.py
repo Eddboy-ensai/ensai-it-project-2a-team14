@@ -68,7 +68,7 @@ with top_cell:
         selection_mode="single",
     )
 
-st.subheader("2 - Cliquez sur la station d'intérêt :")
+st.subheader("2 - Choix de la station d'intérêt :")
 
 text_cell = st.container(
         key="container_even_2", border=True, height="stretch", vertical_alignment="center"
@@ -76,7 +76,7 @@ text_cell = st.container(
 
 with text_cell:
     st.write(
-    "Si seule la station demandée apparait, c'est qu'elle est disponible. Sinon, une liste de station vous sera recommandé."
+    "Cliquez sur la carte sur la station qui vous intéresse. Si seule la station demandée apparait, c'est qu'elle est disponible. Sinon, une liste de station vous sera recommandé pour répondre à votre besoin."
 )
 
 mid_cell = st.container(
