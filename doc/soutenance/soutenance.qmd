@@ -1,0 +1,405 @@
+---
+title: "Projet traitement de données : soutenance"
+subtitle: "DataSport, l'application de gestion de bases de données sportives"
+author:
+  - "BONAVERO Méline]"
+  - "BOYCE Eddy"
+  - "CHATONNIER Eliot"
+  - "LEJARS Samuel"
+  - "MOINERAUD--DOUCET Alix"
+date: "2026-12-09"
+date-format: "D MMMM YYYY"
+lang: fr
+
+format:
+  beamer:
+    theme: metropolis
+    aspectratio: 169
+    toc: false
+    slide-level: 2
+    section-titles: true
+    fontsize: 10pt
+    colorlinks: true
+    include-in-header:
+      text: |
+        \titlegraphic{%
+          \vspace{6cm}
+          \hspace{0cm}
+          \includegraphics[width=3cm]{ensai_logo_1.png}
+        }
+    header-includes: |
+      \usepackage{tcolorbox}
+      \usepackage{tikz}
+      \usetikzlibrary{positioning}
+      \tcbuselibrary{skins}
+
+      % ── Palette bleue douce ──────────────────────────────────────
+      \definecolor{primary}{HTML}{2C4A6E}
+      \definecolor{secondary}{HTML}{3D6B9A}
+      \definecolor{accent}{HTML}{5B9BD5}
+      \definecolor{light}{HTML}{EEF4FB}
+      \definecolor{muted}{HTML}{7A90A8}
+      \definecolor{bg}{HTML}{F7FAFD}
+
+      % ── Metropolis overrides ─────────────────────────────────────
+      \setbeamercolor{normal text}{fg=primary!90!black, bg=bg}
+      \setbeamercolor{frametitle}{bg=primary, fg=white}
+      \setbeamercolor{title separator}{fg=accent}
+      \setbeamercolor{progress bar}{fg=accent, bg=primary!20}
+      \setbeamercolor{alerted text}{fg=secondary}
+      \setbeamercolor{structure}{fg=primary}
+      \setbeamertemplate{navigation symbols}{}
+      \setbeamertemplate{itemize item}{\color{accent}\small\textbullet}
+      \setbeamertemplate{itemize subitem}{\color{muted}\scriptsize$\circ$}
+
+      % ── Blocs arrondis via tcolorbox ─────────────────────────────
+      \setbeamertemplate{blocks}[rounded][shadow=false]
+      \setbeamercolor{block title}{bg=primary, fg=white}
+      \setbeamercolor{block body}{bg=light, fg=primary!80!black}
+      \setbeamercolor{block title alerted}{bg=secondary, fg=white}
+      \setbeamercolor{block body alerted}{bg=light, fg=primary!80!black}
+
+      % ── Commandes utilitaires ────────────────────────────────────
+      \newcommand{\hl}[1]{\textcolor{secondary}{\textbf{#1}}}
+      \newcommand{\kw}[1]{%
+        \tcbox[on line, arc=3pt, colback=light, colframe=accent!40,
+               boxsep=1pt, left=3pt, right=3pt, top=1pt, bottom=1pt,
+               fontupper=\ttfamily\small\color{primary}]{#1}}
+
+---
+
+# Introduction {background-color="#2C4A6E"}
+
+## Cahier des charges
+
+:::: {.columns}
+
+::: {.column width="55%"}
+**Demandes**  
+
+- Application d'information de stations de vélo
+- Obtenir des statistiques
+- Obtenir des recommandations et des prévisions
+- Adaptable aux différentes villes
+- Gestion utilisateur
+
+:::
+
+. . .
+
+::: {.column width="40%"}
+\begin{block}{Contraintes}
+\begin{itemize}
+  \item première expérience de développement d'API
+  \item développement en parallèle de l'apprentissage
+\end{itemize}
+\end{block}
+:::
+
+::::
+
+# Organisation du projet {background-color="#2C4A6E"}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+\begin{block}{Faiblesses environnementales}
+\begin{itemize}
+  \item sujet ambitieux et complexe (backend + frontend)
+  \item du temps libre lorsque l'on n'avait pas les compétences, plus de temps lorsqu'on les avait
+\end{itemize}
+\end{block}
+
+. . .
+
+\begin{block}{Forces internes}
+\begin{itemize}
+  \item une bonne organisation
+  \item de la bonne volonté
+  \item des compétences complémentaires
+  \item gestion des outils (GitHub, WhatsApp)
+\end{itemize}
+\end{block}
+
+:::
+
+. . .
+
+::: {.column width="50%"}
+
+\begin{block}{Faiblesses internes}
+\begin{itemize}
+  \item des points de vue différents (usage de l'IA)
+\end{itemize}
+\end{block}
+
+. . .
+
+\vspace{0.45cm}
+\begin{block}{Forces environnementales}
+\begin{itemize}
+  \item tuteur à l'écoute
+  \item template et solutions techniques fournis
+  \item jours d'immersion
+\end{itemize}
+\end{block}
+
+:::
+
+::::
+
+# Présentation de l'application
+
+## Les différentes fonctionnalités
+
+```{=latex}
+\begin{tikzpicture}[scale=0.95,
+  box/.style={
+    draw,
+    rounded corners,
+    thick,
+    text width=3.8cm,
+    align=left,
+    inner sep=6pt
+  }
+]
+
+% Noeud A : toujours visible
+\node[draw,
+    rounded corners,
+    fill=blue!5,
+    thick,
+    align=left,
+    inner sep=6pt] (a) at (0,0) {
+\textbf{Veloscope}
+};
+
+% Noeud B + trait
+\visible<2->{
+  \node[box, text width=4.2cm] (b) at (0,2.5) {
+  \textbf{Afficher des informations}
+  \rule{\linewidth}{0.4pt}
+  - Disponibilités des stations \\
+  - Statistiques en temps réel \\
+  - Historique des disponibilités
+  };
+  \draw[-, thick] (a) -- (b);
+}
+
+% Noeud C + trait
+\visible<3->{
+  \node[box] (c) at (-5,0) {
+  \textbf{Obtenir des recommandations}
+  \rule{\linewidth}{0.4pt}
+  - tenir compte de la disponibilité en temps réel \\
+  - construire un score
+  };
+  \draw[-, thick] (a) -- (c);
+}
+
+% Noeud D + trait
+\visible<4->{
+  \node[box, text width=4.2cm,] (d) at (0,-2.5) {
+  \textbf{Gérer les stations favorites}
+  \rule{\linewidth}{0.4pt}
+  - Ajouter/supprimer ses favoris \\
+  - Afficher les informations
+  };
+  \draw[-, thick] (a) -- (d);
+}
+
+% Noeud E + trait
+\visible<5->{
+  \node[box] (e) at (5,0) {
+  \textbf{Gérer les comptes}
+  \rule{\linewidth}{0.4pt}
+  - privilèges utilisateurs/administrateurs \\
+  - modifier les informations de son compte
+  };
+  \draw[-, thick] (a) -- (e);
+}
+
+\end{tikzpicture}
+```
+
+## Schéma de l'architecture du code
+
+::: {.center}
+```{=latex}
+\begin{tikzpicture}[scale=0.90,
+  box/.style={
+    draw,
+    rounded corners,
+    thick,
+    text width=3.8cm,
+    minimum height=3.2cm,
+    align=left,
+    inner sep=6pt
+  }
+]
+
+% Noeud A : toujours visible
+\node[draw,
+    rounded corners,
+    thick,
+    text width=3.8cm,
+    align=left,
+    inner sep=6pt] (a) at (0,0) {
+\textbf{Classes modèles}
+\rule{\linewidth}{0.4pt}
+  - User \\
+  - Station \\
+  - StationRecord \\
+  - Favorite \\
+};
+
+% Noeud B + sa flèche
+\visible<2->{
+  \node[box] (b) at (-6.2,-4) {
+  \textbf{Frontend}
+  \rule{\linewidth}{0.4pt}
+  - Interface de l'application
+  - Streamlit
+  };
+  \draw[<->, thick] (b) -- (c) node[midway, sloped, above]{requête} node[midway, sloped, below]{réponse};
+}
+
+% Noeud C + sa flèche
+\visible<3->{
+  \node[box] (c) at (0,-4) {
+  \textbf{Backend}
+  \rule{\linewidth}{0.4pt}
+  - Séparations en couches controller/service/DAO
+  };
+  \draw[->, thick] (c) -- (a) node[midway, sloped, above]{utilise};
+}
+
+% Noeud D + ses flèches
+\visible<4->{
+  \node[box] (d) at (5.5,-4) {
+  \textbf{Bases de données}
+  \rule{\linewidth}{0.4pt}
+  - Respect des trois premières formes normales
+  - Quatre relations (Users, Stations, StationRecords, Favorites)
+  };
+  \draw[->, thick] (c) -- (d) node[midway, above]{appele};
+}
+
+\end{tikzpicture}
+```
+
+:::
+
+# Fonctionnalités {background-color="#2C4A6E"}
+
+## Afficher des informations
+
+\begin{block}{Choix d'implémentation}
+\begin{itemize}
+  \item Une seule page pour l'affichage des stations
+  \item Gérer par paramètre de requête
+\end{itemize}
+\end{block}
+
+. . .
+
+**Contraintes et limites**  
+
+- des menus déroulants long
+- 
+
+## Obtenir des recommandations
+
+\begin{block}{Choix d'implémentation}
+\begin{itemize}
+  \item Gérer la demande via un clic sur une carte \\
+  \item Des scores pour différents 
+\end{itemize}
+\end{block}
+
+. . .
+
+**Contraintes et limites**  
+
+- Des scores basés sur des constantes arbitraires (peuvent dépendre des villes)  
+- De la duplication de code dans les méthodes de calcul  
+
+## Gérer les stations favorites
+
+\begin{block}{Choix d'implémentation}
+\begin{itemize}
+  \item une table de liaison dans la base de données  
+  \item 
+\end{itemize}
+\end{block}
+
+. . .
+
+**Contraintes et limites**
+
+- une solution technique pouvant être améliorée
+- 
+
+## Gérer les comptes
+
+\begin{block}{Choix d'implémentation}
+\begin{itemize}
+  \item un super-administrateur / des administrateurs / des utilisateurs
+  \item 
+\end{itemize}
+\end{block}
+
+. . .
+
+**Contraintes et limites**
+
+- les administrateurs peuvent se supprimer
+- utilise la déconnexion automatique de streamlit
+
+# Bonnes pratiques
+
+## Outils d'aide à la programmation
+
+**Outils utilisés tout au long du projet :**  
+
+- Gestion maîtrisée du dépôt GitHub  
+
+- Utilitaires Python : Ruff
+
+- Tests unitaires : taux de couverture de 82 % du backend (hors DAO) 
+
+# Bilan {background-color="#2C4A6E"}
+
+## Perspectives et améliorations
+
+**Court terme**
+
+- Améliorer et harmoniser le code en utilisant des design patterns  
+
+- Implémenter des tests DAO  
+
+- Permettre une recherche de station par champ de recherche  
+
+. . .
+
+\vspace*{1cm}
+**Moyen terme**
+
+- Gérer la localisation de l'utilisateur pour lui faire des recommandations plus personnalisées  
+
+- 
+
+## Conclusion
+
+**Ce que le projet nous a apporté**
+
+- Première expérience de développement d'une API  
+
+- Gestion d'API externe
+
+---
+
+\begin{center}
+{\Large \textbf{\textcolor{primary}{Merci pour votre attention}}}
+\end{center}
