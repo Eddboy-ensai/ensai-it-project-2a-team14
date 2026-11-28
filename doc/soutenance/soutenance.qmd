@@ -369,6 +369,8 @@ format:
 
 - Tests unitaires : taux de couverture de 82 % du backend (hors DAO) 
 
+- Score Pylint : 9.02/10
+
 # Bilan {background-color="#2C4A6E"}
 
 ## Perspectives et améliorations
